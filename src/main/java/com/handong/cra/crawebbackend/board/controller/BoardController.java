@@ -19,15 +19,13 @@ public class BoardController {
     private final BoardService boardService;
 
     @GetMapping("/{category}")
-    public ResponseEntity<List<ResDetailBoardDto>> getBoardsByCategory(@PathVariable Category category) {
-        return ResponseEntity.ok().body(boardService.getBoardsByCategory(category));
+    public ResponseEntity<List<ResDetailBoardDto>> getBoardsByCategory(@PathVariable Integer category) {
+        return ResponseEntity.ok().body(boardService.getBoardsByCategory(Category.values()[category]));
     }
 
 
-
     @PostMapping("")
-    public ResCreateBoardDto createBoard(@RequestBody ReqCreateBoardDto reqCreateBoardDto) {
-        return boardService.createBoard(reqCreateBoardDto);
-
+    public ResponseEntity<ResCreateBoardDto> createBoard(@RequestBody ReqCreateBoardDto reqCreateBoardDto) {
+        return ResponseEntity.ok().body(boardService.createBoard(reqCreateBoardDto));
     }
 }
