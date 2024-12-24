@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -45,7 +46,7 @@ public class BoardServiceImpl implements BoardService {
         User user = userRepository.findById(createBoardDto.getUserId()).orElseThrow();
         Board board = new Board(user, createBoardDto);
         boardRepository.save(board);
-
+//        new CreateBoardDto(board);
         return CreateBoardDto
                 .builder()
                 .userId(user.getId())
@@ -59,13 +60,16 @@ public class BoardServiceImpl implements BoardService {
     @Override
     @Transactional
     public UpdateBoardDto updateBoard(UpdateBoardDto updateBoardDto) {
-        return null;
+        Board board= boardRepository.findById(updateBoardDto.getId()).orElseThrow();
+        board.update(updateBoardDto);
+        return new UpdateBoardDto(board);
     }
 
 
     @Override
     @Transactional
     public Boolean deleteBoardById(Long id) {
-        return null;
+        boardRepository.findById(id).orElseThrow().delete();
+        return true;
     }
 }

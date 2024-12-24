@@ -1,6 +1,7 @@
 package com.handong.cra.crawebbackend.board.domain;
 
 import com.handong.cra.crawebbackend.board.dto.CreateBoardDto;
+import com.handong.cra.crawebbackend.board.dto.UpdateBoardDto;
 import com.handong.cra.crawebbackend.board.dto.request.ReqCreateBoardDto;
 import com.handong.cra.crawebbackend.common.domain.BaseEntity;
 import com.handong.cra.crawebbackend.user.domain.User;
@@ -12,7 +13,7 @@ import java.util.List;
 
 @Entity
 @Getter
-@Setter
+//@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Board extends BaseEntity {
     @ManyToOne
@@ -44,6 +45,7 @@ public class Board extends BaseEntity {
         this.title = title;
         this.category = category;
         this.content = content;
+        this.imageUrls = imageUrls;
         likeCount = 0L;
         view = 0L;
     }
@@ -57,4 +59,12 @@ public class Board extends BaseEntity {
         likeCount = 0L;
         view = 0L;
     }
+
+    // TODO : 수정할 데이터 추가
+    public void update(UpdateBoardDto updateBoardDto) {
+        this.title = updateBoardDto.getTitle();
+        this.content = updateBoardDto.getContent();
+        this.imageUrls = updateBoardDto.getImageUrls();
+    }
+
 }

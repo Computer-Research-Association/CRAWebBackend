@@ -3,6 +3,7 @@ package com.handong.cra.crawebbackend.board.controller;
 import com.handong.cra.crawebbackend.board.domain.Board;
 import com.handong.cra.crawebbackend.board.domain.Category;
 import com.handong.cra.crawebbackend.board.dto.CreateBoardDto;
+import com.handong.cra.crawebbackend.board.dto.UpdateBoardDto;
 import com.handong.cra.crawebbackend.board.dto.request.ReqCreateBoardDto;
 import com.handong.cra.crawebbackend.board.dto.request.ReqUpdateBoardDto;
 import com.handong.cra.crawebbackend.board.dto.response.ResCreateBoardDto;
@@ -25,40 +26,31 @@ public class BoardController {
 
     @GetMapping("/{category}")
     public ResponseEntity<List<ResListBoardDto>> getBoardsByCategory(@PathVariable Integer category) {
-
-        // service dto => response dto
-        List<ResListBoardDto> lists;
-        lists = boardService.getBoardsByCategory(Category.values()[category] /*int to Enum*/).
-                stream().map(ResListBoardDto::new).toList();
-
-        return ResponseEntity.ok().body(lists);
+        return ResponseEntity.ok().body(boardService.getBoardsByCategory(Category.values()[category] /*int to Enum*/)
+                .stream().map(ResListBoardDto::new).toList());
     }
 
     @PostMapping("")
     public ResponseEntity<ResCreateBoardDto> createBoard(@RequestBody ReqCreateBoardDto reqCreateBoardDto) {
-
-        // service dto => response dto
-        ResCreateBoardDto resCreateBoardDto;
-        resCreateBoardDto = new ResCreateBoardDto(boardService.createBoard(CreateBoardDto.of(reqCreateBoardDto, reqCreateBoardDto.getUserId())));
-
-        // 201 return
-        return ResponseEntity.status(HttpStatus.CREATED).body(resCreateBoardDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new ResCreateBoardDto(boardService
+                .createBoard(CreateBoardDto.of(reqCreateBoardDto, reqCreateBoardDto.getUserId()))));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> updateBoard(@PathVariable Long id, @RequestBody ReqUpdateBoardDto reqUpdateBoardDto) {
-        return null;
+    public ResponseEntity<ResUpdateBoardDto> updateBoard(@PathVariable Long id, @RequestBody ReqUpdateBoardDto reqUpdateBoardDto) {
+        ResUpdateBoardDto resUpdateBoardDto;
+        resUpdateBoardDto = new ResUpdateBoardDto(boardService.updateBoard(new UpdateBoardDto(reqUpdateBoardDto, id)));
+        return ResponseEntity.ok().body(resUpdateBoardDto);
     }
 
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteBoard(@PathVariable Long id) {
-        return null;
-//        // success
-//        if (boardService.deleteBoardById(id))
-//            return ResponseEntity.ok().build();
-//
-//        // fail
-//        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        // success
+        if (boardService.deleteBoardById(id))
+            return ResponseEntity.ok().build();
+
+        // fail
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
 }

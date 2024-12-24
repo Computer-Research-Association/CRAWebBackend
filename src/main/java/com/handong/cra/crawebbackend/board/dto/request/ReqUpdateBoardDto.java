@@ -17,7 +17,7 @@ public class ReqUpdateBoardDto {
     private Long userId;
     //-----------------------------------------
 
-    private Board deleted;
+    private Boolean deleted;
     private String title;
     private String content;
     private Category category;

@@ -2,6 +2,7 @@ package com.handong.cra.crawebbackend.common.domain;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -23,4 +24,8 @@ public abstract class BaseEntity {
     private LocalDateTime updatedAt;
 
     private Boolean deleted = false;
+
+    public void delete(){
+        this.deleted = true;
+    }
 }
