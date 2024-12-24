@@ -2,9 +2,14 @@ package com.handong.cra.crawebbackend.board.service;
 
 import com.handong.cra.crawebbackend.board.domain.Board;
 import com.handong.cra.crawebbackend.board.domain.Category;
+import com.handong.cra.crawebbackend.board.dto.CreateBoardDto;
+import com.handong.cra.crawebbackend.board.dto.DetailBoardDto;
+import com.handong.cra.crawebbackend.board.dto.ListBoardDto;
+import com.handong.cra.crawebbackend.board.dto.UpdateBoardDto;
 import com.handong.cra.crawebbackend.board.dto.request.ReqCreateBoardDto;
 import com.handong.cra.crawebbackend.board.dto.response.ResCreateBoardDto;
 import com.handong.cra.crawebbackend.board.dto.response.ResDetailBoardDto;
+import com.handong.cra.crawebbackend.board.dto.response.ResUpdateBoardDto;
 import com.handong.cra.crawebbackend.board.repository.BoardRepository;
 import com.handong.cra.crawebbackend.user.domain.User;
 import com.handong.cra.crawebbackend.user.repository.UserRepository;
@@ -25,35 +30,42 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     @Transactional
-    public List<ResDetailBoardDto> getBoardsByCategory(Category category) {
+    public List<ListBoardDto> getBoardsByCategory(Category category) {
         // get data
-        List<Board> boards = new ArrayList<>();
-        boards = boardRepository.findAllByCategory(category);
+        List<Board> boards = boardRepository.findAllByCategory(category);
 
         // parsing to dto
-        List<ResDetailBoardDto> dtos = boards.stream().map(ResDetailBoardDto::new).toList();
-
-        // return
+        List<ListBoardDto> dtos = boards.stream().map(ListBoardDto::new).toList();
         return dtos;
     }
 
     @Override
     @Transactional
-    public ResCreateBoardDto createBoard(ReqCreateBoardDto reqCreateBoardDto) {
-        User user = userRepository.findById(reqCreateBoardDto.getUserId()).orElseThrow();
-        Board board = new Board(user, reqCreateBoardDto);
+    public CreateBoardDto createBoard(CreateBoardDto createBoardDto) {
+        User user = userRepository.findById(createBoardDto.getUserId()).orElseThrow();
+        Board board = new Board(user, createBoardDto);
         boardRepository.save(board);
 
-        return ResCreateBoardDto
+        return CreateBoardDto
                 .builder()
-                .id(board.getId())
                 .userId(user.getId())
                 .title(board.getTitle())
                 .content(board.getContent())
                 .category(board.getCategory())
                 .imageUrls(board.getImageUrls())
-                .createdAt(board.getCreatedAt())
-                .updatedAt(board.getUpdatedAt())
                 .build();
+    }
+
+    @Override
+    @Transactional
+    public UpdateBoardDto updateBoard(UpdateBoardDto updateBoardDto) {
+        return null;
+    }
+
+
+    @Override
+    @Transactional
+    public Boolean deleteBoardById(Long id) {
+        return null;
     }
 }

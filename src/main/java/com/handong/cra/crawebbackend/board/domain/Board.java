@@ -1,5 +1,6 @@
 package com.handong.cra.crawebbackend.board.domain;
 
+import com.handong.cra.crawebbackend.board.dto.CreateBoardDto;
 import com.handong.cra.crawebbackend.board.dto.request.ReqCreateBoardDto;
 import com.handong.cra.crawebbackend.common.domain.BaseEntity;
 import com.handong.cra.crawebbackend.user.domain.User;
@@ -47,12 +48,12 @@ public class Board extends BaseEntity {
         view = 0L;
     }
 
-    public Board(User user, ReqCreateBoardDto reqCreateBoardDto) {
+    public Board(User user, CreateBoardDto createBoardDto) {
         this.user = user;
-        this.title = reqCreateBoardDto.getTitle();
-        this.category = reqCreateBoardDto.getCategory();
-        this.content = reqCreateBoardDto.getContent();
-        this.imageUrls = reqCreateBoardDto.getImageUrls();
+        this.title = createBoardDto.getTitle();
+        this.category = createBoardDto.getCategory();
+        this.content = createBoardDto.getContent();
+        this.imageUrls = createBoardDto.getImageUrls();
         likeCount = 0L;
         view = 0L;
     }

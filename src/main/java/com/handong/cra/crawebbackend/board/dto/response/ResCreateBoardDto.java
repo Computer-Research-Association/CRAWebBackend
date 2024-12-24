@@ -2,6 +2,7 @@ package com.handong.cra.crawebbackend.board.dto.response;
 
 import com.handong.cra.crawebbackend.board.domain.Board;
 import com.handong.cra.crawebbackend.board.domain.Category;
+import com.handong.cra.crawebbackend.board.dto.CreateBoardDto;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -20,6 +21,25 @@ public class ResCreateBoardDto {
     private Category category;
     private List<String> imageUrls;
     private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
     // TODO: add havrutaid
+
+
+    public ResCreateBoardDto(CreateBoardDto createBoardDto) {
+
+        this.id = createBoardDto.getId();
+        this.userId = createBoardDto.getUserId();
+        this.title = createBoardDto.getTitle();
+        this.content = createBoardDto.getContent();
+        this.category = createBoardDto.getCategory();
+        this.imageUrls = createBoardDto.getImageUrls();
+        this.createdAt= createBoardDto.getCreatedAt();
+    }
+
+
+//    public ResCreateBoardDto of (CreateBoardDto createBoardDto){
+//
+//
+//    }
+
+
 }
