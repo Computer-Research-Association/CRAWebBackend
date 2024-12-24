@@ -1,6 +1,6 @@
 package com.handong.cra.crawebbackend.board.domain;
 
-import com.handong.cra.crawebbackend.board.dto.ReqCreateBoardDto;
+import com.handong.cra.crawebbackend.board.dto.request.ReqCreateBoardDto;
 import com.handong.cra.crawebbackend.common.domain.BaseEntity;
 import com.handong.cra.crawebbackend.user.domain.User;
 import jakarta.persistence.*;

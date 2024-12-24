@@ -1,4 +1,4 @@
-package com.handong.cra.crawebbackend.board.dto;
+package com.handong.cra.crawebbackend.board.dto.request;
 
 import com.handong.cra.crawebbackend.board.domain.Category;
 import lombok.*;

@@ -1,5 +1,6 @@
-package com.handong.cra.crawebbackend.board.dto;
+package com.handong.cra.crawebbackend.board.dto.response;
 
+import com.handong.cra.crawebbackend.board.domain.Board;
 import com.handong.cra.crawebbackend.board.domain.Category;
 import lombok.*;
 
