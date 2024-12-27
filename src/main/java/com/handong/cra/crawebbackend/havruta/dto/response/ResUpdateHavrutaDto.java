@@ -19,10 +19,13 @@ public class ResUpdateHavrutaDto {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public ResUpdateHavrutaDto(UpdateHavrutaDto havrutaDto){
-
+    public ResUpdateHavrutaDto(UpdateHavrutaDto updateHavrutaDto) {
+        this.id = updateHavrutaDto.getId();
+        this.className = updateHavrutaDto.getClassName();
+        this.boards = updateHavrutaDto.getBoards();
+        this.createdAt = updateHavrutaDto.getCreatedAt();
+        this.updatedAt = updateHavrutaDto.getUpdatedAt();
     }
-
 
 
 }

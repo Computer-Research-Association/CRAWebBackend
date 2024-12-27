@@ -3,6 +3,7 @@ package com.handong.cra.crawebbackend.havruta.controller;
 import com.handong.cra.crawebbackend.havruta.dto.CreateHavrutaDto;
 import com.handong.cra.crawebbackend.havruta.dto.CreatehavrutaDto;
 import com.handong.cra.crawebbackend.havruta.dto.ListHavrutaDto;
+import com.handong.cra.crawebbackend.havruta.dto.UpdateHavrutaDto;
 import com.handong.cra.crawebbackend.havruta.dto.request.ReqCreateHavrutaDto;
 import com.handong.cra.crawebbackend.havruta.dto.response.ResCreateHarvrutaDto;
 import com.handong.cra.crawebbackend.havruta.dto.response.ResCreateHavrutaDto;
@@ -37,7 +38,7 @@ public class HavrutaController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ResDetailHavrutaDto> detailedHavruta(PathVariable Long id){
+    public ResponseEntity<ResDetailHavrutaDto> detailedHavruta(PathVariable Long id) {
 
 
         ResDetailHavrutaDto resDetailHavrutaDto = new ResDetailHavrutaDto();
@@ -56,17 +57,15 @@ public class HavrutaController {
 
     @PutMapping("/{id}")
     public ResponseEntity<ResUpdateHavrutaDto> updateHavruta(@PathVariable Long id, @RequestBody ReqCreateHavrutaDto reqUpdateHavrutaDto) {
-
-
-
-
-        return ResponseEntity.ok().body(null);
+        return ResponseEntity.ok().body(ResUpdateHavrutaDto(havrutaService.updateHavruta(new UpdateHavrutaDto(id, reqUpdateHavrutaDto)));
+);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteHavruta(@PathVariable Long id ){
-
-        return ResponseEntity.ok().build();
+    public ResponseEntity<Void> deleteHavruta(@PathVariable Long id) {
+        if (havrutaService.deleteHavruta(id))
+            return ResponseEntity.ok().build();
+        else return ResponseEntity.internalServerError().build();
     }
 
 
