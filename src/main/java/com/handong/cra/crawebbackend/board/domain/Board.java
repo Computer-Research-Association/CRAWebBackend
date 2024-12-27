@@ -5,6 +5,7 @@ import com.handong.cra.crawebbackend.board.dto.UpdateBoardDto;
 import com.handong.cra.crawebbackend.board.dto.request.ReqCreateBoardDto;
 import com.handong.cra.crawebbackend.comment.domain.Comment;
 import com.handong.cra.crawebbackend.common.domain.BaseEntity;
+import com.handong.cra.crawebbackend.havruta.domain.Havruta;
 import com.handong.cra.crawebbackend.user.domain.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -35,6 +36,9 @@ public class Board extends BaseEntity {
     private List<String> imageUrls = new ArrayList<>();
 
     // TODO: havruta_id 추가
+    @ManyToOne
+    @JoinColumn(name = "havruta_id")
+    private Havruta havruta;
 
     @Column(name = "like_count")
     private Long likeCount;
