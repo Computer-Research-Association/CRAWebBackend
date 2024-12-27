@@ -31,7 +31,7 @@ public class BoardController {
                 .stream().map(ResListBoardDto::new).toList());
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/view/{id}")
     public ResponseEntity<ResDetailBoardDto> getDetailBoard(@PathVariable Long id){
         ResDetailBoardDto resDetailBoardDto = ResDetailBoardDto.from(boardServiceImpl.getDetailBoardById(id));
 
