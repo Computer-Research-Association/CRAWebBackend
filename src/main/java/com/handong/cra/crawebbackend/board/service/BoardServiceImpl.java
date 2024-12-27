@@ -19,9 +19,12 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 @Service
 @RequiredArgsConstructor
@@ -36,7 +39,7 @@ public class BoardServiceImpl implements BoardService {
         List<Board> boards = boardRepository.findAllByCategory(category);
 
         // parsing to dto
-        List<ListBoardDto> dtos = boards.stream().map(ListBoardDto::new).toList();
+        List<ListBoardDto> dtos = boards.stream().map(ListBoardDto::from).filter(Objects::nonNull).toList();
         return dtos;
     }
 
@@ -71,5 +74,15 @@ public class BoardServiceImpl implements BoardService {
     public Boolean deleteBoardById(Long id) {
         boardRepository.findById(id).orElseThrow().delete();
         return true;
+    }
+
+    @Override
+    @Transactional
+    public DetailBoardDto getDetailBoardById(Long id) {
+        Board board = boardRepository.findById(id).orElseThrow();
+        if (board.getDeleted()) return null;
+
+        board.increaseView();
+        return new DetailBoardDto(board);
     }
 }

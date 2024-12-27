@@ -18,6 +18,7 @@ public class ListBoardDto {
     private String title;
     private String content;
     private Category category;
+    private Boolean deleted;
     private Long likeCount;
     private Long view;
     private List<String> imageUrls;
@@ -37,4 +38,8 @@ public class ListBoardDto {
         this.updatedAt = board.getUpdatedAt();
     }
 
+    public static ListBoardDto from(Board board) {
+        if (board.getDeleted())return null;
+        return new ListBoardDto(board);
+    }
 }

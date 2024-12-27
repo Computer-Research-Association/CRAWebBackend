@@ -1,6 +1,5 @@
 package com.handong.cra.crawebbackend.board.controller;
 
-import com.handong.cra.crawebbackend.board.domain.Board;
 import com.handong.cra.crawebbackend.board.domain.Category;
 import com.handong.cra.crawebbackend.board.dto.CreateBoardDto;
 import com.handong.cra.crawebbackend.board.dto.UpdateBoardDto;
@@ -11,6 +10,7 @@ import com.handong.cra.crawebbackend.board.dto.response.ResDetailBoardDto;
 import com.handong.cra.crawebbackend.board.dto.response.ResListBoardDto;
 import com.handong.cra.crawebbackend.board.dto.response.ResUpdateBoardDto;
 import com.handong.cra.crawebbackend.board.service.BoardService;
+import com.handong.cra.crawebbackend.board.service.BoardServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,11 +23,22 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BoardController {
     private final BoardService boardService;
+    private final BoardServiceImpl boardServiceImpl;
 
     @GetMapping("/{category}")
     public ResponseEntity<List<ResListBoardDto>> getBoardsByCategory(@PathVariable Integer category) {
         return ResponseEntity.ok().body(boardService.getBoardsByCategory(Category.values()[category] /*int to Enum*/)
                 .stream().map(ResListBoardDto::new).toList());
+    }
+
+    @GetMapping("/view/{id}")
+    public ResponseEntity<ResDetailBoardDto> getDetailBoard(@PathVariable Long id){
+        ResDetailBoardDto resDetailBoardDto = ResDetailBoardDto.from(boardServiceImpl.getDetailBoardById(id));
+
+        // deleted
+        if (resDetailBoardDto== null) return  ResponseEntity.notFound().build();
+
+        else return ResponseEntity.ok().body(resDetailBoardDto);
     }
 
     @PostMapping("")
