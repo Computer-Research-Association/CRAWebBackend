@@ -37,4 +37,9 @@ public class DetailBoardDto {
         this.createdAt = board.getCreatedAt();
         this.updatedAt = board.getUpdatedAt();
     }
+
+    public static DetailBoardDto from(Board board){
+        return new DetailBoardDto(board);
+    }
+
 }

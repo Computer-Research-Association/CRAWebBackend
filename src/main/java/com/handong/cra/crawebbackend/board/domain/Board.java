@@ -61,6 +61,11 @@ public class Board extends BaseEntity {
         view = 0L;
     }
 
+    public static Board of(User user, CreateBoardDto createBoardDto) {
+        return new Board(user, createBoardDto);
+
+    }
+
     // TODO : 수정할 데이터 추가
     public void update(UpdateBoardDto updateBoardDto) {
         this.title = updateBoardDto.getTitle();
@@ -68,7 +73,7 @@ public class Board extends BaseEntity {
         this.imageUrls = updateBoardDto.getImageUrls();
     }
 
-    public void increaseView(){
+    public void increaseView() {
         this.view++;
     }
 

@@ -42,4 +42,8 @@ public class ResListBoardDto {
         this.createdAt = listBoardDto.getCreatedAt();
         this.updatedAt = listBoardDto.getUpdatedAt();
     }
+
+    public static ResListBoardDto from(ListBoardDto listBoardDto){
+        return new ResListBoardDto(listBoardDto);
+    }
 }
