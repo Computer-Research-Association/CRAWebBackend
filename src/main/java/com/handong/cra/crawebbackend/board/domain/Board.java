@@ -68,4 +68,8 @@ public class Board extends BaseEntity {
         this.imageUrls = updateBoardDto.getImageUrls();
     }
 
+    public void increaseView(){
+        this.view++;
+    }
+
 }

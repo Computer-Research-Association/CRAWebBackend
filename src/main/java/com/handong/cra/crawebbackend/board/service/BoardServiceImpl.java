@@ -72,4 +72,14 @@ public class BoardServiceImpl implements BoardService {
         boardRepository.findById(id).orElseThrow().delete();
         return true;
     }
+
+    @Override
+    @Transactional
+    public DetailBoardDto getDetailBoardById(Long id) {
+        Board board = boardRepository.findById(id).orElseThrow();
+        if (board.getDeleted()) return null;
+
+        board.increaseView();
+        return new DetailBoardDto(board);
+    }
 }

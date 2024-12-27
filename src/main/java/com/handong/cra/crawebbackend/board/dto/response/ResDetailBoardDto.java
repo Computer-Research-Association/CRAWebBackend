@@ -2,6 +2,7 @@ package com.handong.cra.crawebbackend.board.dto.response;
 
 import com.handong.cra.crawebbackend.board.domain.Board;
 import com.handong.cra.crawebbackend.board.domain.Category;
+import com.handong.cra.crawebbackend.board.dto.DetailBoardDto;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -17,7 +18,7 @@ public class ResDetailBoardDto {
     private Long userId;
     private String title;
     private String content;
-    private Category category;
+    private Integer category;
     private Long likeCount;
     private Long view;
     private List<String> imageUrls;
@@ -26,17 +27,19 @@ public class ResDetailBoardDto {
     // TODO: add havrutaid
 
 
-
-    public ResDetailBoardDto(Board board){
-        this.id = board.getId();
-        this.userId = board.getUser().getId();
-        this.title = board.getTitle();
-        this.content = board.getContent();
-        this.category = board.getCategory();
-        this.likeCount = board.getLikeCount();
-        this.view = board.getView();
-        this.imageUrls = board.getImageUrls();
-        this.createdAt = board.getCreatedAt();
-        this.updatedAt = board.getUpdatedAt();
+    public static ResDetailBoardDto from(DetailBoardDto detailBoardDto) {
+        if (detailBoardDto == null) return null;
+        return ResDetailBoardDto.builder()
+                .id(detailBoardDto.getId())
+                .userId(detailBoardDto.getUserId())
+                .title(detailBoardDto.getTitle())
+                .content(detailBoardDto.getContent())
+                .category(detailBoardDto.getCategory().ordinal())
+                .likeCount(detailBoardDto.getLikeCount())
+                .view(detailBoardDto.getView())
+                .imageUrls(detailBoardDto.getImageUrls())
+                .createdAt(detailBoardDto.getCreatedAt())
+                .updatedAt(detailBoardDto.getUpdatedAt())
+                .build();
     }
 }
