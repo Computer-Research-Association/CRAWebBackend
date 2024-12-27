@@ -28,7 +28,7 @@ public class BoardController {
     @GetMapping("/{category}")
     public ResponseEntity<List<ResListBoardDto>> getBoardsByCategory(@PathVariable Integer category) {
         return ResponseEntity.ok().body(boardService.getBoardsByCategory(Category.values()[category] /*int to Enum*/)
-                .stream().map(ResListBoardDto::new).toList());
+                .stream().map(ResListBoardDto::from).toList());
     }
 
     @GetMapping("/view/{id}")
@@ -43,14 +43,14 @@ public class BoardController {
 
     @PostMapping("")
     public ResponseEntity<ResCreateBoardDto> createBoard(@RequestBody ReqCreateBoardDto reqCreateBoardDto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(new ResCreateBoardDto(boardService
+        return ResponseEntity.status(HttpStatus.CREATED).body(ResCreateBoardDto.from(boardService
                 .createBoard(CreateBoardDto.of(reqCreateBoardDto, reqCreateBoardDto.getUserId()))));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<ResUpdateBoardDto> updateBoard(@PathVariable Long id, @RequestBody ReqUpdateBoardDto reqUpdateBoardDto) {
         ResUpdateBoardDto resUpdateBoardDto;
-        resUpdateBoardDto = new ResUpdateBoardDto(boardService.updateBoard(new UpdateBoardDto(reqUpdateBoardDto, id)));
+        resUpdateBoardDto =ResUpdateBoardDto.from(boardService.updateBoard(UpdateBoardDto.of(id, reqUpdateBoardDto)));
         return ResponseEntity.ok().body(resUpdateBoardDto);
     }
 

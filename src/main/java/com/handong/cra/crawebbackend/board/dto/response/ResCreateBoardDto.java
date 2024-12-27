@@ -35,11 +35,8 @@ public class ResCreateBoardDto {
         this.createdAt= createBoardDto.getCreatedAt();
     }
 
-
-//    public ResCreateBoardDto of (CreateBoardDto createBoardDto){
-//
-//
-//    }
-
+    public static ResCreateBoardDto from(CreateBoardDto createBoardDto) {
+            return new ResCreateBoardDto(createBoardDto);
+    }
 
 }

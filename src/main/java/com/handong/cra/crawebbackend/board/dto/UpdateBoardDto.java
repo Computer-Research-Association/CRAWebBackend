@@ -3,6 +3,7 @@ package com.handong.cra.crawebbackend.board.dto;
 import com.handong.cra.crawebbackend.board.domain.Board;
 import com.handong.cra.crawebbackend.board.domain.Category;
 import com.handong.cra.crawebbackend.board.dto.request.ReqUpdateBoardDto;
+import com.handong.cra.crawebbackend.board.dto.response.ResUpdateBoardDto;
 import lombok.*;
 
 import java.util.List;
@@ -26,7 +27,7 @@ public class UpdateBoardDto {
     // TODO: add havrutaid
 
 
-    public UpdateBoardDto(ReqUpdateBoardDto reqUpdateBoardDto, Long id) {
+    public UpdateBoardDto(Long id, ReqUpdateBoardDto reqUpdateBoardDto) {
         // TODO : User Logic
         this.userId = reqUpdateBoardDto.getUserId();
 
@@ -45,5 +46,15 @@ public class UpdateBoardDto {
         this.content = board.getContent();
         this.category = board.getCategory();
         this.imageUrls = board.getImageUrls();
+    }
+
+    public static UpdateBoardDto of(Long id, ReqUpdateBoardDto reqUpdateBoardDto) {
+        return new UpdateBoardDto(id, reqUpdateBoardDto);
+    }
+
+
+    public static UpdateBoardDto from(Board board) {
+        return new UpdateBoardDto(board);
+
     }
 }

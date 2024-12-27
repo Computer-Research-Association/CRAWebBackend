@@ -21,7 +21,6 @@ public class CreateBoardDto {
     private Category category;
     private List<String> imageUrls;
 
-
     private Long id = null;
     private LocalDateTime createdAt = null;
 

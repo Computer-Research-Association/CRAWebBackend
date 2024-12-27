@@ -47,9 +47,8 @@ public class BoardServiceImpl implements BoardService {
     @Transactional
     public CreateBoardDto createBoard(CreateBoardDto createBoardDto) {
         User user = userRepository.findById(createBoardDto.getUserId()).orElseThrow();
-        Board board = new Board(user, createBoardDto);
+        Board board = Board.of(user, createBoardDto);
         boardRepository.save(board);
-//        new CreateBoardDto(board);
         return CreateBoardDto
                 .builder()
                 .userId(user.getId())
@@ -65,7 +64,7 @@ public class BoardServiceImpl implements BoardService {
     public UpdateBoardDto updateBoard(UpdateBoardDto updateBoardDto) {
         Board board= boardRepository.findById(updateBoardDto.getId()).orElseThrow();
         board.update(updateBoardDto);
-        return new UpdateBoardDto(board);
+        return UpdateBoardDto.from(board);
     }
 
 
@@ -83,6 +82,6 @@ public class BoardServiceImpl implements BoardService {
         if (board.getDeleted()) return null;
 
         board.increaseView();
-        return new DetailBoardDto(board);
+        return DetailBoardDto.from(board);
     }
 }

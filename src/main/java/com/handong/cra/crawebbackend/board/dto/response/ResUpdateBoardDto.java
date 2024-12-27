@@ -25,12 +25,17 @@ public class ResUpdateBoardDto {
 
     public ResUpdateBoardDto(UpdateBoardDto updateBoardDto) {
         this.id = updateBoardDto.getId();
-        this.userId= updateBoardDto.getUserId();
+        this.userId = updateBoardDto.getUserId();
         this.deleted = updateBoardDto.getDeleted();
         this.title = updateBoardDto.getTitle();
         this.content = updateBoardDto.getContent();
         this.category = updateBoardDto.getCategory();
         this.imageUrls = updateBoardDto.getImageUrls();
     }
+
+    public static ResUpdateBoardDto from(UpdateBoardDto updateBoardDto) {
+        return new ResUpdateBoardDto(updateBoardDto);
+    }
+
     // TODO: add havrutaid
 }
