@@ -54,6 +54,7 @@ jobs:
     needs: build
 
     steps:
+      - uses: actions/checkout@v4
       - name: copy file via ssh password
         uses: appleboy/scp-action@v0.1.7
         with:
