@@ -21,7 +21,7 @@ services:
       - "8080:8080"
     depends_on:
       - database
-    restart: always
+    restart: craweb-db
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://lifelog_db:3306/cra_web
       SPRING_DATASOURCE_USERNAME: craweb
