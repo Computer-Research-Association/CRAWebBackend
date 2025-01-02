@@ -6,6 +6,6 @@ services:
       - "8080:8080"
     restart: always
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://lifelog_db:3306/cra_web
-      SPRING_DATASOURCE_USERNAME: craweb
+      SPRING_DATASOURCE_URL: jdbc:mysql://lkyoungdbinstanse.cpes68q0s4xy.ap-northeast-2.rds.amazonaws.com:3306/craweb?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+      SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: dnwnchlrkd206
