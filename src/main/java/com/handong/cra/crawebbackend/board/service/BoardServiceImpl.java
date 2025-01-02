@@ -2,35 +2,34 @@ package com.handong.cra.crawebbackend.board.service;
 
 import com.handong.cra.crawebbackend.board.domain.Board;
 import com.handong.cra.crawebbackend.board.domain.Category;
-import com.handong.cra.crawebbackend.board.dto.CreateBoardDto;
-import com.handong.cra.crawebbackend.board.dto.DetailBoardDto;
-import com.handong.cra.crawebbackend.board.dto.ListBoardDto;
-import com.handong.cra.crawebbackend.board.dto.UpdateBoardDto;
-import com.handong.cra.crawebbackend.board.dto.request.ReqCreateBoardDto;
-import com.handong.cra.crawebbackend.board.dto.response.ResCreateBoardDto;
-import com.handong.cra.crawebbackend.board.dto.response.ResDetailBoardDto;
-import com.handong.cra.crawebbackend.board.dto.response.ResUpdateBoardDto;
+import com.handong.cra.crawebbackend.board.domain.OrderBy;
+import com.handong.cra.crawebbackend.board.dto.*;
 import com.handong.cra.crawebbackend.board.repository.BoardRepository;
 import com.handong.cra.crawebbackend.user.domain.User;
 import com.handong.cra.crawebbackend.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.PageRequest;
+
+import org.springframework.data.domain.Pageable;
+import org.springdoc.core.converters.PageableOpenAPIConverter;
+
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.toList;
 
 @Service
 @RequiredArgsConstructor
 public class BoardServiceImpl implements BoardService {
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
+    private final PageableOpenAPIConverter pageableOpenAPIConverter;
 
     @Override
     @Transactional
@@ -41,6 +40,23 @@ public class BoardServiceImpl implements BoardService {
         // parsing to dto
         List<ListBoardDto> dtos = boards.stream().map(ListBoardDto::from).filter(Objects::nonNull).toList();
         return dtos;
+    }
+
+    @Override
+    public List<ListBoardDto> getPaginationBoard(Long page, Integer perPage, OrderBy orderBy, Boolean isASC) {
+
+        HashMap<OrderBy, String> map = new HashMap<>();
+        map.put(OrderBy.DATE, "createdAt");
+        map.put(OrderBy.LIKECOUNT, "likeCount");
+
+        Sort sort = Sort.by(map.get(orderBy));
+
+        sort = (isASC) ? sort.ascending() : sort.descending();
+
+        Pageable pageable = PageRequest.of(Math.toIntExact(page), perPage, sort);
+        List<Board> boards = boardRepository.findAllByDeletedIsFalse(pageable);
+
+        return boards.stream().map(ListBoardDto::from).toList();
     }
 
     @Override
@@ -62,7 +78,7 @@ public class BoardServiceImpl implements BoardService {
     @Override
     @Transactional
     public UpdateBoardDto updateBoard(UpdateBoardDto updateBoardDto) {
-        Board board= boardRepository.findById(updateBoardDto.getId()).orElseThrow();
+        Board board = boardRepository.findById(updateBoardDto.getId()).orElseThrow();
         board.update(updateBoardDto);
         return UpdateBoardDto.from(board);
     }
