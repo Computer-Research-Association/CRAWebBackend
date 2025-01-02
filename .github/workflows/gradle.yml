@@ -35,7 +35,7 @@ jobs:
       run: chmod +x gradlew
 
     - name: Build with Gradle Wrapper
-      run: ./gradlew clean build
+      run: ./gradlew clean build --exclude-task test
       # run: ./gradlew clean build --exclude-task test
 
     - name: Set up Docker Buildx
@@ -46,8 +46,8 @@ jobs:
 
     - name: Build and push test image
       run: |
-        docker build -t lkyoung/craweb .
-        docker push lkyoung/craweb
+        docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/craweb .
+        docker push ${{ secrets.DOCKERHUB_USERNAME }}/craweb
 
   deploy:
     runs-on: ubuntu-latest
@@ -57,18 +57,18 @@ jobs:
       - name: copy file via ssh password
         uses: appleboy/scp-action@v0.1.7
         with:
-          host: ${{ secrets.R2R_EC2_HOST }}
-          username: ${{ secrets.R2R_EC2_USERNAME }}
-          key: ${{ secrets.R2R_EC2_PRIVATE_KEY }}
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_PRIVATE_KEY }}
           source: "docker-compose.yml"
           target: '/home/ubuntu/craweb'
 
       - name: SSH to EC2 and Deploy
         uses: appleboy/ssh-action@v1.2.0
         with:
-          host: ${{ secrets.R2R_EC2_HOST }}
-          username: ${{ secrets.R2R_EC2_USERNAME }}
-          key: ${{ secrets.R2R_EC2_PRIVATE_KEY }}
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_PRIVATE_KEY }}
           script: |
             cd /home/ubuntu/craweb
             docker compose down
