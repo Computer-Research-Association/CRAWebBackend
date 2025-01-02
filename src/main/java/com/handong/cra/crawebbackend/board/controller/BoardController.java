@@ -23,7 +23,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BoardController {
     private final BoardService boardService;
-    private final BoardServiceImpl boardServiceImpl;
 
     @GetMapping("/{category}")
     public ResponseEntity<List<ResListBoardDto>> getBoardsByCategory(@PathVariable Integer category) {
@@ -33,7 +32,7 @@ public class BoardController {
 
     @GetMapping("/view/{id}")
     public ResponseEntity<ResDetailBoardDto> getDetailBoard(@PathVariable Long id){
-        ResDetailBoardDto resDetailBoardDto = ResDetailBoardDto.from(boardServiceImpl.getDetailBoardById(id));
+        ResDetailBoardDto resDetailBoardDto = ResDetailBoardDto.from(boardService.getDetailBoardById(id));
 
         // deleted
         if (resDetailBoardDto== null) return  ResponseEntity.notFound().build();
