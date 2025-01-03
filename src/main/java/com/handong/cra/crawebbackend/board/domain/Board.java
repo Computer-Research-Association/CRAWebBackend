@@ -40,7 +40,6 @@ public class Board extends BaseEntity {
     @JoinColumn(name = "havruta_id") // 외래 키 컬럼을 설정
     private Havruta havruta;
 
-
     @Column(name = "like_count")
     private Long likeCount;
 
