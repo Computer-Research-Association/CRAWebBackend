@@ -1,6 +1,6 @@
 package com.handong.cra.crawebbackend.board.domain;
 
-public enum OrderBy {
+public enum BoardOrderBy {
     DATE,
     LIKECOUNT
 }

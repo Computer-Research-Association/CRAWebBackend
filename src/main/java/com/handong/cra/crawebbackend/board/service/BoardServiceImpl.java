@@ -2,7 +2,7 @@ package com.handong.cra.crawebbackend.board.service;
 
 import com.handong.cra.crawebbackend.board.domain.Board;
 import com.handong.cra.crawebbackend.board.domain.Category;
-import com.handong.cra.crawebbackend.board.domain.OrderBy;
+import com.handong.cra.crawebbackend.board.domain.BoardOrderBy;
 import com.handong.cra.crawebbackend.board.dto.*;
 import com.handong.cra.crawebbackend.board.repository.BoardRepository;
 import com.handong.cra.crawebbackend.user.domain.User;
@@ -10,7 +10,7 @@ import com.handong.cra.crawebbackend.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.PageRequest;
 
@@ -43,18 +43,18 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public List<ListBoardDto> getPaginationBoard(Long page, Integer perPage, OrderBy orderBy, Boolean isASC) {
+    public List<ListBoardDto> getPaginationBoard(Long page, Integer perPage, BoardOrderBy boardOrderBy, Boolean isASC) {
 
-        HashMap<OrderBy, String> map = new HashMap<>();
-        map.put(OrderBy.DATE, "createdAt");
-        map.put(OrderBy.LIKECOUNT, "likeCount");
+        HashMap<BoardOrderBy, String> map = new HashMap<>();
+        map.put(BoardOrderBy.DATE, "createdAt");
+        map.put(BoardOrderBy.LIKECOUNT, "likeCount");
 
-        Sort sort = Sort.by(map.get(orderBy));
+        Sort sort = Sort.by(map.get(boardOrderBy));
 
         sort = (isASC) ? sort.ascending() : sort.descending();
 
         Pageable pageable = PageRequest.of(Math.toIntExact(page), perPage, sort);
-        List<Board> boards = boardRepository.findAllByDeletedIsFalse(pageable);
+        Page<Board> boards = boardRepository.findAllByDeletedIsFalse(pageable);
 
         return boards.stream().map(ListBoardDto::from).toList();
     }
