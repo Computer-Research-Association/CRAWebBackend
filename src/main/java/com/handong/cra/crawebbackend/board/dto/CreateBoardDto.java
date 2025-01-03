@@ -3,6 +3,7 @@ package com.handong.cra.crawebbackend.board.dto;
 import com.handong.cra.crawebbackend.board.domain.Board;
 import com.handong.cra.crawebbackend.board.domain.Category;
 import com.handong.cra.crawebbackend.board.dto.request.ReqCreateBoardDto;
+import com.handong.cra.crawebbackend.board.dto.response.ResDetailBoardDto;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -18,7 +19,7 @@ public class CreateBoardDto {
     private Long userId;
     private String title;
     private String content;
-    private Category category;
+    private Category category = Category.valueOf("HAVRUTA");
     private List<String> imageUrls;
 
     private Long id = null;
