@@ -1,7 +1,9 @@
 package com.handong.cra.crawebbackend.board.controller;
 
 import com.handong.cra.crawebbackend.board.domain.Category;
+import com.handong.cra.crawebbackend.board.domain.OrderBy;
 import com.handong.cra.crawebbackend.board.dto.CreateBoardDto;
+import com.handong.cra.crawebbackend.board.dto.ListBoardDto;
 import com.handong.cra.crawebbackend.board.dto.UpdateBoardDto;
 import com.handong.cra.crawebbackend.board.dto.request.ReqCreateBoardDto;
 import com.handong.cra.crawebbackend.board.dto.request.ReqUpdateBoardDto;
@@ -35,9 +37,21 @@ public class BoardController {
         ResDetailBoardDto resDetailBoardDto = ResDetailBoardDto.from(boardService.getDetailBoardById(id));
 
         // deleted
-        if (resDetailBoardDto== null) return  ResponseEntity.notFound().build();
+        if (resDetailBoardDto == null) return ResponseEntity.notFound().build();
 
         else return ResponseEntity.ok().body(resDetailBoardDto);
+    }
+
+    @GetMapping("/page/{page}")
+    public ResponseEntity<List<ResListBoardDto>> getPaginationBoard(
+            @PathVariable Long page,
+            @RequestParam(required = false, defaultValue = "0") Integer perPage,
+            @RequestParam(required = false,defaultValue = "5") Integer orderBy,
+            @RequestParam(required = false,defaultValue = "true") Boolean isASC
+    ) {
+        List<ListBoardDto> listBoardDtos = boardService.getPaginationBoard(page, perPage, OrderBy.values()[orderBy], isASC);
+        System.out.println("test here : " + listBoardDtos.size());
+        return ResponseEntity.ok(listBoardDtos.stream().map(ResListBoardDto::from).toList());
     }
 
     @PostMapping("")
@@ -49,7 +63,7 @@ public class BoardController {
     @PutMapping("/{id}")
     public ResponseEntity<ResUpdateBoardDto> updateBoard(@PathVariable Long id, @RequestBody ReqUpdateBoardDto reqUpdateBoardDto) {
         ResUpdateBoardDto resUpdateBoardDto;
-        resUpdateBoardDto =ResUpdateBoardDto.from(boardService.updateBoard(UpdateBoardDto.of(id, reqUpdateBoardDto)));
+        resUpdateBoardDto = ResUpdateBoardDto.from(boardService.updateBoard(UpdateBoardDto.of(id, reqUpdateBoardDto)));
         return ResponseEntity.ok().body(resUpdateBoardDto);
     }
 
