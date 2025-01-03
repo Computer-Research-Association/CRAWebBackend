@@ -8,8 +8,8 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class ReqUpdateHavrutaDto {
+
     private String className;
     private String professor;
     private Boolean deleted;
-    // 애매하네요
 }

@@ -7,7 +7,7 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class ReqCreateHavrutaDto {
+
     private String className;
     private String professor;
-    // userId가 필요할까요?
 }

@@ -4,14 +4,13 @@ import com.handong.cra.crawebbackend.havruta.domain.Havruta;
 import com.handong.cra.crawebbackend.havruta.dto.request.ReqUpdateHavrutaDto;
 import lombok.*;
 
-import java.util.List;
-
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
 public class UpdateHavrutaDto {
+
     private Long id;
     private String className;
     private String professor;
@@ -29,5 +28,13 @@ public class UpdateHavrutaDto {
         this.className = havruta.getClassName();
         this.professor = havruta.getProfessor();
         this.deleted = havruta.getDeleted();
+    }
+
+    public static UpdateHavrutaDto of(Long id, ReqUpdateHavrutaDto reqUpdateHavrutaDto) {
+        return new UpdateHavrutaDto(id, reqUpdateHavrutaDto);
+    }
+
+    public static UpdateHavrutaDto from(Havruta havruta) {
+        return new UpdateHavrutaDto(havruta);
     }
 }
