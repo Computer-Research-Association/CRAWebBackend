@@ -19,7 +19,4 @@ public class Havruta extends BaseEntity {
 
     @Column(length = 50, nullable = false)
     private String professor;
-
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "parent")
-    private List<Board> boards;
 }

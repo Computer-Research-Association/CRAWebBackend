@@ -25,4 +25,8 @@ public class DetailHavrutaDto {
         this.createdAt = havruta.getCreatedAt();
         this.updatedAt = havruta.getUpdatedAt();
     }
+
+    public static DetailHavrutaDto from(Havruta havruta){
+        return new DetailHavrutaDto(havruta);
+    }
 }

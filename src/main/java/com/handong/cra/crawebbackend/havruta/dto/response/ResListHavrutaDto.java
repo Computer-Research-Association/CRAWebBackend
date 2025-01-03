@@ -1,5 +1,6 @@
 package com.handong.cra.crawebbackend.havruta.dto.response;
 
+import com.handong.cra.crawebbackend.havruta.dto.ListHavrutaDto;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -15,4 +16,16 @@ public class ResListHavrutaDto {
     private String professor;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    public ResListHavrutaDto(ListHavrutaDto listHavrutaDto) {
+        this.id = listHavrutaDto.getId();
+        this.className = listHavrutaDto.getClassName();
+        this.professor = listHavrutaDto.getProfessor();
+        this.createdAt = listHavrutaDto.getCreatedAt();
+        this.updatedAt = listHavrutaDto.getUpdatedAt();
+    }
+
+    public static ResListHavrutaDto from(ListHavrutaDto listHavrutaDto){
+        return new ResListHavrutaDto(listHavrutaDto);
+    }
 }

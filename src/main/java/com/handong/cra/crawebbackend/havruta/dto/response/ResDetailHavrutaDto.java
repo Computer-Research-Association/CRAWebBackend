@@ -1,5 +1,7 @@
 package com.handong.cra.crawebbackend.havruta.dto.response;
 
+import com.handong.cra.crawebbackend.havruta.domain.Havruta;
+import com.handong.cra.crawebbackend.havruta.dto.DetailHavrutaDto;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -15,4 +17,15 @@ public class ResDetailHavrutaDto {
     private String professor;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    public static ResDetailHavrutaDto from(DetailHavrutaDto detailHavrutaDto) {
+        if(detailHavrutaDto == null) return null;
+        return ResDetailHavrutaDto.builder()
+                .id(detailHavrutaDto.getId())
+                .className(detailHavrutaDto.getClassName())
+                .professor(detailHavrutaDto.getProfessor())
+                .createdAt(detailHavrutaDto.getCreatedAt())
+                .updatedAt(detailHavrutaDto.getUpdatedAt())
+                .build();
+    }
 }

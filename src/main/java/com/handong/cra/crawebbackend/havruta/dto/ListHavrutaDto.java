@@ -14,13 +14,19 @@ public class ListHavrutaDto {
     private Long id;
     private String className;
     private String professor;
-
     private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     public ListHavrutaDto(Havruta havruta) {
         this.id = havruta.getId();
         this.className = havruta.getClassName();
         this.professor = havruta.getProfessor();
         this.createdAt = havruta.getCreatedAt();
+        this.updatedAt = havruta.getUpdatedAt();
+    }
+
+    public static ListHavrutaDto from(Havruta havruta){
+        if(havruta.getDeleted()) return null;
+        return new ListHavrutaDto(havruta);
     }
 }
