@@ -22,7 +22,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class HavrutaController {
     private final HavrutaService havrutaService;
-    private final HavrutaServiceImpl havrutaServiceImpl;
 
     @GetMapping
     public ResponseEntity<List<ResListHavrutaDto>> getHavrutas() {
@@ -31,7 +30,7 @@ public class HavrutaController {
 
     @GetMapping("/view/{id}")
     public ResponseEntity<ResDetailHavrutaDto> getHavrutaById(@PathVariable Long id) {
-        ResDetailHavrutaDto resDetailHavrutaDto = ResDetailHavrutaDto.from(havrutaServiceImpl.getHavrutaById(id));
+        ResDetailHavrutaDto resDetailHavrutaDto = ResDetailHavrutaDto.from(havrutaService.getHavrutaById(id));
 
         if(resDetailHavrutaDto == null) return ResponseEntity.notFound().build();
 
