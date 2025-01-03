@@ -1,8 +1,6 @@
 package com.handong.cra.crawebbackend.project.dto;
 
-import com.handong.cra.crawebbackend.project.domain.Project;
 import com.handong.cra.crawebbackend.project.dto.request.ReqCreateProjectDto;
-import com.handong.cra.crawebbackend.project.repository.ProjectRepository;
 import lombok.*;
 
 import java.time.LocalDateTime;

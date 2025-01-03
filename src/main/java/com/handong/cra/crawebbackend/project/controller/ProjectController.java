@@ -1,5 +1,6 @@
 package com.handong.cra.crawebbackend.project.controller;
 
+import com.handong.cra.crawebbackend.project.dto.response.ResDetailProjectDto;
 import com.handong.cra.crawebbackend.project.dto.response.ResListProjectDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -25,5 +26,11 @@ public class ProjectController {
 
         return null;
 
+
+    }
+
+    @GetMapping("/view/{id}")
+    public ResponseEntity<ResDetailProjectDto> getDetailProject(@PathVariable Long id){
+        return null;
     }
 }

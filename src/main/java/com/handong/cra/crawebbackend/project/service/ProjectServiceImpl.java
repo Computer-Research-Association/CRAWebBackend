@@ -7,6 +7,7 @@ import com.handong.cra.crawebbackend.project.dto.DetailProjectDto;
 import com.handong.cra.crawebbackend.project.dto.ListProjectDto;
 import com.handong.cra.crawebbackend.project.dto.UpdateProjectDto;
 import com.handong.cra.crawebbackend.project.repository.ProjectRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +21,7 @@ public class ProjectServiceImpl implements ProjectService {
     private final ProjectRepository projectRepository;
 
     @Override
+    @Transactional
     public CreateProjectDto createProject(CreateProjectDto createProjectDto) {
         Project project = Project.from(createProjectDto);
         project = projectRepository.save(project); // save 된 Entity 가져옴
@@ -32,17 +34,27 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
+    @Transactional
     public UpdateProjectDto updateProject(UpdateProjectDto updateProjectDto) {
-        return null;
+        Project project = projectRepository.findById(updateProjectDto.getId()).orElseThrow();
+        project = project.update(updateProjectDto);
+
+        // set meta data
+        updateProjectDto.setCreateAt(project.getCreatedAt());
+        updateProjectDto.setUpdatedAt(project.getUpdatedAt());
+        return  updateProjectDto;
     }
 
     @Override
-    public Boolean deleteProjectById(Long id) {
-        return null;
+    @Transactional
+    public Boolean deleteProjectById(Long id) { // TODO exception 처리 필요
+        Project project = projectRepository.findById(id).orElseThrow();
+        project.delete();
+        return true;
     }
 
     @Override
-    public DetailProjectDto getProjectById(Long id) {
+    public DetailProjectDto getDetailProjectById(Long id) {
         return null;
     }
 

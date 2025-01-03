@@ -2,11 +2,13 @@ package com.handong.cra.crawebbackend.project.domain;
 
 import com.handong.cra.crawebbackend.common.domain.BaseEntity;
 import com.handong.cra.crawebbackend.project.dto.CreateProjectDto;
+import com.handong.cra.crawebbackend.project.dto.UpdateProjectDto;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,4 +65,17 @@ public class Project extends BaseEntity {
         return new Project(createProjectDto);
     }
 
+
+    public Project update(UpdateProjectDto updateProjectDto){
+        this.year = updateProjectDto.getYear();
+        this.semester = updateProjectDto.getSemester();
+        this.teamName = updateProjectDto.getTeamName();
+        this.serviceName = updateProjectDto.getServiceName();
+        this.content = updateProjectDto.getContent();
+        this.gitHubUrl = updateProjectDto.getGitHubUrl();
+        this.serviceUrl = updateProjectDto.getServiceUrl();
+        this.members = updateProjectDto.getMembers();
+        this.imageUrls = updateProjectDto.getImageUrls();
+        return this;
+    }
 }

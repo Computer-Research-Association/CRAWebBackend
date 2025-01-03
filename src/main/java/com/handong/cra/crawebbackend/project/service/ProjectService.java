@@ -18,7 +18,7 @@ public interface ProjectService {
     public Boolean deleteProjectById(Long id);
 
     // users
-    public DetailProjectDto getProjectById(Long id);
+    public DetailProjectDto getDetailProjectById(Long id);
 
     public List<ListProjectDto> getListProject();
 

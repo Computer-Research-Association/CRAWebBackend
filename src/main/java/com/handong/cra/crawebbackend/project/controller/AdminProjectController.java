@@ -2,6 +2,7 @@ package com.handong.cra.crawebbackend.project.controller;
 
 
 import com.handong.cra.crawebbackend.project.dto.CreateProjectDto;
+import com.handong.cra.crawebbackend.project.dto.UpdateProjectDto;
 import com.handong.cra.crawebbackend.project.dto.request.ReqCreateProjectDto;
 import com.handong.cra.crawebbackend.project.dto.request.ReqUpdateProjectDto;
 import com.handong.cra.crawebbackend.project.dto.response.ResCreateProjectDto;
@@ -24,17 +25,19 @@ public class AdminProjectController {
     public ResponseEntity<ResCreateProjectDto> createProject(@RequestBody ReqCreateProjectDto reqCreateProjectDto) {
         CreateProjectDto createProjectDto = projectService.createProject(CreateProjectDto.from(reqCreateProjectDto));
         ResCreateProjectDto resCreateProjectDto = ResCreateProjectDto.of(createProjectDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(resCreateProjectDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(resCreateProjectDto); // TODO null exception 처리 해야함
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<ResUpdateProjectDto> updateProjectById(@PathVariable Long id, @RequestBody ReqUpdateProjectDto reqUpdateProjectDto) {
-        return null;
+        ResUpdateProjectDto resUpdateProjectDto = ResUpdateProjectDto.from(projectService.updateProject(UpdateProjectDto.of(id, reqUpdateProjectDto)));
+        return ResponseEntity.ok(resUpdateProjectDto);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProjectById(@PathVariable Long id) {
-        return null;
+        if( projectService.deleteProjectById(id)) return ResponseEntity.ok().build();
+        else return ResponseEntity.internalServerError().build();
     }
 
 }
