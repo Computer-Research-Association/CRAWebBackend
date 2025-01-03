@@ -6,5 +6,5 @@ import lombok.*;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ReqCreateProjectDto {
+public class ReqUpdateProjectDto {
 }

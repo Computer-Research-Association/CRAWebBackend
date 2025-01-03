@@ -1,4 +1,4 @@
-package com.handong.cra.crawebbackend.project.dto.request;
+package com.handong.cra.crawebbackend.project.dto.response;
 
 import lombok.*;
 
@@ -6,5 +6,5 @@ import lombok.*;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ReqCreateProjectDto {
+public class ResDetailProjectDto {
 }
