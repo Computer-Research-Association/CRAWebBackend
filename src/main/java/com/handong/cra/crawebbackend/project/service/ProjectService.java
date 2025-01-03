@@ -1,6 +1,8 @@
 package com.handong.cra.crawebbackend.project.service;
 
-import com.handong.cra.crawebbackend.board.domain.OrderBy;
+import com.handong.cra.crawebbackend.board.domain.BoardOrderBy;
+import com.handong.cra.crawebbackend.project.domain.Project;
+import com.handong.cra.crawebbackend.project.domain.ProjectOrderBy;
 import com.handong.cra.crawebbackend.project.dto.CreateProjectDto;
 import com.handong.cra.crawebbackend.project.dto.DetailProjectDto;
 import com.handong.cra.crawebbackend.project.dto.ListProjectDto;
@@ -22,5 +24,5 @@ public interface ProjectService {
 
     public List<ListProjectDto> getListProject();
 
-    public List<ListProjectDto> getPaginationProject(Long page, Integer perPage, OrderBy orderB, Boolean isASC);
+    public List<ListProjectDto> getPaginationProject(Long page, Integer perPage, ProjectOrderBy orderBy, Boolean isASC);
 }

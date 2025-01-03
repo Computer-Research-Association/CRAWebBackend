@@ -17,12 +17,8 @@ import java.util.List;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Project extends BaseEntity {
-
-    @Column(length = 4)
-    private Integer year;
-
-    @Column(length = 1) // 1 or 2
-    private Integer semester;
+    @Column(length = 4) // ex 25-1
+    private String semester;
 
     @Column(name = "team_name", length = 150)
     private String teamName;
@@ -50,7 +46,6 @@ public class Project extends BaseEntity {
 
 
     public Project(CreateProjectDto createProjectDto) {
-        this.year = createProjectDto.getYear();
         this.semester = createProjectDto.getSemester();
         this.teamName = createProjectDto.getTeamName();
         this.serviceName = createProjectDto.getServiceName();
@@ -67,7 +62,6 @@ public class Project extends BaseEntity {
 
 
     public Project update(UpdateProjectDto updateProjectDto){
-        this.year = updateProjectDto.getYear();
         this.semester = updateProjectDto.getSemester();
         this.teamName = updateProjectDto.getTeamName();
         this.serviceName = updateProjectDto.getServiceName();

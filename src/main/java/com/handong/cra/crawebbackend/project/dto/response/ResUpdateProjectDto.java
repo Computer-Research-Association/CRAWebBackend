@@ -13,8 +13,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ResUpdateProjectDto {
     private Long id;
-    private Integer year;
-    private Integer semester;
+    private String semester;
     private String teamName;
     private String serviceName;
     private String content;
@@ -29,7 +28,6 @@ public class ResUpdateProjectDto {
 
     public ResUpdateProjectDto(UpdateProjectDto updateProjectDto) {
         this.id = updateProjectDto.getId();
-        this.year = updateProjectDto.getYear();
         this.semester = updateProjectDto.getSemester();
         this.teamName = updateProjectDto.getTeamName();
         this.serviceName = updateProjectDto.getServiceName();

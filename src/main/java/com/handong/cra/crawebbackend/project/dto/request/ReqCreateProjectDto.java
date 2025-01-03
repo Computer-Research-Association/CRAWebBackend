@@ -10,8 +10,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class ReqCreateProjectDto {
-    private Integer year;
-    private Integer semester;
+    private String semester;
     private String teamName;
     private String serviceName;
     private String content;

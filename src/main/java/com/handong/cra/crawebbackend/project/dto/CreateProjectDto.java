@@ -12,8 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CreateProjectDto {
-    private Integer year;
-    private Integer semester;
+    private String semester;
     private String teamName;
     private String serviceName;
     private String content;
@@ -27,7 +26,6 @@ public class CreateProjectDto {
     private LocalDateTime createdAt = null;
 
     public CreateProjectDto(ReqCreateProjectDto reqCreateProjectDto) {
-        this.year = reqCreateProjectDto.getYear();
         this.semester = reqCreateProjectDto.getSemester();
         this.teamName = reqCreateProjectDto.getTeamName();
         this.serviceName = reqCreateProjectDto.getServiceName();

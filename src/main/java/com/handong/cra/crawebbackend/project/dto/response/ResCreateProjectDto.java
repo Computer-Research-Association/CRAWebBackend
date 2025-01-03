@@ -14,8 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 public class ResCreateProjectDto {
     private Long id;
-    private Integer year;
-    private Integer semester;
+    private String semester;
     private String teamName;
     private String serviceName;
     private String content;
@@ -29,7 +28,6 @@ public class ResCreateProjectDto {
 
     public ResCreateProjectDto(CreateProjectDto createProjectDto) {
         this.id = createProjectDto.getId();
-        this.year = createProjectDto.getYear();
         this.semester = createProjectDto.getSemester();
         this.teamName = createProjectDto.getTeamName();
         this.serviceName = createProjectDto.getServiceName();
