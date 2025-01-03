@@ -1,12 +1,49 @@
 package com.handong.cra.crawebbackend.project.dto.response;
 
 
+import com.handong.cra.crawebbackend.project.dto.CreateProjectDto;
 import lombok.*;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Setter
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class ResCreateProjectDto {
+    private Long id;
+    private Integer year;
+    private Integer semester;
+    private String teamName;
+    private String serviceName;
+    private String content;
+    private String gitHubUrl;
+    private String serviceUrl;
+    private List<String> members = new ArrayList<>();
+    private List<String> imageUrls = new ArrayList<>();
 
+    private Boolean deleted;
+    private LocalDateTime createdAt;
+
+    public ResCreateProjectDto(CreateProjectDto createProjectDto) {
+        this.id = createProjectDto.getId();
+        this.year = createProjectDto.getYear();
+        this.semester = createProjectDto.getSemester();
+        this.teamName = createProjectDto.getTeamName();
+        this.serviceName = createProjectDto.getServiceName();
+        this.content = createProjectDto.getContent();
+        this.gitHubUrl = createProjectDto.getGitHubUrl();
+        this.serviceUrl = createProjectDto.getServiceUrl();
+        this.members = createProjectDto.getMembers();
+        this.imageUrls = createProjectDto.getImageUrls();
+        this.deleted = false;
+        this.createdAt = createProjectDto.getCreatedAt();
+    }
+
+    public static ResCreateProjectDto of(CreateProjectDto createProjectDto) {
+        if (createProjectDto.getId() == null) return null;
+        else return new ResCreateProjectDto(createProjectDto);
+    }
 }

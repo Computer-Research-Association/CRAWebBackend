@@ -7,4 +7,5 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ResListProjectDto {
+    private Long id;
 }

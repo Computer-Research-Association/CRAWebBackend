@@ -4,7 +4,8 @@ import lombok.*;
 
 @Setter
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class ReqUpdateProjectDto {
+    private Long id;
 }
