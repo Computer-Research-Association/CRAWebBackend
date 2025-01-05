@@ -1,7 +1,7 @@
 package com.handong.cra.crawebbackend.board.controller;
 
 import com.handong.cra.crawebbackend.board.domain.Category;
-import com.handong.cra.crawebbackend.board.domain.OrderBy;
+import com.handong.cra.crawebbackend.board.domain.BoardOrderBy;
 import com.handong.cra.crawebbackend.board.dto.CreateBoardDto;
 import com.handong.cra.crawebbackend.board.dto.ListBoardDto;
 import com.handong.cra.crawebbackend.board.dto.UpdateBoardDto;
@@ -25,7 +25,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BoardController {
     private final BoardService boardService;
-    private final BoardServiceImpl boardServiceImpl;
 
     @GetMapping("/{category}")
     public ResponseEntity<List<ResListBoardDto>> getBoardsByCategory(@PathVariable Integer category) {
@@ -34,8 +33,8 @@ public class BoardController {
     }
 
     @GetMapping("/view/{id}")
-    public ResponseEntity<ResDetailBoardDto> getDetailBoard(@PathVariable Long id) {
-        ResDetailBoardDto resDetailBoardDto = ResDetailBoardDto.from(boardServiceImpl.getDetailBoardById(id));
+    public ResponseEntity<ResDetailBoardDto> getDetailBoard(@PathVariable Long id){
+        ResDetailBoardDto resDetailBoardDto = ResDetailBoardDto.from(boardService.getDetailBoardById(id));
 
         // deleted
         if (resDetailBoardDto == null) return ResponseEntity.notFound().build();
@@ -50,7 +49,7 @@ public class BoardController {
             @RequestParam(required = false,defaultValue = "5") Integer orderBy,
             @RequestParam(required = false,defaultValue = "true") Boolean isASC
     ) {
-        List<ListBoardDto> listBoardDtos = boardService.getPaginationBoard(page, perPage, OrderBy.values()[orderBy], isASC);
+        List<ListBoardDto> listBoardDtos = boardService.getPaginationBoard(page, perPage, BoardOrderBy.values()[orderBy], isASC);
         System.out.println("test here : " + listBoardDtos.size());
         return ResponseEntity.ok(listBoardDtos.stream().map(ResListBoardDto::from).toList());
     }
