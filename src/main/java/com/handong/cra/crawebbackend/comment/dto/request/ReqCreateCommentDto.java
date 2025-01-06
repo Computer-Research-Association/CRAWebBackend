@@ -13,6 +13,5 @@ public class ReqCreateCommentDto {
     //-----------------------------------------
 
     private Long parentCommentId;
-    private Long boardId;
     private String content;
 }

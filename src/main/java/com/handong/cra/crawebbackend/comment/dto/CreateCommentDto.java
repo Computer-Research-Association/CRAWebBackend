@@ -23,10 +23,10 @@ public class CreateCommentDto {
     private LocalDateTime createdAt = null;
 
 
-    public CreateCommentDto(Long userId, ReqCreateCommentDto reqCreateCommentDto) {
+    public CreateCommentDto(Long boardId, Long userId, ReqCreateCommentDto reqCreateCommentDto) {
         this.userId = userId;
         this.content = reqCreateCommentDto.getContent();
-        this.boardId = reqCreateCommentDto.getBoardId();
+        this.boardId = boardId;
         this.parentCommentId = reqCreateCommentDto.getParentCommentId();
     }
 
@@ -39,8 +39,8 @@ public class CreateCommentDto {
         if (comment.getParentComment() != null) this.parentCommentId = comment.getParentComment().getId();
     }
 
-    public static CreateCommentDto of(Long userId, ReqCreateCommentDto reqCreateBoardDto) {
-        return new CreateCommentDto(userId, reqCreateBoardDto);
+    public static CreateCommentDto of(Long boardId, Long userId, ReqCreateCommentDto reqCreateBoardDto) {
+        return new CreateCommentDto(boardId, userId, reqCreateBoardDto);
     }
 
     public static CreateCommentDto from(Comment comment) {

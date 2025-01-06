@@ -27,11 +27,12 @@ public class CommentController {
                 .stream().map(ResListCommentDto::from).toList());
     }
 
-    @PostMapping("")
-    public ResponseEntity<ResCreateCommentDto> createComment(@RequestBody ReqCreateCommentDto reqCreateCommentDto) {
+
+    @PostMapping("/{boardId}")
+    public ResponseEntity<ResCreateCommentDto> createComment(@PathVariable Long boardId, @RequestBody ReqCreateCommentDto reqCreateCommentDto) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new ResCreateCommentDto(
-                        commentService.createComment(CreateCommentDto.of(reqCreateCommentDto.getUserId(), reqCreateCommentDto))));
+                        commentService.createComment(CreateCommentDto.of(boardId, reqCreateCommentDto.getUserId(), reqCreateCommentDto))));
     }
 
     @PutMapping("/{id}")
