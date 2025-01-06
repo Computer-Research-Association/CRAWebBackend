@@ -2,7 +2,6 @@ package com.handong.cra.crawebbackend.comment.dto;
 
 import com.handong.cra.crawebbackend.comment.domain.Comment;
 import com.handong.cra.crawebbackend.comment.dto.request.ReqUpdateCommentDto;
-import com.handong.cra.crawebbackend.comment.dto.response.ResUpdateCommentDto;
 import lombok.*;
 
 @Getter

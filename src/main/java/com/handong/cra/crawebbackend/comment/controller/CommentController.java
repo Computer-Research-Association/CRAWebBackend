@@ -30,13 +30,8 @@ public class CommentController {
     @PostMapping("")
     public ResponseEntity<ResCreateCommentDto> createComment(@RequestBody ReqCreateCommentDto reqCreateCommentDto) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new ResCreateCommentDto(commentService.createComment(
-                        CreateCommentDto.of(
-                                reqCreateCommentDto,
-                                reqCreateCommentDto.getUserId(),
-                                reqCreateCommentDto.getBoardId()
-                        )))
-                );
+                .body(new ResCreateCommentDto(
+                        commentService.createComment(CreateCommentDto.of(reqCreateCommentDto.getUserId(), reqCreateCommentDto))));
     }
 
     @PutMapping("/{id}")

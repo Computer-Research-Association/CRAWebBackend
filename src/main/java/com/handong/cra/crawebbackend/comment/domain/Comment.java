@@ -55,7 +55,8 @@ public class Comment extends BaseEntity {
     }
 
     // TODO: 수정할 데이터 추가
-    public void update(UpdateCommentDto updateCommentDto) {
+    public Comment update(UpdateCommentDto updateCommentDto) {
         this.content = updateCommentDto.getContent();
+        return this;
     }
 }

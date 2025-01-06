@@ -1,5 +1,6 @@
 package com.handong.cra.crawebbackend.comment.dto;
 
+import com.handong.cra.crawebbackend.comment.domain.Comment;
 import com.handong.cra.crawebbackend.comment.dto.request.ReqCreateCommentDto;
 import lombok.*;
 
@@ -22,15 +23,27 @@ public class CreateCommentDto {
     private LocalDateTime createdAt = null;
 
 
-    public CreateCommentDto(ReqCreateCommentDto reqCreateCommentDto, Long userId, Long boardId) {
+    public CreateCommentDto(Long userId, ReqCreateCommentDto reqCreateCommentDto) {
         this.userId = userId;
         this.content = reqCreateCommentDto.getContent();
         this.boardId = reqCreateCommentDto.getBoardId();
         this.parentCommentId = reqCreateCommentDto.getParentCommentId();
     }
 
-    // TODO : user logic
-    public static CreateCommentDto of(ReqCreateCommentDto reqCreateBoardDto, Long userId, Long boardId) {
-        return new CreateCommentDto(reqCreateBoardDto, userId, boardId);
+    public CreateCommentDto(Comment comment) {
+        this.id = comment.getId();
+        this.createdAt = comment.getCreatedAt();
+        this.userId = comment.getUser().getId();
+        this.content = comment.getContent();
+        this.boardId = comment.getBoard().getId();
+        if (comment.getParentComment() != null) this.parentCommentId = comment.getParentComment().getId();
+    }
+
+    public static CreateCommentDto of(Long userId, ReqCreateCommentDto reqCreateBoardDto) {
+        return new CreateCommentDto(userId, reqCreateBoardDto);
+    }
+
+    public static CreateCommentDto from(Comment comment) {
+        return new CreateCommentDto(comment);
     }
 }

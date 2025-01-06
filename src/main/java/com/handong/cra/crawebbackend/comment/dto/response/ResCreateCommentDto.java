@@ -22,6 +22,7 @@ public class ResCreateCommentDto {
         this.id = createCommentDto.getId();
         this.userId = createCommentDto.getUserId();
         this.boardId = createCommentDto.getBoardId();
+        this.parentCommentId = createCommentDto.getParentCommentId();
         this.content = createCommentDto.getContent();
         this.createdAt = createCommentDto.getCreatedAt();
     }
