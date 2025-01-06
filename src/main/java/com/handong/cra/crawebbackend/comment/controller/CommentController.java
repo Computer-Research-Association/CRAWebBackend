@@ -24,19 +24,15 @@ public class CommentController {
     @GetMapping("/{boardId}")
     public ResponseEntity<List<ResListCommentDto>> getCommentsByBoardId(@PathVariable Long boardId) {
         return ResponseEntity.ok().body(commentService.getCommentsByBoardId(boardId)
-                .stream().map(ResListCommentDto::new).toList());
+                .stream().map(ResListCommentDto::from).toList());
     }
 
-    @PostMapping
-    public ResponseEntity<ResCreateCommentDto> createComment(@RequestBody ReqCreateCommentDto reqCreateCommentDto) {
+
+    @PostMapping("/{boardId}")
+    public ResponseEntity<ResCreateCommentDto> createComment(@PathVariable Long boardId, @RequestBody ReqCreateCommentDto reqCreateCommentDto) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new ResCreateCommentDto(commentService.createComment(
-                        CreateCommentDto.of(
-                                reqCreateCommentDto,
-                                reqCreateCommentDto.getUserId(),
-                                reqCreateCommentDto.getBoardId()
-                        )))
-                );
+                .body(new ResCreateCommentDto(
+                        commentService.createComment(CreateCommentDto.of(boardId, reqCreateCommentDto.getUserId(), reqCreateCommentDto))));
     }
 
     @PutMapping("/{id}")

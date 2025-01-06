@@ -26,4 +26,12 @@ public class UpdateCommentDto {
         this.content = comment.getContent();
         this.deleted = comment.getDeleted();
     }
+
+    public static UpdateCommentDto of(ReqUpdateCommentDto reqUpdateCommentDto, Long id) {
+        return new UpdateCommentDto(reqUpdateCommentDto, id);
+    }
+
+    public static UpdateCommentDto from(Comment comment){
+        return new UpdateCommentDto(comment);
+    }
 }

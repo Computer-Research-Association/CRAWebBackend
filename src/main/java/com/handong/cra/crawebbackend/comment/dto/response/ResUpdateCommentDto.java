@@ -18,4 +18,8 @@ public class ResUpdateCommentDto {
         this.content = updateCommentDto.getContent();
         this.deleted = updateCommentDto.getDeleted();
     }
+
+    public static ResUpdateCommentDto from(UpdateCommentDto updateCommentDto) {
+        return new ResUpdateCommentDto(updateCommentDto);
+    }
 }
