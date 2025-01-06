@@ -30,7 +30,7 @@ public class Comment extends BaseEntity {
     @JoinColumn(name = "parent_id")
     private Comment parentComment; // 상위 댓글
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "parentComment", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> commentList; // 대댓글
 
     @Column(length = 512, nullable = false)
@@ -42,6 +42,14 @@ public class Comment extends BaseEntity {
     public Comment(User user, Board board, CreateCommentDto createCommentDto) {
         this.user = user;
         this.board = board;
+        this.content = createCommentDto.getContent();
+        likeCount = 0L;
+    }
+
+    public Comment(User user, Board board, Comment parentComment, CreateCommentDto createCommentDto) {
+        this.user = user;
+        this.board = board;
+        this.parentComment = parentComment;
         this.content = createCommentDto.getContent();
         likeCount = 0L;
     }

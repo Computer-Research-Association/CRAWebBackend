@@ -24,9 +24,9 @@ public class CreateCommentDto {
 
     public CreateCommentDto(ReqCreateCommentDto reqCreateCommentDto, Long userId, Long boardId) {
         this.userId = userId;
-        this.boardId = boardId;
         this.content = reqCreateCommentDto.getContent();
         this.boardId = reqCreateCommentDto.getBoardId();
+        this.parentCommentId = reqCreateCommentDto.getParentCommentId();
     }
 
     // TODO : user logic

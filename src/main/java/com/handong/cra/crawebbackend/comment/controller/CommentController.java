@@ -27,7 +27,7 @@ public class CommentController {
                 .stream().map(ResListCommentDto::from).toList());
     }
 
-    @PostMapping
+    @PostMapping("")
     public ResponseEntity<ResCreateCommentDto> createComment(@RequestBody ReqCreateCommentDto reqCreateCommentDto) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new ResCreateCommentDto(commentService.createComment(
