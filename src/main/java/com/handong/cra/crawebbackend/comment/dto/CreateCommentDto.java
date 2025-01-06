@@ -1,13 +1,9 @@
 package com.handong.cra.crawebbackend.comment.dto;
 
-import com.handong.cra.crawebbackend.board.domain.Board;
-import com.handong.cra.crawebbackend.board.domain.Category;
-import com.handong.cra.crawebbackend.board.dto.request.ReqCreateBoardDto;
 import com.handong.cra.crawebbackend.comment.dto.request.ReqCreateCommentDto;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Getter
 @Setter

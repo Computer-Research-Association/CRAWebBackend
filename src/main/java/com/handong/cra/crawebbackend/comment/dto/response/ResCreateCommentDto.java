@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 public class ResCreateCommentDto {
     private Long id;
     private Long userId;
+    private Long parentCommentId;
     private Long boardId;
     private String content;
     private LocalDateTime createdAt;
@@ -23,5 +24,9 @@ public class ResCreateCommentDto {
         this.boardId = createCommentDto.getBoardId();
         this.content = createCommentDto.getContent();
         this.createdAt = createCommentDto.getCreatedAt();
+    }
+
+    public static  ResCreateCommentDto from(CreateCommentDto createCommentDto){
+        return new ResCreateCommentDto(createCommentDto);
     }
 }

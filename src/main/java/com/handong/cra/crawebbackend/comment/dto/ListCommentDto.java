@@ -25,9 +25,14 @@ public class ListCommentDto {
         this.id = comment.getId();
         this.userId = comment.getUser().getId();
         this.boardId = comment.getBoard().getId();
+        this.commentDtoList = comment.getCommentList().stream().map(ListCommentDto::from).toList();
         this.content = comment.getContent();
         this.likeCount = comment.getLikeCount();
         this.createdAt = comment.getCreatedAt();
         this.updatedAt = comment.getUpdatedAt();
+    }
+
+    public static ListCommentDto from(Comment comment) {
+        return new ListCommentDto(comment);
     }
 }
