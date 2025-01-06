@@ -5,13 +5,12 @@ import com.handong.cra.crawebbackend.comment.dto.CreateCommentDto;
 import com.handong.cra.crawebbackend.comment.dto.UpdateCommentDto;
 import com.handong.cra.crawebbackend.common.domain.BaseEntity;
 import com.handong.cra.crawebbackend.user.domain.User;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Entity
 @Getter
@@ -25,6 +24,14 @@ public class Comment extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+
+    @ManyToOne
+    @JoinColumn(name = "parent_id")
+    private Comment parentComment; // 상위 댓글
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> commentList; // 대댓글
 
     @Column(length = 512, nullable = false)
     private String content;

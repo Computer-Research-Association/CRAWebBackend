@@ -19,6 +19,7 @@ public class CreateCommentDto {
     private Long userId;
     private Long boardId;
     private String content;
+    private Long parentCommentId;
 
 
     private Long id = null;

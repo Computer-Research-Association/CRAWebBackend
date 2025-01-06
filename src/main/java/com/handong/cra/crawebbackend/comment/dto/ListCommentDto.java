@@ -4,6 +4,7 @@ import com.handong.cra.crawebbackend.comment.domain.Comment;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
 @Builder
 public class ListCommentDto {
     private Long id;
+    private List<ListCommentDto> commentDtoList;
     private Long userId;
     private Long boardId;
     private String content;
