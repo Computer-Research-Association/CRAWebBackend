@@ -76,4 +76,9 @@ public class CommentServiceImpl implements CommentService {
 
         return true;
     }
+
+    @Override
+    public Long getCommentCount(Long boardId) {
+        return (long) commentRepository.findAllByBoardIdAndDeletedFalse(boardId).size();
+    }
 }
