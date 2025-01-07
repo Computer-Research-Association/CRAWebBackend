@@ -11,4 +11,5 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     // board 로 모든것 찾고, 삭제되지 않은 것들. and parentComment 가 null 이 아닌 값
     public List<Comment> findAllByBoardAndDeletedFalseAndParentCommentIsNull(Board board);
+    public List<Comment> findAllByBoardIdAndDeletedFalse(Long boardId);
 }

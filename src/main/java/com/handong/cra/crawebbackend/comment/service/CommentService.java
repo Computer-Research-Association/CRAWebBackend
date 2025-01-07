@@ -11,4 +11,5 @@ public interface CommentService {
     public List<ListCommentDto> getCommentsByBoardId(Long boardId);
     public UpdateCommentDto updateComment(UpdateCommentDto updateCommentDto);
     public Boolean deleteCommentById(Long id);
+    public Long getCommentCount(Long boardId);
 }

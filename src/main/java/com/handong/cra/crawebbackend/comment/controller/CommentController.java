@@ -27,6 +27,11 @@ public class CommentController {
                 .stream().map(ResListCommentDto::from).toList());
     }
 
+    @GetMapping("/count/{boardId}")
+    public ResponseEntity<Long> getCommentCount(@PathVariable Long boardId){
+
+        return ResponseEntity.ok(commentService.getCommentCount(boardId));
+    }
 
     @PostMapping("/{boardId}")
     public ResponseEntity<ResCreateCommentDto> createComment(@PathVariable Long boardId, @RequestBody ReqCreateCommentDto reqCreateCommentDto) {
