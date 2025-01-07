@@ -1,8 +1,11 @@
 package com.handong.cra.crawebbackend.item.service;
 
 import com.handong.cra.crawebbackend.item.domain.Item;
+import com.handong.cra.crawebbackend.item.domain.ItemCategory;
 import com.handong.cra.crawebbackend.item.dto.CreateItemDto;
+import com.handong.cra.crawebbackend.item.dto.DetailItemDto;
 import com.handong.cra.crawebbackend.item.dto.ListItemDto;
+import com.handong.cra.crawebbackend.item.dto.UpdateItemDto;
 import com.handong.cra.crawebbackend.item.repository.ItemRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -31,14 +34,33 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    @Transactional
-    public List<ListItemDto> getItemList() {
-        List<Item> items = itemRepository.findAll();
-        List<ListItemDto> itemDtos = new ArrayList<>();
-        for (Item item : items) {
-            itemDtos.add(ListItemDto.from(item));
-        }
-
-        return itemDtos;
+    public UpdateItemDto updateItem(UpdateItemDto updateItemDto) {
+        return null;
     }
+
+    @Override
+    public Boolean deleteItemById(Long id) {
+        return null;
+    }
+
+    @Override
+    public Boolean setBorrowedById(Long id) {
+        return null;
+    }
+
+    @Override
+    public Boolean setReturnedById(Long id) {
+        return null;
+    }
+
+    @Override
+    public List<ListItemDto> getItemsByCategory(ItemCategory itemCategory) {
+        return List.of();
+    }
+
+    @Override
+    public DetailItemDto getDetailById(Long id) {
+        return null;
+    }
+
 }

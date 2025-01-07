@@ -8,5 +8,8 @@ import lombok.*;
 @AllArgsConstructor
 public class ReqUpdateItemDto {
     private String name;
+    private String description;
+    private Integer itemCategory;
     private String imageUrl;
+    private Boolean isBorrowed;
 }

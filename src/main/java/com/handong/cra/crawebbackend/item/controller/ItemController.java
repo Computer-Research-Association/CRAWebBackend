@@ -18,16 +18,18 @@ import java.util.List;
 public class ItemController {
     private final ItemService itemService;
 
-    @PostMapping("")
-    public ResponseEntity<ResCreateItemDto> createItem(@RequestBody ReqCreateItemDto reqCreateItemDto) {
-        CreateItemDto requestDto = CreateItemDto.from(reqCreateItemDto);
-        CreateItemDto responseDto = itemService.createItem(requestDto);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(ResCreateItemDto.from(responseDto));
-    }
-
     @GetMapping("")
     public ResponseEntity<List<ResListItemDto>> getAllItems() {
-        return ResponseEntity.ok().body(itemService.getItemList().stream().map(ResListItemDto::from).toList());
+//        return ResponseEntity.ok().body(itemService.getItemList().stream().map(ResListItemDto::from).toList());
+        return null;
     }
+
+
+    @GetMapping("/{id}")
+    public ResponseEntity<List<ResListItemDto>> getDetailItems(@PathVariable Long id) {
+
+//    return ResponseEntity.ok();
+        return null;
+    }
+
 }
