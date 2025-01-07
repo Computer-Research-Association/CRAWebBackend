@@ -15,7 +15,7 @@ public class ResListCommentDto {
     private Long id;
     private Long userId;
     private Long boardId;
-    private List<ResListCommentDto> commentDtoList;
+    private List<ResListCommentDto> commentList;
     private String content;
     private Long likeCount;
     private LocalDateTime createdAt;
@@ -25,7 +25,7 @@ public class ResListCommentDto {
         this.id = listCommentDto.getId();
         this.userId = listCommentDto.getUserId();
         this.boardId = listCommentDto.getBoardId();
-        this.commentDtoList = listCommentDto.getCommentDtoList().stream().map(ResListCommentDto::from).toList();
+        this.commentList = listCommentDto.getCommentDtoList().stream().map(ResListCommentDto::from).toList();
         this.content = listCommentDto.getContent();
         this.likeCount = listCommentDto.getLikeCount();
         this.createdAt = listCommentDto.getCreatedAt();
