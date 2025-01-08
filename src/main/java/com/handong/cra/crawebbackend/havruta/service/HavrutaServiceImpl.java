@@ -48,6 +48,8 @@ public class HavrutaServiceImpl implements HavrutaService {
 
         return CreateHavrutaDto
                 .builder()
+                .id(havruta.getId())
+                .createdAt(havruta.getCreatedAt())
                 .className(havruta.getClassName())
                 .professor(havruta.getProfessor())
                 .build();
