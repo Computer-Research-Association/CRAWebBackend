@@ -1,21 +1,10 @@
 package com.handong.cra.crawebbackend.item.controller;
 
-import com.handong.cra.crawebbackend.board.domain.Board;
-import com.handong.cra.crawebbackend.board.dto.ListBoardDto;
 import com.handong.cra.crawebbackend.item.domain.ItemCategory;
-import com.handong.cra.crawebbackend.item.dto.CreateItemDto;
-import com.handong.cra.crawebbackend.item.dto.request.ReqCreateItemDto;
-import com.handong.cra.crawebbackend.item.dto.response.ResCreateItemDto;
 import com.handong.cra.crawebbackend.item.dto.response.ResDetailItemDto;
 import com.handong.cra.crawebbackend.item.dto.response.ResListItemDto;
-import com.handong.cra.crawebbackend.item.repository.ItemRepository;
 import com.handong.cra.crawebbackend.item.service.ItemService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

@@ -1,8 +1,5 @@
 package com.handong.cra.crawebbackend.item.service;
 
-import com.handong.cra.crawebbackend.board.domain.Board;
-import com.handong.cra.crawebbackend.board.domain.BoardOrderBy;
-import com.handong.cra.crawebbackend.board.dto.ListBoardDto;
 import com.handong.cra.crawebbackend.item.domain.Item;
 import com.handong.cra.crawebbackend.item.domain.ItemCategory;
 import com.handong.cra.crawebbackend.item.dto.CreateItemDto;
