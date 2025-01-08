@@ -2,11 +2,13 @@ package com.handong.cra.crawebbackend.item.domain;
 
 import com.handong.cra.crawebbackend.common.domain.BaseEntity;
 import com.handong.cra.crawebbackend.item.dto.CreateItemDto;
+import com.handong.cra.crawebbackend.item.dto.UpdateItemDto;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Getter
@@ -21,6 +23,7 @@ public class Item extends BaseEntity {
     @Column(name = "imgae_url", length = 256)
     private String imageUrl;
 
+    @Setter
     @Column(name = "is_broowed", nullable = false)
     private Boolean isBorrowed;
 
@@ -38,4 +41,15 @@ public class Item extends BaseEntity {
     public static Item from(CreateItemDto createItemDto) {
         return new Item(createItemDto);
     }
+
+    public Item update(UpdateItemDto updateItemDto) {
+        this.name = updateItemDto.getName();
+        this.description = updateItemDto.getDescription();
+        this.imageUrl = updateItemDto.getImageUrl();
+        this.isBorrowed = updateItemDto.getIsBorrowed();
+        this.itemCategory = updateItemDto.getItemCategory();
+
+        return this;
+    }
+
 }

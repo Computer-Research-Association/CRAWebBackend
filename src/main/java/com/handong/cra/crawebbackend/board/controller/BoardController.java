@@ -46,7 +46,7 @@ public class BoardController {
     public ResponseEntity<List<ResListBoardDto>> getPaginationBoard(
             @PathVariable Long page,
             @RequestParam(required = false, defaultValue = "0") Integer perPage,
-            @RequestParam(required = false,defaultValue = "5") Integer orderBy,
+            @RequestParam(required = false,defaultValue = "0") Integer orderBy,
             @RequestParam(required = false,defaultValue = "true") Boolean isASC
     ) {
         List<ListBoardDto> listBoardDtos = boardService.getPaginationBoard(page, perPage, BoardOrderBy.values()[orderBy], isASC);
