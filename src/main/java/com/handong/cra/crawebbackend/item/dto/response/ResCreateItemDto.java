@@ -15,15 +15,21 @@ public class ResCreateItemDto {
     private String name;
     private String description;
     private String imageUrl;
+    private Integer itemCategory;
+    private Boolean isBorrowed = false;
     private LocalDateTime createdAt;
 
+    public ResCreateItemDto(CreateItemDto createItemDto) {
+        this.id = createItemDto.getId();
+        this.name = createItemDto.getName();
+        this.description = createItemDto.getDescription();
+        this.imageUrl = createItemDto.getImageUrl();
+        this.itemCategory = createItemDto.getItemCategory().ordinal();
+        this.isBorrowed = false;
+        this.createdAt = createItemDto.getCreatedAt();
+    }
+
     public static ResCreateItemDto from(CreateItemDto createItemDto) {
-        return ResCreateItemDto.builder()
-                .id(createItemDto.getId())
-                .name(createItemDto.getName())
-                .description(createItemDto.getDescription())
-                .imageUrl(createItemDto.getImageUrl())
-                .createdAt(createItemDto.getCreatedAt())
-                .build();
+        return new ResCreateItemDto(createItemDto);
     }
 }

@@ -31,8 +31,8 @@ public class ProjectController {
     @GetMapping("/list/{page}")
     public ResponseEntity<List<ResListProjectDto>> getPageListProject(
             @PathVariable Long page,
-            @RequestParam(required = false, defaultValue = "0") Integer perPage,
-            @RequestParam(required = false, defaultValue = "5") Integer orderBy,
+            @RequestParam(required = false, defaultValue = "5") Integer perPage,
+            @RequestParam(required = false, defaultValue = "0") Integer orderBy,
             @RequestParam(required = false, defaultValue = "true") Boolean isASC
     ) {
         return ResponseEntity.ok(projectService.getPaginationProject(page, perPage, ProjectOrderBy.values()[orderBy], isASC)
