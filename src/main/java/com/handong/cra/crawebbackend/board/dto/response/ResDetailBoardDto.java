@@ -1,6 +1,5 @@
 package com.handong.cra.crawebbackend.board.dto.response;
 
-import com.handong.cra.crawebbackend.board.domain.Board;
 import com.handong.cra.crawebbackend.board.domain.Category;
 import com.handong.cra.crawebbackend.board.dto.DetailBoardDto;
 import lombok.*;
@@ -12,13 +11,12 @@ import java.util.List;
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Builder
 public class ResDetailBoardDto {
     private Long id;
     private Long userId;
     private String title;
     private String content;
-    private Integer category;
+    private Category category;
     private Long likeCount;
     private Long view;
     private List<String> imageUrls;
@@ -26,20 +24,21 @@ public class ResDetailBoardDto {
     private LocalDateTime updatedAt;
     // TODO: add havrutaid
 
+    public ResDetailBoardDto(DetailBoardDto detailBoardDto) {
+        this.id = detailBoardDto.getId();
+        this.userId = detailBoardDto.getUserId();
+        this.title = detailBoardDto.getTitle();
+        this.content = detailBoardDto.getContent();
+        this.category = detailBoardDto.getCategory();
+        this.likeCount = detailBoardDto.getLikeCount();
+        this.view = detailBoardDto.getView();
+        this.imageUrls = detailBoardDto.getImageUrls();
+        this.createdAt = detailBoardDto.getCreatedAt();
+        this.updatedAt = detailBoardDto.getUpdatedAt();
+    }
+
 
     public static ResDetailBoardDto from(DetailBoardDto detailBoardDto) {
-        if (detailBoardDto == null) return null;
-        return ResDetailBoardDto.builder()
-                .id(detailBoardDto.getId())
-                .userId(detailBoardDto.getUserId())
-                .title(detailBoardDto.getTitle())
-                .content(detailBoardDto.getContent())
-                .category(detailBoardDto.getCategory().ordinal())
-                .likeCount(detailBoardDto.getLikeCount())
-                .view(detailBoardDto.getView())
-                .imageUrls(detailBoardDto.getImageUrls())
-                .createdAt(detailBoardDto.getCreatedAt())
-                .updatedAt(detailBoardDto.getUpdatedAt())
-                .build();
+        return new ResDetailBoardDto(detailBoardDto);
     }
 }

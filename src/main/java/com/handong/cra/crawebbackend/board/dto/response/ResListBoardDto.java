@@ -5,13 +5,11 @@ import com.handong.cra.crawebbackend.board.dto.ListBoardDto;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Builder
 public class ResListBoardDto {
     private Long id;
     private Long userId;
@@ -20,7 +18,6 @@ public class ResListBoardDto {
     private Category category;
     private Long likeCount;
     private Long view;
-    private List<String> imageUrls;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 

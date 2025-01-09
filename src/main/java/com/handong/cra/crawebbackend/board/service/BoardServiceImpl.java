@@ -15,7 +15,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.PageRequest;
 
 import org.springframework.data.domain.Pageable;
-import org.springdoc.core.converters.PageableOpenAPIConverter;
 
 import org.springframework.stereotype.Service;
 
@@ -29,17 +28,15 @@ import java.util.Objects;
 public class BoardServiceImpl implements BoardService {
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
-    private final PageableOpenAPIConverter pageableOpenAPIConverter;
 
     @Override
     @Transactional
     public List<ListBoardDto> getBoardsByCategory(Category category) {
         // get data
-        List<Board> boards = boardRepository.findAllByCategory(category);
+        List<Board> boards = boardRepository.findAllByCategoryAndDeletedFalse(category);
 
         // parsing to dto
-        List<ListBoardDto> dtos = boards.stream().map(ListBoardDto::from).filter(Objects::nonNull).toList();
-        return dtos;
+        return boards.stream().map(ListBoardDto::from).filter(Objects::nonNull).toList();
     }
 
     @Override
@@ -62,42 +59,37 @@ public class BoardServiceImpl implements BoardService {
     @Override
     @Transactional
     public CreateBoardDto createBoard(CreateBoardDto createBoardDto) {
-        User user = userRepository.findById(createBoardDto.getUserId()).orElseThrow();
+        User user = userRepository.findById(createBoardDto.getUserId()).orElseThrow(()-> new RuntimeException("no user"));
         Board board = Board.of(user, createBoardDto);
-        boardRepository.save(board);
-        return CreateBoardDto
-                .builder()
-                .userId(user.getId())
-                .title(board.getTitle())
-                .content(board.getContent())
-                .category(board.getCategory())
-                .imageUrls(board.getImageUrls())
-                .build();
+        board = boardRepository.save(board);
+        return CreateBoardDto.from(board);
     }
 
     @Override
     @Transactional
     public UpdateBoardDto updateBoard(UpdateBoardDto updateBoardDto) {
-        Board board = boardRepository.findById(updateBoardDto.getId()).orElseThrow();
-        board.update(updateBoardDto);
+        Board board = boardRepository.findById(updateBoardDto.getId()).orElseThrow(()-> new RuntimeException("no data"));
+        board = board.update(updateBoardDto);
         return UpdateBoardDto.from(board);
     }
-
 
     @Override
     @Transactional
     public Boolean deleteBoardById(Long id) {
-        boardRepository.findById(id).orElseThrow().delete();
+        boardRepository.findById(id).orElseThrow(() -> new RuntimeException("no data")).delete();
         return true;
     }
 
     @Override
-    @Transactional
     public DetailBoardDto getDetailBoardById(Long id) {
-        Board board = boardRepository.findById(id).orElseThrow();
-        if (board.getDeleted()) return null;
-
-        board.increaseView();
+        Board board = boardRepository.findById(id).orElseThrow(()-> new RuntimeException("no data"));
         return DetailBoardDto.from(board);
+    }
+
+    @Override
+    @Transactional
+    public void ascendingBoardView(Long id) {
+        Board board = boardRepository.findById(id).orElseThrow(() -> new RuntimeException("no data"));
+        board.increaseView();
     }
 }

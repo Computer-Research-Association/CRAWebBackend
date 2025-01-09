@@ -14,4 +14,5 @@ public interface BoardService {
     public UpdateBoardDto updateBoard(UpdateBoardDto updateBoardDto);
     public Boolean deleteBoardById(Long id);
     public DetailBoardDto getDetailBoardById(Long id);
+    public void ascendingBoardView(Long id);
 }

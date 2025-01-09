@@ -1,6 +1,5 @@
 package com.handong.cra.crawebbackend.board.dto.response;
 
-import com.handong.cra.crawebbackend.board.domain.Board;
 import com.handong.cra.crawebbackend.board.domain.Category;
 import com.handong.cra.crawebbackend.board.dto.CreateBoardDto;
 import lombok.*;
@@ -12,7 +11,6 @@ import java.util.List;
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Builder
 public class ResCreateBoardDto {
     private Long id;
     private Long userId;

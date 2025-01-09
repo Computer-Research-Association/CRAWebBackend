@@ -12,7 +12,6 @@ import com.handong.cra.crawebbackend.board.dto.response.ResDetailBoardDto;
 import com.handong.cra.crawebbackend.board.dto.response.ResListBoardDto;
 import com.handong.cra.crawebbackend.board.dto.response.ResUpdateBoardDto;
 import com.handong.cra.crawebbackend.board.service.BoardService;
-import com.handong.cra.crawebbackend.board.service.BoardServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,20 +25,32 @@ import java.util.List;
 public class BoardController {
     private final BoardService boardService;
 
+
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteBoard(@PathVariable Long id) {
+        boardService.deleteBoardById(id);
+        return ResponseEntity.ok().build();
+    }
+
     @GetMapping("/{category}")
     public ResponseEntity<List<ResListBoardDto>> getBoardsByCategory(@PathVariable Integer category) {
         return ResponseEntity.ok().body(boardService.getBoardsByCategory(Category.values()[category] /*int to Enum*/)
                 .stream().map(ResListBoardDto::from).toList());
     }
 
+    // 조회수 상승 없이 데이터 읽어옴
     @GetMapping("/view/{id}")
     public ResponseEntity<ResDetailBoardDto> getDetailBoard(@PathVariable Long id){
         ResDetailBoardDto resDetailBoardDto = ResDetailBoardDto.from(boardService.getDetailBoardById(id));
+        return ResponseEntity.ok().body(resDetailBoardDto);
+    }
 
-        // deleted
-        if (resDetailBoardDto == null) return ResponseEntity.notFound().build();
-
-        else return ResponseEntity.ok().body(resDetailBoardDto);
+    // 조회수 상승
+    @PostMapping("/view/{id}")
+    public ResponseEntity<Void> ascendingBoardView(@PathVariable Long id){
+        boardService.ascendingBoardView(id);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/page/{page}")
@@ -67,14 +78,4 @@ public class BoardController {
         return ResponseEntity.ok().body(resUpdateBoardDto);
     }
 
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteBoard(@PathVariable Long id) {
-        // success
-        if (boardService.deleteBoardById(id))
-            return ResponseEntity.ok().build();
-
-        // fail
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-    }
 }

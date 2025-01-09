@@ -1,8 +1,6 @@
 package com.handong.cra.crawebbackend.board.dto.response;
 
 
-import com.handong.cra.crawebbackend.board.domain.Board;
-import com.handong.cra.crawebbackend.board.domain.Category;
 import com.handong.cra.crawebbackend.board.dto.UpdateBoardDto;
 import lombok.*;
 
@@ -13,15 +11,15 @@ import java.util.List;
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Builder
 public class ResUpdateBoardDto {
-    private Long id = null;
+    private Long id;
     private Long userId;
     private Boolean deleted;
     private String title;
     private String content;
-    private Category category;
     private List<String> imageUrls;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     public ResUpdateBoardDto(UpdateBoardDto updateBoardDto) {
         this.id = updateBoardDto.getId();
@@ -29,8 +27,9 @@ public class ResUpdateBoardDto {
         this.deleted = updateBoardDto.getDeleted();
         this.title = updateBoardDto.getTitle();
         this.content = updateBoardDto.getContent();
-        this.category = updateBoardDto.getCategory();
         this.imageUrls = updateBoardDto.getImageUrls();
+        this.createdAt =  updateBoardDto.getCreatedAt();
+        this.updatedAt = updateBoardDto.getUpdatedAt();
     }
 
     public static ResUpdateBoardDto from(UpdateBoardDto updateBoardDto) {

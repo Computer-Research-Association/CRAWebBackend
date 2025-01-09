@@ -1,6 +1,5 @@
 package com.handong.cra.crawebbackend.board.dto.request;
 
-import com.handong.cra.crawebbackend.board.domain.Board;
 import com.handong.cra.crawebbackend.board.domain.Category;
 import lombok.*;
 
@@ -20,7 +19,6 @@ public class ReqUpdateBoardDto {
     private Boolean deleted;
     private String title;
     private String content;
-    private Category category;
     private List<String> imageUrls;
 
     // TODO: add havrutaid
