@@ -33,7 +33,14 @@ public class ResListBoardDto {
         this.id = listBoardDto.getId();
         this.userId = listBoardDto.getId();
         this.title = listBoardDto.getTitle();
-        this.content = listBoardDto.getContent();
+
+        // 길이 제한
+        String temp = listBoardDto.getContent();
+        if (temp.length() > 90) temp = listBoardDto.getContent().substring(0, 90) + "...";
+
+        this.content = temp;
+
+
         this.category = listBoardDto.getCategory();
         this.likeCount = listBoardDto.getLikeCount();
         this.view = listBoardDto.getView();
@@ -41,7 +48,7 @@ public class ResListBoardDto {
         this.updatedAt = listBoardDto.getUpdatedAt();
     }
 
-    public static ResListBoardDto from(ListBoardDto listBoardDto){
+    public static ResListBoardDto from(ListBoardDto listBoardDto) {
         return new ResListBoardDto(listBoardDto);
     }
 }
