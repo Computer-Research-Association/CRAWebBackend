@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface BoardService {
     public List<ListBoardDto> getBoardsByCategory(Category category);
-    public List<ListBoardDto> getPaginationBoard(Long page, Integer perPage, BoardOrderBy orderBy, Boolean isASC);
+    public List<ListBoardDto> getPaginationBoard(Category category, Long page, Integer perPage, BoardOrderBy orderBy, Boolean isASC);
 
     public CreateBoardDto createBoard(CreateBoardDto createBoardDto);
     public UpdateBoardDto updateBoard(UpdateBoardDto updateBoardDto);

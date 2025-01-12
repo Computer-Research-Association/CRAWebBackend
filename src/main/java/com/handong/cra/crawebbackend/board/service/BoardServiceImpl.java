@@ -40,7 +40,7 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public List<ListBoardDto> getPaginationBoard(Long page, Integer perPage, BoardOrderBy boardOrderBy, Boolean isASC) {
+    public List<ListBoardDto> getPaginationBoard(Category category, Long page, Integer perPage, BoardOrderBy boardOrderBy, Boolean isASC) {
 
         HashMap<BoardOrderBy, String> map = new HashMap<>();
         map.put(BoardOrderBy.DATE, "createdAt");
@@ -51,7 +51,7 @@ public class BoardServiceImpl implements BoardService {
         sort = (isASC) ? sort.ascending() : sort.descending();
 
         Pageable pageable = PageRequest.of(Math.toIntExact(page), perPage, sort);
-        Page<Board> boards = boardRepository.findAllByDeletedIsFalse(pageable);
+        Page<Board> boards = boardRepository.findAllByCategoryAndDeletedFalse(category, pageable);
 
         return boards.stream().map(ListBoardDto::from).toList();
     }
@@ -59,7 +59,7 @@ public class BoardServiceImpl implements BoardService {
     @Override
     @Transactional
     public CreateBoardDto createBoard(CreateBoardDto createBoardDto) {
-        User user = userRepository.findById(createBoardDto.getUserId()).orElseThrow(()-> new RuntimeException("no user"));
+        User user = userRepository.findById(createBoardDto.getUserId()).orElseThrow(() -> new RuntimeException("no user"));
         Board board = Board.of(user, createBoardDto);
         board = boardRepository.save(board);
         return CreateBoardDto.from(board);
@@ -68,7 +68,7 @@ public class BoardServiceImpl implements BoardService {
     @Override
     @Transactional
     public UpdateBoardDto updateBoard(UpdateBoardDto updateBoardDto) {
-        Board board = boardRepository.findById(updateBoardDto.getId()).orElseThrow(()-> new RuntimeException("no data"));
+        Board board = boardRepository.findById(updateBoardDto.getId()).orElseThrow(() -> new RuntimeException("no data"));
         board = board.update(updateBoardDto);
         return UpdateBoardDto.from(board);
     }
@@ -82,7 +82,7 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     public DetailBoardDto getDetailBoardById(Long id) {
-        Board board = boardRepository.findById(id).orElseThrow(()-> new RuntimeException("no data"));
+        Board board = boardRepository.findById(id).orElseThrow(() -> new RuntimeException("no data"));
         return DetailBoardDto.from(board);
     }
 

@@ -126,8 +126,7 @@ public class BoardController {
             @RequestParam(required = false, defaultValue = "0") Integer orderBy,
             @RequestParam(required = false, defaultValue = "true") Boolean isASC
     ) {
-        List<ListBoardDto> listBoardDtos = boardService.getPaginationBoard(page, perPage, BoardOrderBy.values()[orderBy], isASC);
-        System.out.println("test here : " + listBoardDtos.size());
+        List<ListBoardDto> listBoardDtos = boardService.getPaginationBoard(Category.values()[category],page, perPage, BoardOrderBy.values()[orderBy], isASC);
         return ResponseEntity.ok(listBoardDtos.stream().map(ResListBoardDto::from).toList());
     }
 
