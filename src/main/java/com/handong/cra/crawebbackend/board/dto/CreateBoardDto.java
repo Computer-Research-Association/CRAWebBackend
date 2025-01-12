@@ -23,16 +23,13 @@ public class CreateBoardDto {
     private Long id = null;
     private LocalDateTime createdAt = null;
 
-    // TODO: add havrutaid
-
 
     public CreateBoardDto(ReqCreateBoardDto reqCreateBoardDto, Long userId) {
         this.userId = userId;
         this.title = reqCreateBoardDto.getTitle();
         this.content = reqCreateBoardDto.getContent();
-        this.category = reqCreateBoardDto.getCategory();
+        this.category = Category.values()[reqCreateBoardDto.getCategory()];
         this.imageUrls = reqCreateBoardDto.getImageUrls();
-        // TODO: add havrutaid
 
     }
 
