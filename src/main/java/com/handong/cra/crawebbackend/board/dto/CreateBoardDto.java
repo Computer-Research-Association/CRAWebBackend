@@ -3,6 +3,7 @@ package com.handong.cra.crawebbackend.board.dto;
 import com.handong.cra.crawebbackend.board.domain.Board;
 import com.handong.cra.crawebbackend.board.domain.Category;
 import com.handong.cra.crawebbackend.board.dto.request.ReqCreateBoardDto;
+import com.handong.cra.crawebbackend.havruta.dto.havrutaboard.CreateHavrutaBoardDto;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -43,6 +44,14 @@ public class CreateBoardDto {
         this.createdAt = board.getCreatedAt();
     }
 
+    public CreateBoardDto(CreateHavrutaBoardDto createHavrutaBoardDto, Long userId) {
+        this.userId = userId;
+        this.title = createHavrutaBoardDto.getTitle();
+        this.content = createHavrutaBoardDto.getContent();
+        this.category = createHavrutaBoardDto.getCategory();
+        this.imageUrls = createHavrutaBoardDto.getImageUrls();
+    }
+
     // TODO : user logic
     public static CreateBoardDto of(ReqCreateBoardDto reqCreateBoardDto, Long userId) {
         return new CreateBoardDto(reqCreateBoardDto, userId);
@@ -50,6 +59,8 @@ public class CreateBoardDto {
 
     public static CreateBoardDto from(Board board) {
         return new CreateBoardDto(board);
-
+    }
+    public static CreateBoardDto from(CreateHavrutaBoardDto createHavrutaBoardDto, Long userId) {
+        return new CreateBoardDto(createHavrutaBoardDto, userId);
     }
 }
