@@ -44,7 +44,7 @@ public class HavrutaBoardController {
 //        return null;
 //    }
     @PostMapping("")
-    public ResponseEntity<CreateHavrutaBoardDto> createHavrutaBoard(CreateHavrutaBoardDto createHavrutaBoardDto){
+    public ResponseEntity<CreateHavrutaBoardDto> createHavrutaBoard(@RequestBody CreateHavrutaBoardDto createHavrutaBoardDto){
         log.info("test here user id = {}", createHavrutaBoardDto.getUserId());
         return ResponseEntity.status(HttpStatus.CREATED).body(havrutaService.createHavrutaBoard(createHavrutaBoardDto));
     }
