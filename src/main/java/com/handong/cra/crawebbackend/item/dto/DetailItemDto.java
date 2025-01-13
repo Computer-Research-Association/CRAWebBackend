@@ -8,32 +8,31 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Builder
-public class ListItemDto {
+@NoArgsConstructor (access = AccessLevel.PROTECTED)
+public class DetailItemDto {
     private Long id;
     private String name;
     private String description;
+    private ItemCategory itemCategory;
     private String imageUrl;
     private Boolean isBorrowed;
-    private ItemCategory itemCategory;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public ListItemDto(Item item) {
+    public DetailItemDto(Item item) {
         this.id = item.getId();
         this.name = item.getName();
         this.description = item.getDescription();
+        this.itemCategory = item.getItemCategory();
         this.imageUrl = item.getImageUrl();
         this.isBorrowed = item.getIsBorrowed();
-        this.itemCategory = item.getItemCategory();
         this.createdAt = item.getCreatedAt();
         this.updatedAt = item.getUpdatedAt();
     }
 
-    public static ListItemDto from(Item item) {
-        return new ListItemDto(item);
+    public static DetailItemDto from(Item item) {
+        return new DetailItemDto(item);
     }
 
 }
