@@ -160,5 +160,24 @@ public class BoardController {
     }
 
 
-
+    @Parameters(value = {
+            @Parameter(name = "id", description = "Board의 id"),
+            @Parameter(name = "userId", description = "User Id (하드코딩)"),
+            @Parameter(name = "isLike", description = "좋아요 -> true 취소 -> false")
+    })
+    @Operation(summary = "Board 좋아요")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "정상 작동", content = @Content()),
+            @ApiResponse(responseCode = "403", description = "권한 없음", content = @Content()),
+            @ApiResponse(responseCode = "404", description = "Board 정보 없음", content = @Content())
+    })
+    @PostMapping("/like/{id}")
+    public ResponseEntity<Void> BoardLike(
+            @PathVariable Long id,
+            @RequestParam Long userId,
+            @RequestParam(defaultValue = "true") Boolean isLike)
+    {
+        boardService.boardLike(id ,userId, isLike);
+        return ResponseEntity.ok().build();
+    }
 }

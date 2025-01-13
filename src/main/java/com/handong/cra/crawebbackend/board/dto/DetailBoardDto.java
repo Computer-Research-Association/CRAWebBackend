@@ -29,7 +29,7 @@ public class DetailBoardDto {
         this.title = board.getTitle();
         this.content = board.getContent();
         this.category = board.getCategory();
-        this.likeCount = board.getLikeCount();
+        this.likeCount =  (long) board.getLikedUsers().size();
         this.view = board.getView();
         this.imageUrls = board.getImageUrls();
         this.createdAt = board.getCreatedAt();

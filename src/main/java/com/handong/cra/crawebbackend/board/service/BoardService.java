@@ -15,4 +15,5 @@ public interface BoardService {
     public Boolean deleteBoardById(Long id);
     public DetailBoardDto getDetailBoardById(Long id);
     public void ascendingBoardView(Long id);
+    public void boardLike(Long boardId, Long userId, Boolean isLiked);
 }

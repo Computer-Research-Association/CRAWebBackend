@@ -10,6 +10,7 @@ import com.handong.cra.crawebbackend.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.PageRequest;
@@ -25,6 +26,7 @@ import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class BoardServiceImpl implements BoardService {
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
@@ -91,5 +93,27 @@ public class BoardServiceImpl implements BoardService {
     public void ascendingBoardView(Long id) {
         Board board = boardRepository.findById(id).orElseThrow(() -> new RuntimeException("no data"));
         board.increaseView();
+    }
+
+    @Override
+    @Transactional
+    public void boardLike(Long boardId, Long userId, Boolean isLiked) {
+        Board board = boardRepository.findById(boardId).orElseThrow(() -> new RuntimeException("no board"));
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("no user"));
+        if (isLiked && !board.getLikedUsers().contains(user)) {
+            log.info("Add Listing");
+            board.like(user);
+            user.likeBoard(board);
+        } else if (!isLiked && board.getLikedUsers().contains(user)) {
+            log.info("Remove Listing");
+            board.unlike(user);
+            user.unlikeBoard(board);
+        } else {
+            log.error("error");
+            // exception
+            throw new RuntimeException("error!");
+        }
+
+        log.info("user list size = {}, board list size = {}", user.getLikedBoards().size(), board.getLikedUsers().size());
     }
 }

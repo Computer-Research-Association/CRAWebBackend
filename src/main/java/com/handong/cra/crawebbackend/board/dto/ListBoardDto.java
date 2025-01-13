@@ -30,7 +30,7 @@ public class ListBoardDto {
         this.title = board.getTitle();
         this.content = board.getContent();
         this.category = board.getCategory();
-        this.likeCount = board.getLikeCount();
+        this.likeCount = (long) board.getLikedUsers().size();
         this.view = board.getView();
         this.createdAt = board.getCreatedAt();
         this.updatedAt = board.getUpdatedAt();

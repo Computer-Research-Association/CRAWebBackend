@@ -32,13 +32,13 @@ public class Board extends BaseEntity {
     @Column(name = "image_url")
     private List<String> imageUrls = new ArrayList<>();
 
-    // TODO: havruta_id 추가
     @ManyToOne
     @JoinColumn(name = "havruta_id") // 외래 키 컬럼을 설정
     private Havruta havruta;
 
-    @Column(name = "like_count")
-    private Long likeCount;
+
+    @ManyToMany(mappedBy = "likedBoards")
+    private List<User> likedUsers = new ArrayList<>();
 
     private Long view;
 
@@ -48,7 +48,6 @@ public class Board extends BaseEntity {
         this.category = category;
         this.content = content;
         this.imageUrls = imageUrls;
-        likeCount = 0L;
         view = 0L;
     }
 
@@ -58,7 +57,6 @@ public class Board extends BaseEntity {
         this.category = createBoardDto.getCategory();
         this.content = createBoardDto.getContent();
         this.imageUrls = createBoardDto.getImageUrls();
-        likeCount = 0L;
         view = 0L;
     }
 
@@ -77,6 +75,14 @@ public class Board extends BaseEntity {
 
     public void increaseView() {
         this.view++;
+    }
+
+    public void like(User user) {
+        this.likedUsers.add(user);
+    }
+
+    public void unlike(User user) {
+        this.likedUsers.remove(user);
     }
 
 }
