@@ -1,11 +1,12 @@
 package com.handong.cra.crawebbackend.user.domain;
 
+import com.handong.cra.crawebbackend.board.domain.Board;
 import com.handong.cra.crawebbackend.common.domain.BaseEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -29,6 +30,14 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private String term;
 
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "likes",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "board_id")
+    )
+    private List<Board> likedBoards = new ArrayList<>();
+
     public User(String userName, String githubId, String email, String role, Long studentNumber, String term) {
         this.userName = userName;
         this.githubId = githubId;
@@ -36,5 +45,13 @@ public class User extends BaseEntity {
         this.role = role;
         this.studentNumber = studentNumber;
         this.term = term;
+    }
+
+
+    public void likeBoard(Board board){
+        this.likedBoards.add(board);
+    }
+    public void unlikeBoard(Board board){
+        this.likedBoards.remove(board);
     }
 }
