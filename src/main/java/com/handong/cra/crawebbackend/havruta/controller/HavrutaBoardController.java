@@ -4,8 +4,6 @@ package com.handong.cra.crawebbackend.havruta.controller;
 import com.handong.cra.crawebbackend.havruta.dto.havrutaboard.CreateHavrutaBoardDto;
 import com.handong.cra.crawebbackend.havruta.dto.havrutaboard.DetailHavrutaBoardDto;
 import com.handong.cra.crawebbackend.havruta.dto.havrutaboard.UpdateHavrutaBoardDto;
-import com.handong.cra.crawebbackend.havruta.dto.havrutaboard.response.ResCreateHavrutaBoardDto;
-import com.handong.cra.crawebbackend.havruta.dto.havrutaboard.response.ResDetailHavrutaBoardDto;
 import com.handong.cra.crawebbackend.havruta.dto.havrutaboard.response.ResListHavrutaBoardDto;
 import com.handong.cra.crawebbackend.havruta.dto.havrutaboard.response.ResUpdateHavrutaBoardDto;
 import com.handong.cra.crawebbackend.havruta.service.HavrutaService;
@@ -41,8 +39,9 @@ public class HavrutaBoardController {
 //        return null;
 //    }
     @PostMapping("")
-    public ResponseEntity<CreateHavrutaBoardDto> createHavrutaBoard(CreateHavrutaBoardDto createHavrutaBoardDto){
-        return null;
+    public ResponseEntity<CreateHavrutaBoardDto> createHavrutaBoard(@RequestBody CreateHavrutaBoardDto createHavrutaBoardDto){
+        log.info("test here user id = {}", createHavrutaBoardDto.getUserId());
+        return ResponseEntity.status(HttpStatus.CREATED).body(havrutaService.createHavrutaBoard(createHavrutaBoardDto));
     }
 
     @PutMapping("")
