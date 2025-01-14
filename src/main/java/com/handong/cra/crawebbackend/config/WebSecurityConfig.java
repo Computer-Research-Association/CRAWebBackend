@@ -38,9 +38,13 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests((authorize) -> authorize
                         .requestMatchers("/api/auth/**").permitAll()
 
-                        .requestMatchers(HttpMethod.POST, "/api/**").authenticated()
-                        .requestMatchers(HttpMethod.PUT, "/api/**").authenticated()
-                        .requestMatchers(HttpMethod.DELETE, "/api/**").authenticated()
+//                        .requestMatchers(HttpMethod.POST, "/api/**").authenticated()
+//                        .requestMatchers(HttpMethod.PUT, "/api/**").authenticated()
+//                        .requestMatchers(HttpMethod.DELETE, "/api/**").authenticated()
+                        // 테스트용
+                        .requestMatchers(HttpMethod.POST, "/api/**").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/api/**").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/api/**").permitAll()
 
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
 
