@@ -10,17 +10,14 @@ import com.handong.cra.crawebbackend.havruta.dto.havrutaboard.response.ResListHa
 import com.handong.cra.crawebbackend.havruta.dto.havrutaboard.response.ResUpdateHavrutaBoardDto;
 import com.handong.cra.crawebbackend.havruta.service.HavrutaService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/havruta")
+@RequestMapping
 @RequiredArgsConstructor
-@Slf4j
 public class HavrutaBoardController {
 
 
@@ -40,13 +37,12 @@ public class HavrutaBoardController {
     }
 
 //    @PostMapping("")
-//    public ResponseEntity<ResCreateHavrutaBoardDto> createHavrutaBoard(ReqCreateHavrutaBoardDto reqcreateHavrutaBoardDto){
+//    public ResponseEntity<ResCreateHavrutaBoardDto> createHavrutaBoard(CreateHavrutaBoardDto createHavrutaBoardDto){
 //        return null;
 //    }
     @PostMapping("")
     public ResponseEntity<CreateHavrutaBoardDto> createHavrutaBoard(CreateHavrutaBoardDto createHavrutaBoardDto){
-        log.info("test here user id = {}", createHavrutaBoardDto.getUserId());
-        return ResponseEntity.status(HttpStatus.CREATED).body(havrutaService.createHavrutaBoard(createHavrutaBoardDto));
+        return null;
     }
 
     @PutMapping("")
