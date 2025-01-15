@@ -18,8 +18,6 @@ import org.springframework.stereotype.Service;
 public class AuthServiceImpl implements AuthService {
     private final UserService userService;
     private final JwtTokenProvider jwtTokenProvider;
-
-    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Override
@@ -44,7 +42,7 @@ public class AuthServiceImpl implements AuthService {
             throw new BadCredentialsException("Invalid username or password");
         }
 
-        return jwtTokenProvider.generateTokenByLogin(loginUserDto.getUsername(), loginUserDto.getRole());
+        return jwtTokenProvider.generateTokenByLogin(loginUserDto.getUsername());
     }
 
     @Override

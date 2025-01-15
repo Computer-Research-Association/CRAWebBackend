@@ -40,12 +40,4 @@ public class UserServiceImpl implements UserService {
         signupDto.setId(user.getId());
         return signupDto;
     }
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities(String username) {
-        List<GrantedAuthority> authorities = new ArrayList<>();
-        User user = userRepository.findByUsername(username);
-        authorities.add(new SimpleGrantedAuthority(user.getRole().getAuthority()));
-        return authorities;
-    }
 }

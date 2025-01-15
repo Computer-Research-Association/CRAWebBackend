@@ -1,7 +1,9 @@
 package com.handong.cra.crawebbackend.util;
 
 import com.handong.cra.crawebbackend.auth.dto.response.ResTokenDto;
+import com.handong.cra.crawebbackend.user.domain.User;
 import com.handong.cra.crawebbackend.user.domain.UserRoleEnum;
+import com.handong.cra.crawebbackend.user.repository.UserRepository;
 import com.handong.cra.crawebbackend.user.service.UserService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -29,7 +31,8 @@ import java.util.List;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtTokenProvider jwtTokenProvider;
 
-    private final UserService userService;
+    private final UserDetailsService userDetailsService;
+    private final UserRepository userRepository;
 
 
     @Override
@@ -43,7 +46,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 return;
             }
 
-            String username = jwtTokenProvider.getSubject(jwt);
+            Long userId = Long.valueOf(jwtTokenProvider.getSubject(jwt));
+            String username = userRepository.getUserById(userId).getUsername();
             log.info(username);
             log.info("username: {}", username);
             setAuthentication(username);
@@ -53,7 +57,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private void setAuthentication(String username) {
         SecurityContext context = SecurityContextHolder.createEmptyContext();
-        context.setAuthentication(new UsernamePasswordAuthenticationToken(username, null, userService.getAuthorities(username)));
+        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        context.setAuthentication(new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities()));
         log.info("context: {}", context);
         SecurityContextHolder.setContext(context);
     }
