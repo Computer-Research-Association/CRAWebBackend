@@ -18,8 +18,6 @@ import org.springframework.stereotype.Service;
 public class AuthServiceImpl implements AuthService {
     private final UserService userService;
     private final JwtTokenProvider jwtTokenProvider;
-
-    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Override
