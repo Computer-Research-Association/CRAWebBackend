@@ -41,11 +41,6 @@ public class HavrutaBoardController {
     public ResponseEntity<ResCreateHavrutaBoardDto> createHavrutaBoard(@RequestBody ReqCreateHavrutaBoardDto reqCreateHavrutaBoardDto){
         return ResponseEntity.status(HttpStatus.CREATED).body(ResCreateHavrutaBoardDto.from(havrutaService.createHavrutaBoard(CreateHavrutaBoardDto.from(reqCreateHavrutaBoardDto))));
     }
-//    @PostMapping("")
-//    public ResponseEntity<CreateHavrutaBoardDto> createHavrutaBoard(@RequestBody CreateHavrutaBoardDto createHavrutaBoardDto){
-//        log.info("test here user id = {}", createHavrutaBoardDto.getUserId());
-//        return ResponseEntity.status(HttpStatus.CREATED).body(havrutaService.createHavrutaBoard(createHavrutaBoardDto));
-//    }
 
     @PutMapping("/{id}")
     public ResponseEntity<ResUpdateHavrutaBoardDto> updateHavrutaBoard(@PathVariable Long id, @RequestBody ReqUpdateHavrutaBoardDto requpdateHavrutaBoardDto){
@@ -53,12 +48,4 @@ public class HavrutaBoardController {
         resUpdateHavrutaBoardDto = ResUpdateHavrutaBoardDto.from(havrutaService.updateHavrutaBoard(id, UpdateHavrutaBoardDto.of(requpdateHavrutaBoardDto)));
         return ResponseEntity.ok().body(resUpdateHavrutaBoardDto);
     }
-
-//    @DeleteMapping("/{id}")
-//    public ResponseEntity<Void> deleteHavrutaBoardById(@PathVariable Long id){
-//        havrutaService.deleteHavrutaBoardById(id);
-//        return ResponseEntity.ok().build();
-//    }
-
-
 }
