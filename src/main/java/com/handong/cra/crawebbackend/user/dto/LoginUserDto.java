@@ -2,6 +2,7 @@ package com.handong.cra.crawebbackend.user.dto;
 
 import com.handong.cra.crawebbackend.user.domain.User;
 import com.handong.cra.crawebbackend.user.domain.UserRoleEnum;
+import com.handong.cra.crawebbackend.user.domain.UserRoleSet;
 import lombok.*;
 
 @Getter
@@ -11,12 +12,12 @@ import lombok.*;
 public class LoginUserDto {
     private String username;
     private String password;
-    private UserRoleEnum role;
+    private UserRoleSet roles;
 
     public LoginUserDto(User user) {
         this.username = user.getUsername();
         this.password = user.getPassword();
-        this.role = user.getRole();
+        this.roles = user.getRoles();
     }
 
     public static LoginUserDto from(User user) {

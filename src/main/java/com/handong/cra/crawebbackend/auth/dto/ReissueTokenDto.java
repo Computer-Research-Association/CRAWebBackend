@@ -1,7 +1,6 @@
 package com.handong.cra.crawebbackend.auth.dto;
 
 import com.handong.cra.crawebbackend.auth.dto.request.ReqReissueTokenDto;
-import com.handong.cra.crawebbackend.user.domain.UserRoleEnum;
 import lombok.*;
 
 @Data
@@ -10,13 +9,11 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class ReissueTokenDto {
-    private String username;
-    private UserRoleEnum role;
+    private Long userId;
     private String refreshToken;
 
     public ReissueTokenDto(ReqReissueTokenDto reqReissueTokenDto) {
-        this.username = reqReissueTokenDto.getUsername();
-        this.role = reqReissueTokenDto.getRole();
+        this.userId = reqReissueTokenDto.getUserId();
         this.refreshToken = reqReissueTokenDto.getRefreshToken();
     }
 

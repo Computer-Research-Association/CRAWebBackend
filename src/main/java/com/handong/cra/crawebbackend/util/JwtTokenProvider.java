@@ -4,13 +4,10 @@ import com.handong.cra.crawebbackend.auth.domain.RefreshToken;
 import com.handong.cra.crawebbackend.auth.dto.ReissueTokenDto;
 import com.handong.cra.crawebbackend.auth.dto.response.ResTokenDto;
 import com.handong.cra.crawebbackend.auth.repository.RefreshTokenRepository;
-import com.handong.cra.crawebbackend.user.domain.User;
-import com.handong.cra.crawebbackend.user.domain.UserRoleEnum;
 import com.handong.cra.crawebbackend.user.repository.UserRepository;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -39,14 +36,13 @@ public class JwtTokenProvider {
     private final RefreshTokenRepository refreshTokenRepository;
     private final UserRepository userRepository;
 
-    public String generateToken(String username, UserRoleEnum role, Long expirationTime) {
+    public String generateToken(Long id, Long expirationTime) {
         Key jwtSecretKey = Keys.hmacShaKeyFor(secret.getBytes());
         log.info("jwtSecretKey: {}", jwtSecretKey);
         Date now = new Date();
 
         return Jwts.builder()
-                .claim("role", role)
-                .subject(username)
+                .subject(id.toString())
                 .issuedAt(now)
                 .issuer("cra/lky")
                 .expiration(new Date(now.getTime() + expirationTime))
@@ -54,26 +50,26 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    public ResTokenDto generateTokenByLogin(String username, UserRoleEnum role) {
-        Long id = userRepository.findByUsername(username).getId();
-        String accessToken = generateToken(username, role, accessExpiration);
-        String refreshToken = generateToken(username, role, refreshExpiration);
-        refreshTokenRepository.save(new RefreshToken(username, refreshToken));
-        return new ResTokenDto(id, accessToken, refreshToken);
+    public ResTokenDto generateTokenByLogin(String username) {
+        Long userId = userRepository.findByUsername(username).getId();
+        String accessToken = generateToken(userId, accessExpiration);
+        String refreshToken = generateToken(userId, refreshExpiration);
+        refreshTokenRepository.save(new RefreshToken(userId, refreshToken));
+        return new ResTokenDto(userId, accessToken, refreshToken);
     }
 
     @Transactional
     public ResTokenDto reissueToken(ReissueTokenDto reissueTokenDto) {
-        RefreshToken savedToken = refreshTokenRepository.getRefreshTokenByUsername(reissueTokenDto.getUsername());
-        Long id = userRepository.findByUsername(savedToken.getUsername()).getId();
+        RefreshToken savedToken = refreshTokenRepository.getRefreshTokenByUserId(reissueTokenDto.getUserId());
+        Long userId = savedToken.getUserId();
         if (!savedToken.getRefreshToken().equals(reissueTokenDto.getRefreshToken())) {
             // TODO: exception 하쇼 토큰 구라핑한거
             return null;
         }
-        String accessToken = generateToken(reissueTokenDto.getUsername(), reissueTokenDto.getRole(), accessExpiration);
-        String newRefreshToken = generateToken(reissueTokenDto.getUsername(), reissueTokenDto.getRole(), refreshExpiration);
+        String accessToken = generateToken(reissueTokenDto.getUserId(), accessExpiration);
+        String newRefreshToken = generateToken(reissueTokenDto.getUserId(), refreshExpiration);
         savedToken.setRefreshToken(newRefreshToken);
-        return new ResTokenDto(id, accessToken, newRefreshToken);
+        return new ResTokenDto(userId, accessToken, newRefreshToken);
     }
 
     public Boolean validateToken(String token) {

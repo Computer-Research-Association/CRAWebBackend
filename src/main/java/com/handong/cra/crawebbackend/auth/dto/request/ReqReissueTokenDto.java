@@ -1,6 +1,5 @@
 package com.handong.cra.crawebbackend.auth.dto.request;
 
-import com.handong.cra.crawebbackend.user.domain.UserRoleEnum;
 import lombok.*;
 
 @Data
@@ -9,7 +8,6 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class ReqReissueTokenDto {
-    private String username;
-    private UserRoleEnum role;
+    private Long userId;
     private String refreshToken;
 }

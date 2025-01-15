@@ -9,6 +9,7 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class ResSignupDto {
+    private Long id;
     private String username;
     private String email;
     private String name;
@@ -17,6 +18,7 @@ public class ResSignupDto {
     private String term;
 
     public ResSignupDto(SignupDto signupDto) {
+        this.id = signupDto.getId();
         this.username = signupDto.getUsername();
         this.email = signupDto.getEmail();
         this.name = signupDto.getName();

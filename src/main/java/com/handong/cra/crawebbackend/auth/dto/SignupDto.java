@@ -3,6 +3,7 @@ package com.handong.cra.crawebbackend.auth.dto;
 import com.handong.cra.crawebbackend.auth.dto.request.ReqSignupDto;
 import com.handong.cra.crawebbackend.auth.dto.response.ResSignupDto;
 import com.handong.cra.crawebbackend.user.domain.UserRoleEnum;
+import com.handong.cra.crawebbackend.user.domain.UserRoleSet;
 import lombok.*;
 
 @Data
@@ -19,7 +20,7 @@ public class SignupDto {
     private String githubId;
     private Long studentNumber;
     private String term;
-    private UserRoleEnum role;
+    private UserRoleSet roles;
 
     public SignupDto(ReqSignupDto reqSignupDto) {
         this.username = reqSignupDto.getUsername();
@@ -29,7 +30,7 @@ public class SignupDto {
         this.githubId = reqSignupDto.getGithubId();
         this.studentNumber = reqSignupDto.getStudentNumber();
         this.term = reqSignupDto.getTerm();
-        this.role = UserRoleEnum.USER;
+        this.roles = UserRoleSet.getDefault(UserRoleEnum.USER);
     }
 
     public static SignupDto from(ReqSignupDto reqSignupDto) {

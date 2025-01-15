@@ -44,7 +44,7 @@ public class AuthServiceImpl implements AuthService {
             throw new BadCredentialsException("Invalid username or password");
         }
 
-        return jwtTokenProvider.generateTokenByLogin(loginUserDto.getUsername(), loginUserDto.getRole());
+        return jwtTokenProvider.generateTokenByLogin(loginUserDto.getUsername());
     }
 
     @Override
