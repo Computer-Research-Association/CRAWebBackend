@@ -16,9 +16,8 @@ public class UpdateHavrutaBoardDto extends UpdateBoardDto {
     private String className;
     private String professor;
 
-    public UpdateHavrutaBoardDto(Long id, ReqUpdateHavrutaBoardDto reqUpdateHavrutaBoardDto){
+    public UpdateHavrutaBoardDto(ReqUpdateHavrutaBoardDto reqUpdateHavrutaBoardDto){
         super(reqUpdateHavrutaBoardDto);
-        this.setId(id);
         this.havrutaId = reqUpdateHavrutaBoardDto.getHavrutaId();
     }
 
@@ -29,8 +28,8 @@ public class UpdateHavrutaBoardDto extends UpdateBoardDto {
         this.professor = board.getHavruta().getProfessor();
     }
 
-    public static UpdateHavrutaBoardDto of(Long id, ReqUpdateHavrutaBoardDto reqUpdateHavrutaBoardDto){
-        return new UpdateHavrutaBoardDto(id, reqUpdateHavrutaBoardDto);
+    public static UpdateHavrutaBoardDto of(ReqUpdateHavrutaBoardDto reqUpdateHavrutaBoardDto){
+        return new UpdateHavrutaBoardDto(reqUpdateHavrutaBoardDto);
     }
 
     public static UpdateHavrutaBoardDto from(Board board){

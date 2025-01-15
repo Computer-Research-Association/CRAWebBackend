@@ -50,7 +50,7 @@ public class HavrutaBoardController {
     @PutMapping("/{id}")
     public ResponseEntity<ResUpdateHavrutaBoardDto> updateHavrutaBoard(@PathVariable Long id, @RequestBody ReqUpdateHavrutaBoardDto requpdateHavrutaBoardDto){
         ResUpdateHavrutaBoardDto resUpdateHavrutaBoardDto;
-        resUpdateHavrutaBoardDto = ResUpdateHavrutaBoardDto.from(havrutaService.updateHavrutaBoard(id, UpdateHavrutaBoardDto.of(id, requpdateHavrutaBoardDto)));
+        resUpdateHavrutaBoardDto = ResUpdateHavrutaBoardDto.from(havrutaService.updateHavrutaBoard(id, UpdateHavrutaBoardDto.of(requpdateHavrutaBoardDto)));
         return ResponseEntity.ok().body(resUpdateHavrutaBoardDto);
     }
 

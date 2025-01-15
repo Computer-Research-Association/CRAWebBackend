@@ -120,7 +120,7 @@ public class HavrutaServiceImpl implements HavrutaService {
     @Override
     @Transactional
     public UpdateHavrutaBoardDto updateHavrutaBoard(Long id, UpdateHavrutaBoardDto updateHavrutaBoardDto) {
-        Board board = boardRepository.findById(updateHavrutaBoardDto.getId()).orElseThrow(() -> new RuntimeException("no data"));
+        Board board = boardRepository.findById(id).orElseThrow(() -> new RuntimeException("no data"));
         board = board.update(updateHavrutaBoardDto);
         return UpdateHavrutaBoardDto.from(board);
     }
