@@ -4,6 +4,7 @@ import com.handong.cra.crawebbackend.board.dto.CreateBoardDto;
 import com.handong.cra.crawebbackend.board.dto.UpdateBoardDto;
 import com.handong.cra.crawebbackend.common.domain.BaseEntity;
 import com.handong.cra.crawebbackend.havruta.domain.Havruta;
+import com.handong.cra.crawebbackend.havruta.dto.havrutaboard.CreateHavrutaBoardDto;
 import com.handong.cra.crawebbackend.user.domain.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -60,10 +61,20 @@ public class Board extends BaseEntity {
         view = 0L;
     }
 
+    public Board(User user, Havruta havruta, CreateHavrutaBoardDto createHavrutaBoardDto) {
+      this(user, CreateBoardDto.from(createHavrutaBoardDto, user.getId()));
+      this.havruta = havruta;
+    }
+
     public static Board of(User user, CreateBoardDto createBoardDto) {
         return new Board(user, createBoardDto);
 
     }
+    public static Board of(User user, Havruta havruta, CreateHavrutaBoardDto createHavrutaBoardDto) {
+        return new Board(user, havruta, createHavrutaBoardDto);
+    }
+
+
 
     // TODO : 수정할 데이터 추가
     public Board update(UpdateBoardDto updateBoardDto) {

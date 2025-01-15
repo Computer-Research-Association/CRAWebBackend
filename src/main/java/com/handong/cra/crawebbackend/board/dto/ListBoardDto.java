@@ -5,7 +5,6 @@ import com.handong.cra.crawebbackend.board.domain.Category;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Getter
 @Setter

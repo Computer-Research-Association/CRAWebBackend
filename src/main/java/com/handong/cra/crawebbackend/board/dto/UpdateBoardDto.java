@@ -2,6 +2,7 @@ package com.handong.cra.crawebbackend.board.dto;
 
 import com.handong.cra.crawebbackend.board.domain.Board;
 import com.handong.cra.crawebbackend.board.dto.request.ReqUpdateBoardDto;
+import com.handong.cra.crawebbackend.havruta.dto.havrutaboard.request.ReqUpdateHavrutaBoardDto;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -46,6 +47,13 @@ public class UpdateBoardDto {
         this.imageUrls = board.getImageUrls();
         this.createdAt = board.getCreatedAt();
         this.updatedAt = board.getUpdatedAt();
+    }
+
+    public UpdateBoardDto(ReqUpdateHavrutaBoardDto reqUpdateHavrutaBoardDto) {
+        this.userId = reqUpdateHavrutaBoardDto.getUserId();
+        this.title = reqUpdateHavrutaBoardDto.getTitle();
+        this.content = reqUpdateHavrutaBoardDto.getContent();
+        this.imageUrls = reqUpdateHavrutaBoardDto.getImageUrls();
     }
 
     public static UpdateBoardDto of(Long id, ReqUpdateBoardDto reqUpdateBoardDto) {
