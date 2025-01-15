@@ -84,7 +84,10 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     public DetailBoardDto getDetailBoardById(Long id) {
-        Board board = boardRepository.findById(id).orElseThrow(() -> new RuntimeException("no data"));
+        Board board = boardRepository.findBoardByIdAndDeletedFalse(id);
+        if (board == null) {
+            throw new RuntimeException("no data");
+        }
         return DetailBoardDto.from(board);
     }
 

@@ -9,5 +9,5 @@ import java.util.List;
 public interface HavrutaRepository extends JpaRepository<Havruta, Long> {
     public List<Havruta> findAllByClassName(String className);
 
-    public Havruta findHavrutaDeletedFalseById(Long id);
+    public Havruta findHavrutaByIdAndDeletedFalse(Long id);
 }

@@ -6,7 +6,7 @@ import lombok.*;
 
 @Setter
 @Getter
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ListHavrutaBoardDto extends ListBoardDto {
 
     public ListHavrutaBoardDto (Board board){
@@ -14,8 +14,7 @@ public class ListHavrutaBoardDto extends ListBoardDto {
     }
 
     public static ListHavrutaBoardDto from (Board board){
-        return new ListHavrutaBoardDto(board);
+        if (board.getDeleted()) return null;
+        else return new ListHavrutaBoardDto(board);
     }
-
-
 }

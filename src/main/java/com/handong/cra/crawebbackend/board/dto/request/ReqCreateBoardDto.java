@@ -1,8 +1,10 @@
 package com.handong.cra.crawebbackend.board.dto.request;
 
+import com.handong.cra.crawebbackend.board.domain.Category;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
+import java.util.Calendar;
 import java.util.List;
 
 @Data

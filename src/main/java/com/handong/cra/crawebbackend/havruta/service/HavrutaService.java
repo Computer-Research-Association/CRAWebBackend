@@ -22,7 +22,7 @@ public interface HavrutaService {
     public DetailHavrutaBoardDto getDetailHavrutaBoardByBoardId(Long id);
 //    public List<ListBoardDto> getPaginationBoard(Long page, Integer perPage, BoardOrderBy orderBy, Boolean isASC);
     public CreateHavrutaBoardDto createHavrutaBoard(CreateHavrutaBoardDto createHavrutaBoardDto);
-    public UpdateHavrutaBoardDto updateHavrutaBoard(UpdateHavrutaBoardDto updateHavrutaBoardDto);
-    public Boolean deleteHavrutaBoardById(Long id);
+    public UpdateHavrutaBoardDto updateHavrutaBoard(Long id, UpdateHavrutaBoardDto updateHavrutaBoardDto);
+//    public Boolean deleteHavrutaBoardById(Long id);
 
 }

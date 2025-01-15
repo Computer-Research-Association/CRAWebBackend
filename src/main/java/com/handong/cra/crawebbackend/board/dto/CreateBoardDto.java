@@ -4,6 +4,7 @@ import com.handong.cra.crawebbackend.board.domain.Board;
 import com.handong.cra.crawebbackend.board.domain.Category;
 import com.handong.cra.crawebbackend.board.dto.request.ReqCreateBoardDto;
 import com.handong.cra.crawebbackend.havruta.dto.havrutaboard.CreateHavrutaBoardDto;
+import com.handong.cra.crawebbackend.havruta.dto.havrutaboard.request.ReqCreateHavrutaBoardDto;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -50,6 +51,15 @@ public class CreateBoardDto {
         this.content = createHavrutaBoardDto.getContent();
         this.category = createHavrutaBoardDto.getCategory();
         this.imageUrls = createHavrutaBoardDto.getImageUrls();
+    }
+
+    public CreateBoardDto(ReqCreateHavrutaBoardDto reqCreateHavrutaBoardDto) {
+        this.userId = reqCreateHavrutaBoardDto.getUserId();
+        this.title = reqCreateHavrutaBoardDto.getTitle();
+        this.content = reqCreateHavrutaBoardDto.getContent();
+        this.category = Category.values()[reqCreateHavrutaBoardDto.getCategory()];
+        this.imageUrls = reqCreateHavrutaBoardDto.getImageUrls();
+
     }
 
     // TODO : user logic

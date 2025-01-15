@@ -1,11 +1,9 @@
 package com.handong.cra.crawebbackend.havruta.service;
 
+import com.handong.cra.crawebbackend.board.dto.UpdateBoardDto;
 import com.handong.cra.crawebbackend.board.repository.BoardRepository;
 import com.handong.cra.crawebbackend.havruta.domain.Havruta;
 import com.handong.cra.crawebbackend.board.domain.Board;
-import com.handong.cra.crawebbackend.board.domain.Category;
-import com.handong.cra.crawebbackend.board.dto.ListBoardDto;
-import com.handong.cra.crawebbackend.havruta.domain.Havruta;
 import com.handong.cra.crawebbackend.havruta.dto.CreateHavrutaDto;
 import com.handong.cra.crawebbackend.havruta.dto.DetailHavrutaDto;
 import com.handong.cra.crawebbackend.havruta.dto.ListHavrutaDto;
@@ -73,25 +71,37 @@ public class HavrutaServiceImpl implements HavrutaService {
     }
 
     @Override
+    @Transactional
     public Boolean deleteHavruta(Long id) {
-        havrutaRepository.findById(id).orElseThrow().delete();
+        // delete managing obj
+        Havruta havruta = havrutaRepository.findById(id).orElseThrow();
+        havruta.delete();
+
+        // delete boards
+        List<Board> boards = havruta.getBoards();
+
+        for (Board board : boards) board.delete();
         return true;
     }
 
     @Override
     public List<ListHavrutaBoardDto> getHavrutaBoardsByHavrutaId(Long id) {
 
-        List<Board> havrutadtos = havrutaRepository.findHavrutaDeletedFalseById(id).getBoards();
-        List<ListHavrutaBoardDto> listHavrutaBoardDtos = havrutadtos.stream()
-                .map(ListHavrutaBoardDto::from).toList();
+        List<Board> havrutadtos = havrutaRepository.findHavrutaByIdAndDeletedFalse(id).getBoards();
 
+        List<ListHavrutaBoardDto> listHavrutaBoardDtos = havrutadtos.stream()
+                .map(ListHavrutaBoardDto::from).filter(Objects::nonNull).toList();
+        if (listHavrutaBoardDtos.isEmpty()) throw new RuntimeException("no data");
         return listHavrutaBoardDtos;
     }
 
     @Override
     public DetailHavrutaBoardDto getDetailHavrutaBoardByBoardId(Long id) {
 
-        Board board = boardRepository.findBoardDeletedFalseById(id);
+        Board board = boardRepository.findBoardByIdAndDeletedFalse(id);
+        if (board == null) {
+            throw new RuntimeException("no data");
+        }
         DetailHavrutaBoardDto detailHavrutaBoardDto = DetailHavrutaBoardDto.from(board);
         return detailHavrutaBoardDto;
     }
@@ -109,14 +119,19 @@ public class HavrutaServiceImpl implements HavrutaService {
 
     @Override
     @Transactional
-    public UpdateHavrutaBoardDto updateHavrutaBoard(UpdateHavrutaBoardDto updateHavrutaBoardDto) {
-        return null;
+    public UpdateHavrutaBoardDto updateHavrutaBoard(Long id, UpdateHavrutaBoardDto updateHavrutaBoardDto) {
+        Board board = boardRepository.findById(updateHavrutaBoardDto.getId()).orElseThrow(() -> new RuntimeException("no data"));
+        board = board.update(updateHavrutaBoardDto);
+        return UpdateHavrutaBoardDto.from(board);
     }
 
-    @Override
-    @Transactional
-    public Boolean deleteHavrutaBoardById(Long id) {
-        return null;
-    }
+//    Delete 기능은 Board에서 처리해도 됨!
+//    @Override
+//    @Transactional
+//    public Boolean deleteHavrutaBoardById(Long id) {
+//        boardRepository.findById(id).orElseThrow(() -> new RuntimeException("no data")).delete();
+//        return true;
+//    }
+
 
 }
