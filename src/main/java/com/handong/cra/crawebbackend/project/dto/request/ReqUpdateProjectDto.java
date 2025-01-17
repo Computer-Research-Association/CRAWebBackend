@@ -17,6 +17,6 @@ public class ReqUpdateProjectDto {
     private String gitHubUrl;
     private String serviceUrl;
     private List<String> members = new ArrayList<>();
-    private List<String> imageUrls = new ArrayList<>(); // 이후 multipart 로 변경 해야함.
+    private String imageUrl;
     private Boolean deleted;
 }

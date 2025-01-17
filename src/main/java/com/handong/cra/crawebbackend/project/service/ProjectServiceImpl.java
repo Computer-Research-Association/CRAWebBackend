@@ -1,5 +1,8 @@
 package com.handong.cra.crawebbackend.project.service;
 
+import com.handong.cra.crawebbackend.file.domain.S3ImageCategory;
+import com.handong.cra.crawebbackend.file.service.S3ImageService;
+import com.handong.cra.crawebbackend.file.service.S3ImageServiceImpl;
 import com.handong.cra.crawebbackend.project.domain.Project;
 import com.handong.cra.crawebbackend.project.domain.ProjectOrderBy;
 import com.handong.cra.crawebbackend.project.dto.CreateProjectDto;
@@ -26,30 +29,31 @@ public class ProjectServiceImpl implements ProjectService {
 
 
     private final ProjectRepository projectRepository;
+    private final S3ImageService s3ImageService;
 
     @Override
     @Transactional
     public CreateProjectDto createProject(CreateProjectDto createProjectDto) {
         Project project = Project.from(createProjectDto);
+        project.setImageUrl(s3ImageService.transferImage(project.getImageUrl(), S3ImageCategory.PROJECT));
         project = projectRepository.save(project); // save 된 Entity 가져옴
 
-        // set meta data
-        createProjectDto.setCreatedAt(project.getCreatedAt());
-        createProjectDto.setId(project.getId());
-
-        return createProjectDto;
+        return CreateProjectDto.from(project);
     }
 
     @Override
     @Transactional
     public UpdateProjectDto updateProject(UpdateProjectDto updateProjectDto) { // TODO exception 처리 필요
         Project project = projectRepository.findById(updateProjectDto.getId()).orElseThrow();
+
+        // 변경됨
+        if (updateProjectDto.getImageUrl().contains("temp/")){
+            s3ImageService.transferImage(project.getImageUrl(),S3ImageCategory.DELETED);
+            project.setImageUrl(s3ImageService.transferImage(updateProjectDto.getImageUrl(),S3ImageCategory.PROJECT));
+        }
         project = project.update(updateProjectDto);
 
-        // set meta data
-        updateProjectDto.setCreateAt(project.getCreatedAt());
-        updateProjectDto.setUpdatedAt(project.getUpdatedAt());
-        return updateProjectDto;
+        return UpdateProjectDto.from(project);
     }
 
     @Override
@@ -57,6 +61,7 @@ public class ProjectServiceImpl implements ProjectService {
     public Boolean deleteProjectById(Long id) { // TODO exception 처리 필요
         Project project = projectRepository.findById(id).orElseThrow();
         project.delete();
+        s3ImageService.transferImage(project.getImageUrl(), S3ImageCategory.DELETED);
         return true;
     }
 

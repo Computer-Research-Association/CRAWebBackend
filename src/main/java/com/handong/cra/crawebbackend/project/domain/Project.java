@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -39,10 +40,9 @@ public class Project extends BaseEntity {
     @ElementCollection
     private List<String> members; // 이름만 저장
 
-    @ElementCollection
-    @CollectionTable(name = "project_images", joinColumns = @JoinColumn(name = "project_id"))
     @Column(name = "image_url")
-    private List<String> imageUrls = new ArrayList<>();
+    @Setter
+    private String imageUrl;
 
 
     public Project(CreateProjectDto createProjectDto) {
@@ -53,7 +53,7 @@ public class Project extends BaseEntity {
         this.gitHubUrl = createProjectDto.getGitHubUrl();
         this.serviceUrl = createProjectDto.getServiceUrl();
         this.members = createProjectDto.getMembers();
-        this.imageUrls = createProjectDto.getImageUrls();
+        this.imageUrl = createProjectDto.getImageUrl();
     }
 
     public static Project from(CreateProjectDto createProjectDto) {
@@ -69,7 +69,7 @@ public class Project extends BaseEntity {
         this.gitHubUrl = updateProjectDto.getGitHubUrl();
         this.serviceUrl = updateProjectDto.getServiceUrl();
         this.members = updateProjectDto.getMembers();
-        this.imageUrls = updateProjectDto.getImageUrls();
+        this.imageUrl = updateProjectDto.getImageUrl();
         return this;
     }
 }

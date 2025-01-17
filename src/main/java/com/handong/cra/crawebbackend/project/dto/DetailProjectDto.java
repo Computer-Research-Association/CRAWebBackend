@@ -20,7 +20,7 @@ public class DetailProjectDto {
     private String gitHubUrl;
     private String serviceUrl;
     private List<String> members = new ArrayList<>();
-    private List<String> imageUrls = new ArrayList<>();
+    private String imageUrl;
 
     private Boolean deleted;
     private LocalDateTime createAt = null;
@@ -36,7 +36,7 @@ public class DetailProjectDto {
         this.gitHubUrl = project.getGitHubUrl();
         this.serviceUrl = project.getServiceUrl();
         this.members = project.getMembers();
-        this.imageUrls =project.getImageUrls();
+        this.imageUrl =project.getImageUrls();
         this.deleted = project.getDeleted();
         this.createAt = project.getCreatedAt();
         this.updatedAt = project.getUpdatedAt();

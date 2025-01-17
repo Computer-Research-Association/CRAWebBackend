@@ -1,5 +1,6 @@
 package com.handong.cra.crawebbackend.project.dto;
 
+import com.handong.cra.crawebbackend.project.domain.Project;
 import com.handong.cra.crawebbackend.project.dto.request.ReqUpdateProjectDto;
 import lombok.*;
 
@@ -20,7 +21,7 @@ public class UpdateProjectDto {
     private String gitHubUrl;
     private String serviceUrl;
     private List<String> members = new ArrayList<>();
-    private List<String> imageUrls = new ArrayList<>();
+    private String imageUrl;
 
     private Boolean deleted;
     private LocalDateTime createAt = null;
@@ -35,11 +36,28 @@ public class UpdateProjectDto {
         this.gitHubUrl = reqUpdateProjectDto.getGitHubUrl();
         this.serviceUrl = reqUpdateProjectDto.getServiceUrl();
         this.members = reqUpdateProjectDto.getMembers();
-        this.imageUrls = reqUpdateProjectDto.getImageUrls();
+        this.imageUrl = reqUpdateProjectDto.getImageUrl();
         this.deleted = reqUpdateProjectDto.getDeleted();
+    }
+
+    public UpdateProjectDto(Project project) {
+        this.id =project.getId();
+        this.semester = project.getSemester();
+        this.teamName = project.getTeamName();
+        this.serviceName = project.getServiceName();
+        this.content = project.getContent();
+        this.gitHubUrl = project.getGitHubUrl();
+        this.serviceUrl = project.getServiceUrl();
+        this.members = project.getMembers();
+        this.imageUrl = project.getImageUrl();
+        this.deleted = project.getDeleted();
     }
 
     public static UpdateProjectDto of(Long id, ReqUpdateProjectDto reqUpdateProjectDto){
         return new UpdateProjectDto(id, reqUpdateProjectDto);
+    }
+
+    public static UpdateProjectDto from(Project project){
+        return new UpdateProjectDto(project);
     }
 }
