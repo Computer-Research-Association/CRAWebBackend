@@ -1,5 +1,7 @@
 package com.handong.cra.crawebbackend.havruta.service;
 
+import com.handong.cra.crawebbackend.board.domain.BoardOrderBy;
+import com.handong.cra.crawebbackend.board.domain.Category;
 import com.handong.cra.crawebbackend.board.dto.UpdateBoardDto;
 import com.handong.cra.crawebbackend.board.repository.BoardRepository;
 import com.handong.cra.crawebbackend.havruta.domain.Havruta;
@@ -17,8 +19,13 @@ import com.handong.cra.crawebbackend.user.domain.User;
 import com.handong.cra.crawebbackend.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
@@ -101,7 +108,24 @@ public class HavrutaServiceImpl implements HavrutaService {
 
         List<ListHavrutaBoardDto> listHavrutaBoardDtos = havrutadtos.stream()
                 .map(ListHavrutaBoardDto::from).filter(Objects::nonNull).toList();
+        if (listHavrutaBoardDtos.isEmpty()) throw new RuntimeException("no data");
         return listHavrutaBoardDtos;
+    }
+
+    @Override
+    public List<ListHavrutaBoardDto> getPaginationHavrutaBoard(Long id, Long page, Integer perPage, BoardOrderBy boardOrderBy, Boolean isASC) {
+        HashMap<BoardOrderBy, String> map = new HashMap<>();
+        map.put(BoardOrderBy.DATE, "createdAt");
+        map.put(BoardOrderBy.LIKECOUNT, "likeCount");
+
+        Sort sort = Sort.by(map.get(boardOrderBy));
+        sort = (isASC) ? sort.ascending() : sort.descending();
+        Havruta havruta = havrutaRepository.findById(id).orElseThrow();
+        Pageable pageable = PageRequest.of(Math.toIntExact(page), perPage, sort);
+
+        Page<Board> boards = boardRepository.findAllByHavrutaAndDeletedFalse(havruta, pageable);
+
+        return boards.stream().map(ListHavrutaBoardDto::from).toList();
     }
 
     @Override

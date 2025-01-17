@@ -1,5 +1,6 @@
 package com.handong.cra.crawebbackend.havruta.controller;
 
+import com.handong.cra.crawebbackend.board.domain.BoardOrderBy;
 import com.handong.cra.crawebbackend.havruta.dto.havrutaboard.CreateHavrutaBoardDto;
 import com.handong.cra.crawebbackend.havruta.dto.havrutaboard.DetailHavrutaBoardDto;
 import com.handong.cra.crawebbackend.havruta.dto.havrutaboard.ListHavrutaBoardDto;
@@ -45,6 +46,18 @@ public class HavrutaBoardController {
     @PostMapping("")
     public ResponseEntity<ResCreateHavrutaBoardDto> createHavrutaBoard(@RequestBody ReqCreateHavrutaBoardDto reqCreateHavrutaBoardDto){
         return ResponseEntity.status(HttpStatus.CREATED).body(ResCreateHavrutaBoardDto.from(havrutaService.createHavrutaBoard(CreateHavrutaBoardDto.from(reqCreateHavrutaBoardDto))));
+    }
+
+    @GetMapping("/{id}/page/{page}")
+    public ResponseEntity<List<ResListHavrutaBoardDto>> getPaginationHavrutaBoard(
+            @PathVariable Long id,
+            @PathVariable Long page,
+            @RequestParam(required = false, defaultValue = "0") Integer perPage,
+            @RequestParam(required = false, defaultValue = "0") Integer orderBy,
+            @RequestParam(required = false, defaultValue = "true") Boolean isASC
+    ){
+        List<ListHavrutaBoardDto> listHavrutaBoardDtos = havrutaService.getPaginationHavrutaBoard(id, page, perPage, BoardOrderBy.values()[orderBy], isASC);
+        return ResponseEntity.ok(listHavrutaBoardDtos.stream().map(ResListHavrutaBoardDto::from).toList());
     }
 
     @PutMapping("/{id}")

@@ -58,6 +58,7 @@ public class BoardServiceImpl implements BoardService {
         return boards.stream().map(ListBoardDto::from).toList();
     }
 
+
     @Override
     @Transactional
     public CreateBoardDto createBoard(CreateBoardDto createBoardDto) {
