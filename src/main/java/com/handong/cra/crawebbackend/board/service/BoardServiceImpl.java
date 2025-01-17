@@ -89,6 +89,7 @@ public class BoardServiceImpl implements BoardService {
         newImgs.removeAll(temp);
 
         s3ImageService.transferImage(removeImgs,S3ImageCategory.DELETED);
+        newImgs.addAll(temp);
         board.setImageUrls(s3ImageService.transferImage(newImgs,S3ImageCategory.BOARD));
 
         // TODO : 새로운 url 받아서 수정해줘야 함
