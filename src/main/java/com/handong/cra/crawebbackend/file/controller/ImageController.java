@@ -16,8 +16,8 @@ public class ImageController {
 
 
     @PostMapping("/upload")
-    public ResponseEntity<String> uploadImage(@RequestParam MultipartFile image, @RequestParam Integer imageCategory) {
-        return ResponseEntity.ok(s3ImageService.uploadImage(image, S3ImageCategory.values()[imageCategory]));
+    public ResponseEntity<String> uploadImage(@RequestParam MultipartFile image) {
+        return ResponseEntity.ok(s3ImageService.uploadImage(image));
     }
 
 

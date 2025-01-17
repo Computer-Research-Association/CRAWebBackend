@@ -37,7 +37,7 @@ public class S3ImageServiceImpl implements S3ImageService {
     }
 
     @Override
-    public String uploadImage(MultipartFile image, S3ImageCategory s3ImageCategory) {
+    public String uploadImage(MultipartFile image) {
         // filename -> uuid
         String filename = "temp/" + UUID.randomUUID();
         try {
