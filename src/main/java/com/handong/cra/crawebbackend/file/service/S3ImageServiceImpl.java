@@ -13,6 +13,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -50,7 +52,7 @@ public class S3ImageServiceImpl implements S3ImageService {
         }
     }
 
-    public Boolean transferImage(String path, S3ImageCategory s3ImageCategory) {
+    public String transferImage(String path, S3ImageCategory s3ImageCategory) {
         String key = getKeyFromUrl(path);
         String filename = Objects.requireNonNull(key).substring("temp/".length());
         try {
@@ -60,10 +62,17 @@ public class S3ImageServiceImpl implements S3ImageService {
 
             amazonS3.copyObject(copyObjectRequest);
             amazonS3.deleteObject(deleteObjectRequest);
-            return true;
+            return   getPublicUrl(filename);
         } catch (Exception e) {
-            return false;
+            return null;
         }
+    }
+
+    public List<String> transferImage(List<String> paths, S3ImageCategory s3ImageCategory) {
+        List<String> urls = new ArrayList<>();
+        for (String path : paths)
+            urls.add(transferImage(path, s3ImageCategory));
+        return urls;
     }
 
 //

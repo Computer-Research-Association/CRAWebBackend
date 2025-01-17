@@ -31,6 +31,7 @@ public class Board extends BaseEntity {
     @ElementCollection
     @CollectionTable(name = "board_images", joinColumns = @JoinColumn(name = "board_id"))
     @Column(name = "image_url")
+    @Setter
     private List<String> imageUrls = new ArrayList<>();
 
     @ManyToOne

@@ -5,6 +5,8 @@ import com.handong.cra.crawebbackend.board.domain.Category;
 import com.handong.cra.crawebbackend.board.domain.BoardOrderBy;
 import com.handong.cra.crawebbackend.board.dto.*;
 import com.handong.cra.crawebbackend.board.repository.BoardRepository;
+import com.handong.cra.crawebbackend.file.domain.S3ImageCategory;
+import com.handong.cra.crawebbackend.file.service.S3ImageService;
 import com.handong.cra.crawebbackend.user.domain.User;
 import com.handong.cra.crawebbackend.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
@@ -19,6 +21,7 @@ import org.springframework.data.domain.Pageable;
 
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -30,6 +33,7 @@ import java.util.Objects;
 public class BoardServiceImpl implements BoardService {
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
+    private final S3ImageService s3ImageService;
 
     @Override
     @Transactional
@@ -63,6 +67,7 @@ public class BoardServiceImpl implements BoardService {
     public CreateBoardDto createBoard(CreateBoardDto createBoardDto) {
         User user = userRepository.findById(createBoardDto.getUserId()).orElseThrow(() -> new RuntimeException("no user"));
         Board board = Board.of(user, createBoardDto);
+        board.setImageUrls(s3ImageService.transferImage(board.getImageUrls(), S3ImageCategory.BOARD));
         board = boardRepository.save(board);
         return CreateBoardDto.from(board);
     }
@@ -71,14 +76,32 @@ public class BoardServiceImpl implements BoardService {
     @Transactional
     public UpdateBoardDto updateBoard(UpdateBoardDto updateBoardDto) {
         Board board = boardRepository.findById(updateBoardDto.getId()).orElseThrow(() -> new RuntimeException("no data"));
-        board = board.update(updateBoardDto);
-        return UpdateBoardDto.from(board);
+        Board updated = board.update(updateBoardDto);
+
+        //img update logic
+        List<String> removeImgs = board.getImageUrls();
+        List<String> newImgs = board.getImageUrls();
+
+        List<String> temp = new ArrayList<>(removeImgs);
+        temp.retainAll(newImgs);
+
+        removeImgs.removeAll(temp);
+        newImgs.removeAll(temp);
+
+        s3ImageService.transferImage(removeImgs,S3ImageCategory.DELETED);
+        board.setImageUrls(s3ImageService.transferImage(newImgs,S3ImageCategory.BOARD));
+
+        // TODO : 새로운 url 받아서 수정해줘야 함
+
+        return UpdateBoardDto.from(updated);
     }
 
     @Override
     @Transactional
     public Boolean deleteBoardById(Long id) {
-        boardRepository.findById(id).orElseThrow(() -> new RuntimeException("no data")).delete();
+        Board board = boardRepository.findById(id).orElseThrow(() -> new RuntimeException("no data"));
+        board.delete();
+        s3ImageService.transferImage(board.getImageUrls(), S3ImageCategory.DELETED);
         return true;
     }
 

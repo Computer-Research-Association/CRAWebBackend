@@ -38,6 +38,10 @@ public class User extends BaseEntity implements UserDetails {
     @Column(nullable = false)
     private String term;
 
+    @Setter
+    @Column(name = "img_url")
+    private String imgUrl;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "likes",

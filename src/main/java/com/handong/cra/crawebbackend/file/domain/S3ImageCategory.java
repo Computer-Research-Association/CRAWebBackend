@@ -5,5 +5,6 @@ public enum S3ImageCategory {
     USER, // 유저 프사
     PROJECT,
     GALLERY,
-    ITEM;
+    ITEM,
+    DELETED;
 }
