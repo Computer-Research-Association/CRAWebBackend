@@ -26,10 +26,10 @@ import java.util.List;
 public class HavrutaBoardController {
 
     private final HavrutaService havrutaService;
-//    @GetMapping("")
-//    public ResponseEntity<List<ResListHavrutaBoardDto>> getHavrutaBoards(){
-//        return ResponseEntity.ok().body(havrutaService.getHavrutaBoards().stream().map(ResListHavrutaBoardDto::from).toList());
-//    }
+    @GetMapping("")
+    public ResponseEntity<List<ResListHavrutaBoardDto>> getHavrutaBoards(){
+        return ResponseEntity.ok().body(havrutaService.getHavrutaBoards().stream().map(ResListHavrutaBoardDto::from).toList());
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<List<ResListHavrutaBoardDto>> getHavrutaBoardsByHavrutaId(@PathVariable Long id){

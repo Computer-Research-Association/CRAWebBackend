@@ -84,9 +84,15 @@ public class HavrutaServiceImpl implements HavrutaService {
         return true;
     }
 
-//    @Override
-//    public List<ListHavrutaBoardDto> getHavrutaBoards(){
-//    }
+    @Override
+    public List<ListHavrutaBoardDto> getHavrutaBoards(){
+
+        List<Board> boards = boardRepository.findAll();
+
+        List<ListHavrutaBoardDto> listHavrutaBoardDtos = boards.stream()
+                .map(ListHavrutaBoardDto::from).filter(Objects::nonNull).toList();
+        return listHavrutaBoardDtos;
+    }
 
     @Override
     public List<ListHavrutaBoardDto> getHavrutaBoardsByHavrutaId(Long id) {
@@ -95,7 +101,6 @@ public class HavrutaServiceImpl implements HavrutaService {
 
         List<ListHavrutaBoardDto> listHavrutaBoardDtos = havrutadtos.stream()
                 .map(ListHavrutaBoardDto::from).filter(Objects::nonNull).toList();
-        if (listHavrutaBoardDtos.isEmpty()) throw new RuntimeException("no data");
         return listHavrutaBoardDtos;
     }
 
