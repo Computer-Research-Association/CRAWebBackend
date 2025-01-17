@@ -97,7 +97,7 @@ public class BoardServiceImpl implements BoardService {
 
         // TODO : 새로운 url 받아서 수정해줘야 함
 
-        return UpdateBoardDto.from(updated);
+        return UpdateBoardDto.from(board);
     }
 
     @Override

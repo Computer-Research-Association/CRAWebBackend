@@ -30,7 +30,7 @@ public class ListProjectDto {
         this.serviceName = project.getServiceName();
 //        this.content = project.getContent();
         this.members = project.getMembers();
-        this.imageUrl = project.getImageUrls();
+        this.imageUrl = project.getImageUrl();
         this.deleted = project.getDeleted();
         this.createAt = project.getCreatedAt();
     }

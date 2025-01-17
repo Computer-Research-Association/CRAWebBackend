@@ -22,9 +22,9 @@ public class ImageController {
 
 
     // testing
-    @PutMapping("/move")
-    public ResponseEntity<Void> moveImage(@RequestParam String url, @RequestParam Integer imageCategory) {
-        if (s3ImageService.transferImage(url,S3ImageCategory.values()[imageCategory])) return ResponseEntity.ok().build();
-        else return ResponseEntity.internalServerError().build();
-    }
+//    @PutMapping("/move")
+//    public ResponseEntity<Void> moveImage(@RequestParam String url, @RequestParam Integer imageCategory) {
+//        if (s3ImageService.transferImage(url,S3ImageCategory.values()[imageCategory])) return ResponseEntity.ok().build();
+//        else return ResponseEntity.internalServerError().build();
+//    }
 }

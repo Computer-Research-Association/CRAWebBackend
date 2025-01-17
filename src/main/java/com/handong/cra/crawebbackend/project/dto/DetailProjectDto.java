@@ -36,7 +36,7 @@ public class DetailProjectDto {
         this.gitHubUrl = project.getGitHubUrl();
         this.serviceUrl = project.getServiceUrl();
         this.members = project.getMembers();
-        this.imageUrl =project.getImageUrls();
+        this.imageUrl =project.getImageUrl();
         this.deleted = project.getDeleted();
         this.createAt = project.getCreatedAt();
         this.updatedAt = project.getUpdatedAt();
