@@ -8,6 +8,7 @@ import com.handong.cra.crawebbackend.havruta.dto.havrutaboard.CreateHavrutaBoard
 import com.handong.cra.crawebbackend.havruta.dto.havrutaboard.DetailHavrutaBoardDto;
 import com.handong.cra.crawebbackend.havruta.dto.havrutaboard.ListHavrutaBoardDto;
 import com.handong.cra.crawebbackend.havruta.dto.havrutaboard.UpdateHavrutaBoardDto;
+import com.handong.cra.crawebbackend.havruta.dto.havrutaboard.response.ResListHavrutaBoardDto;
 
 import java.util.List;
 
@@ -18,11 +19,12 @@ public interface HavrutaService {
     public UpdateHavrutaDto updateHavruta(UpdateHavrutaDto updateHavrutaDto);
     public Boolean deleteHavruta(Long id);
 
+//    public List<ListHavrutaBoardDto> getHavrutaBoards();
     public List<ListHavrutaBoardDto> getHavrutaBoardsByHavrutaId(Long id);
     public DetailHavrutaBoardDto getDetailHavrutaBoardByBoardId(Long id);
 //    public List<ListBoardDto> getPaginationBoard(Long page, Integer perPage, BoardOrderBy orderBy, Boolean isASC);
     public CreateHavrutaBoardDto createHavrutaBoard(CreateHavrutaBoardDto createHavrutaBoardDto);
     public UpdateHavrutaBoardDto updateHavrutaBoard(Long id, UpdateHavrutaBoardDto updateHavrutaBoardDto);
-//    public Boolean deleteHavrutaBoardById(Long id);
 
+//    public Boolean deleteHavrutaBoardById(Long id);
 }

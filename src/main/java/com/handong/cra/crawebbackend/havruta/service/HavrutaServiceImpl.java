@@ -84,6 +84,10 @@ public class HavrutaServiceImpl implements HavrutaService {
         return true;
     }
 
+//    @Override
+//    public List<ListHavrutaBoardDto> getHavrutaBoards(){
+//    }
+
     @Override
     public List<ListHavrutaBoardDto> getHavrutaBoardsByHavrutaId(Long id) {
 
