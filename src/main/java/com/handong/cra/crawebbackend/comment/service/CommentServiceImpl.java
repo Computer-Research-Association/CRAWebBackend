@@ -7,6 +7,10 @@ import com.handong.cra.crawebbackend.comment.dto.CreateCommentDto;
 import com.handong.cra.crawebbackend.comment.dto.ListCommentDto;
 import com.handong.cra.crawebbackend.comment.dto.UpdateCommentDto;
 import com.handong.cra.crawebbackend.comment.repository.CommentRepository;
+import com.handong.cra.crawebbackend.exception.board.BoardNotFoundException;
+import com.handong.cra.crawebbackend.exception.comment.CommentNestedReplyNotAllowedException;
+import com.handong.cra.crawebbackend.exception.comment.CommentNotFoundException;
+import com.handong.cra.crawebbackend.exception.user.UserNotFoundException;
 import com.handong.cra.crawebbackend.user.domain.User;
 import com.handong.cra.crawebbackend.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
@@ -28,13 +32,16 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional
     public CreateCommentDto createComment(CreateCommentDto createCommentDto) {
-        User user = userRepository.findById(createCommentDto.getUserId()).orElseThrow();
-        Board board = boardRepository.findById(createCommentDto.getBoardId()).orElseThrow();
+        User user = userRepository.findById(createCommentDto.getUserId()).orElseThrow(UserNotFoundException::new);
+        Board board = boardRepository.findById(createCommentDto.getBoardId()).orElseThrow(BoardNotFoundException::new);
         Comment comment;
         // 2차 대댓글은 달 수 없음
         if (createCommentDto.getParentCommentId() != null) {
             log.info("parentId is {}", createCommentDto.getParentCommentId());
-            Comment parentComment = commentRepository.findById(createCommentDto.getParentCommentId()).orElseThrow();
+            Comment parentComment = commentRepository.findById(createCommentDto.getParentCommentId()).orElseThrow(CommentNotFoundException::new);
+            if (parentComment.getParentComment() != null) {
+                throw new CommentNestedReplyNotAllowedException();
+            }
             comment = new Comment(user, board, parentComment, createCommentDto);
         } else {
             log.info("parentId is null");
@@ -49,7 +56,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional
     public List<ListCommentDto> getCommentsByBoardId(Long boardId) {
-        Board board = boardRepository.findById(boardId).orElseThrow();
+        Board board = boardRepository.findById(boardId).orElseThrow(BoardNotFoundException::new);
 //        List<Comment> comments = commentRepository.findAllByBoardAndDeletedFalse(board);
         List<Comment> comments = commentRepository.findAllByBoardAndDeletedFalseAndParentCommentIsNull(board);
 
@@ -59,7 +66,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional
     public UpdateCommentDto updateComment(UpdateCommentDto updateCommentDto) {
-        Comment comment = commentRepository.findById(updateCommentDto.getId()).orElseThrow();
+        Comment comment = commentRepository.findById(updateCommentDto.getId()).orElseThrow(CommentNotFoundException::new);
         comment = comment.update(updateCommentDto);
         return UpdateCommentDto.from(comment);
     }
@@ -67,7 +74,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional
     public Boolean deleteCommentById(Long id) {
-        Comment comment = commentRepository.findById(id).orElseThrow();
+        Comment comment = commentRepository.findById(id).orElseThrow(CommentNotFoundException::new);
         comment.delete();
 
         List<Comment> comments = comment.getCommentList();
@@ -79,6 +86,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public Long getCommentCount(Long boardId) {
+        boardRepository.findById(boardId).orElseThrow(BoardNotFoundException::new);
         return (long) commentRepository.findAllByBoardIdAndDeletedFalse(boardId).size();
     }
 }

@@ -20,7 +20,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/admin/havruta")
 @RequiredArgsConstructor
-public class HavrutaController {
+public class                                                                HavrutaController {
     private final HavrutaService havrutaService;
 
     @GetMapping

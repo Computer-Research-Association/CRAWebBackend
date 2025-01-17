@@ -5,6 +5,9 @@ import com.handong.cra.crawebbackend.board.domain.Category;
 import com.handong.cra.crawebbackend.board.domain.BoardOrderBy;
 import com.handong.cra.crawebbackend.board.dto.*;
 import com.handong.cra.crawebbackend.board.repository.BoardRepository;
+import com.handong.cra.crawebbackend.exception.board.BoardLikeBadRequestException;
+import com.handong.cra.crawebbackend.exception.board.BoardNotFoundException;
+import com.handong.cra.crawebbackend.exception.user.UserNotFoundException;
 import com.handong.cra.crawebbackend.user.domain.User;
 import com.handong.cra.crawebbackend.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
@@ -61,7 +64,7 @@ public class BoardServiceImpl implements BoardService {
     @Override
     @Transactional
     public CreateBoardDto createBoard(CreateBoardDto createBoardDto) {
-        User user = userRepository.findById(createBoardDto.getUserId()).orElseThrow(() -> new RuntimeException("no user"));
+        User user = userRepository.findById(createBoardDto.getUserId()).orElseThrow(UserNotFoundException::new);
         Board board = Board.of(user, createBoardDto);
         board = boardRepository.save(board);
         return CreateBoardDto.from(board);
@@ -70,7 +73,7 @@ public class BoardServiceImpl implements BoardService {
     @Override
     @Transactional
     public UpdateBoardDto updateBoard(UpdateBoardDto updateBoardDto) {
-        Board board = boardRepository.findById(updateBoardDto.getId()).orElseThrow(() -> new RuntimeException("no data"));
+        Board board = boardRepository.findById(updateBoardDto.getId()).orElseThrow(BoardNotFoundException::new);
         board = board.update(updateBoardDto);
         return UpdateBoardDto.from(board);
     }
@@ -78,7 +81,7 @@ public class BoardServiceImpl implements BoardService {
     @Override
     @Transactional
     public Boolean deleteBoardById(Long id) {
-        boardRepository.findById(id).orElseThrow(() -> new RuntimeException("no data")).delete();
+        boardRepository.findById(id).orElseThrow(UserNotFoundException::new).delete();
         return true;
     }
 
@@ -86,7 +89,7 @@ public class BoardServiceImpl implements BoardService {
     public DetailBoardDto getDetailBoardById(Long id) {
         Board board = boardRepository.findBoardByIdAndDeletedFalse(id);
         if (board == null) {
-            throw new RuntimeException("no data");
+            throw new BoardNotFoundException();
         }
         return DetailBoardDto.from(board);
     }
@@ -101,8 +104,8 @@ public class BoardServiceImpl implements BoardService {
     @Override
     @Transactional
     public void boardLike(Long boardId, Long userId, Boolean isLiked) {
-        Board board = boardRepository.findById(boardId).orElseThrow(() -> new RuntimeException("no board"));
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("no user"));
+        Board board = boardRepository.findById(boardId).orElseThrow(BoardNotFoundException::new);
+        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         if (isLiked && !board.getLikedUsers().contains(user)) {
             log.info("Add Listing");
             board.like(user);
@@ -112,9 +115,8 @@ public class BoardServiceImpl implements BoardService {
             board.unlike(user);
             user.unlikeBoard(board);
         } else {
-            log.error("error");
             // exception
-            throw new RuntimeException("error!");
+            throw new BoardLikeBadRequestException();
         }
 
         log.info("user list size = {}, board list size = {}", user.getLikedBoards().size(), board.getLikedUsers().size());

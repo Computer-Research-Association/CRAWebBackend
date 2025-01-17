@@ -1,5 +1,6 @@
 package com.handong.cra.crawebbackend.project.service;
 
+import com.handong.cra.crawebbackend.exception.project.ProjectNotFoundException;
 import com.handong.cra.crawebbackend.project.domain.Project;
 import com.handong.cra.crawebbackend.project.domain.ProjectOrderBy;
 import com.handong.cra.crawebbackend.project.dto.CreateProjectDto;
@@ -43,7 +44,7 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     @Transactional
     public UpdateProjectDto updateProject(UpdateProjectDto updateProjectDto) { // TODO exception 처리 필요
-        Project project = projectRepository.findById(updateProjectDto.getId()).orElseThrow();
+        Project project = projectRepository.findById(updateProjectDto.getId()).orElseThrow(ProjectNotFoundException::new);
         project = project.update(updateProjectDto);
 
         // set meta data
@@ -55,14 +56,14 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     @Transactional
     public Boolean deleteProjectById(Long id) { // TODO exception 처리 필요
-        Project project = projectRepository.findById(id).orElseThrow();
+        Project project = projectRepository.findById(id).orElseThrow(ProjectNotFoundException::new);
         project.delete();
         return true;
     }
 
     @Override
     public DetailProjectDto getDetailProjectById(Long id) {
-        Project project = projectRepository.findById(id).orElseThrow();
+        Project project = projectRepository.findById(id).orElseThrow(ProjectNotFoundException::new);
         return DetailProjectDto.from(project);
     }
 
