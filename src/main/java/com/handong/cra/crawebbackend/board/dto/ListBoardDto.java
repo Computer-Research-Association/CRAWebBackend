@@ -5,7 +5,6 @@ import com.handong.cra.crawebbackend.board.domain.Category;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Getter
 @Setter
@@ -21,7 +20,6 @@ public class ListBoardDto {
     private Boolean deleted;
     private Long likeCount;
     private Long view;
-    private List<String> imageUrls;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -31,9 +29,8 @@ public class ListBoardDto {
         this.title = board.getTitle();
         this.content = board.getContent();
         this.category = board.getCategory();
-        this.likeCount = board.getLikeCount();
+        this.likeCount = (long) board.getLikedUsers().size();
         this.view = board.getView();
-        this.imageUrls = board.getImageUrls();
         this.createdAt = board.getCreatedAt();
         this.updatedAt = board.getUpdatedAt();
     }

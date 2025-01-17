@@ -6,13 +6,11 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Locale;
 
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Builder
 public class DetailBoardDto {
     private Long id;
     private Long userId;
@@ -31,14 +29,14 @@ public class DetailBoardDto {
         this.title = board.getTitle();
         this.content = board.getContent();
         this.category = board.getCategory();
-        this.likeCount =board.getLikeCount();
+        this.likeCount =  (long) board.getLikedUsers().size();
         this.view = board.getView();
         this.imageUrls = board.getImageUrls();
         this.createdAt = board.getCreatedAt();
         this.updatedAt = board.getUpdatedAt();
     }
 
-    public static DetailBoardDto from(Board board){
+    public static DetailBoardDto from(Board board) {
         return new DetailBoardDto(board);
     }
 

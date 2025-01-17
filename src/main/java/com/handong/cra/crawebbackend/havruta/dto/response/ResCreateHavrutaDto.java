@@ -12,13 +12,13 @@ import java.time.LocalDateTime;
 @Builder
 public class ResCreateHavrutaDto {
 
-    private Long Id;
+    private Long id;
     private String className;
     private String professor;
     private LocalDateTime createdAt;
 
     public ResCreateHavrutaDto(CreateHavrutaDto createHavrutaDto) {
-        this.Id = createHavrutaDto.getId();
+        this.id = createHavrutaDto.getId();
         this.className = createHavrutaDto.getClassName();
         this.professor = createHavrutaDto.getProfessor();
         this.createdAt = createHavrutaDto.getCreatedAt();
