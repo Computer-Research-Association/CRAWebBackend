@@ -18,6 +18,7 @@ public class CraExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> commonException(Exception e) {
+        log.error("CommonException", e);
         return createErrorResponseEntity(ErrorCode.INTERNAL_SERVER_ERROR);
     }
 

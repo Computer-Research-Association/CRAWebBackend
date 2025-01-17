@@ -1,5 +1,6 @@
 package com.handong.cra.crawebbackend.item.service;
 
+import com.handong.cra.crawebbackend.exception.item.ItemNotFoundException;
 import com.handong.cra.crawebbackend.item.domain.Item;
 import com.handong.cra.crawebbackend.item.domain.ItemCategory;
 import com.handong.cra.crawebbackend.item.dto.CreateItemDto;
@@ -34,7 +35,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     @Transactional
     public UpdateItemDto updateItem(Long id, UpdateItemDto updateItemDto) {
-        Item item = itemRepository.findById(id).orElseThrow(() -> new RuntimeException("no data"));
+        Item item = itemRepository.findById(id).orElseThrow(ItemNotFoundException::new);
         item = item.update(updateItemDto);
         return UpdateItemDto.from(item);
     }
@@ -42,14 +43,14 @@ public class ItemServiceImpl implements ItemService {
     @Override
     @Transactional
     public Boolean deleteItemById(Long id) {
-        itemRepository.findById(id).orElseThrow(() -> new RuntimeException("no data")).delete();
+        itemRepository.findById(id).orElseThrow(ItemNotFoundException::new).delete();
         return true;
     }
 
     @Override
     @Transactional
     public Boolean changeValidatingById(Long id, Boolean valid) {
-        itemRepository.findById(id).orElseThrow(() -> new RuntimeException("no data")).setIsBorrowed(valid);
+        itemRepository.findById(id).orElseThrow(ItemNotFoundException::new).setIsBorrowed(valid);
         return true;
     }
 
@@ -75,7 +76,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public DetailItemDto getDetailById(Long id) {
-        Item item = itemRepository.findById(id).orElseThrow(() -> new RuntimeException("no data"));
+        Item item = itemRepository.findById(id).orElseThrow(ItemNotFoundException::new);
         if (item.getDeleted()) return null;
         else return DetailItemDto.from(item);
     }

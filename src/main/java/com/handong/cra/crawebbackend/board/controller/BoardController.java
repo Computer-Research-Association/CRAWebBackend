@@ -12,6 +12,9 @@ import com.handong.cra.crawebbackend.board.dto.response.ResDetailBoardDto;
 import com.handong.cra.crawebbackend.board.dto.response.ResListBoardDto;
 import com.handong.cra.crawebbackend.board.dto.response.ResUpdateBoardDto;
 import com.handong.cra.crawebbackend.board.service.BoardService;
+import com.handong.cra.crawebbackend.exception.ErrorResponse;
+import com.handong.cra.crawebbackend.exception.board.BoardIllegalCategoryException;
+import com.handong.cra.crawebbackend.exception.board.BoardPageSizeLimitExceededException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
@@ -33,6 +36,7 @@ import java.util.List;
 @Tag(name = "Board API", description = "Board 관련 컨트롤러.")
 public class BoardController {
     private final BoardService boardService;
+    private final Integer MAX_PAGE_SIZE = 100;
 
 
     @Parameters(value = {
@@ -65,6 +69,10 @@ public class BoardController {
     //TODO 어드민만 접근 가능하게 할것
     @GetMapping("/{category}")
     public ResponseEntity<List<ResListBoardDto>> getBoardsByCategory(@PathVariable Integer category) {
+        if (category < 0 || category >= Category.values().length) {
+            throw new BoardIllegalCategoryException();
+        }
+
         return ResponseEntity.ok().body(boardService.getBoardsByCategory(Category.values()[category])
                 .stream().map(ResListBoardDto::from).toList());
     }
@@ -115,8 +123,8 @@ public class BoardController {
     @Operation(summary = "Board 페이지단위로 가져오기", description = "페이지별 Board list")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "정상 작동", content = @Content(schema = @Schema(implementation = ResListBoardDto.class))),
-            @ApiResponse(responseCode = "403", description = "권한 없음", content = @Content()),
-            @ApiResponse(responseCode = "404", description = "Board 정보 없음", content = @Content())
+            @ApiResponse(responseCode = "403", description = "권한 없음", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "404", description = "Board 정보 없음", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @GetMapping("/{category}/page/{page}")
     public ResponseEntity<List<ResListBoardDto>> getPaginationBoard(
@@ -126,6 +134,9 @@ public class BoardController {
             @RequestParam(required = false, defaultValue = "0") Integer orderBy,
             @RequestParam(required = false, defaultValue = "true") Boolean isASC
     ) {
+        if (perPage > MAX_PAGE_SIZE) {
+            throw new BoardPageSizeLimitExceededException();
+        }
         List<ListBoardDto> listBoardDtos = boardService.getPaginationBoard(Category.values()[category],page, perPage, BoardOrderBy.values()[orderBy], isASC);
         return ResponseEntity.ok(listBoardDtos.stream().map(ResListBoardDto::from).toList());
     }
@@ -133,8 +144,8 @@ public class BoardController {
     @Operation(summary = "Board 생성")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "정상 작동", content = @Content(schema = @Schema(implementation = ResCreateBoardDto.class))),
-            @ApiResponse(responseCode = "403", description = "권한 없음", content = @Content()),
-            @ApiResponse(responseCode = "404", description = "Board 정보 없음", content = @Content())
+            @ApiResponse(responseCode = "403", description = "권한 없음", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "404", description = "Board 정보 없음", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PostMapping("")
     public ResponseEntity<ResCreateBoardDto> createBoard(@RequestBody ReqCreateBoardDto reqCreateBoardDto) {
@@ -149,8 +160,8 @@ public class BoardController {
     @Operation(summary = "Board 수정")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "정상 작동", content = @Content(schema = @Schema(implementation = ResUpdateBoardDto.class))),
-            @ApiResponse(responseCode = "403", description = "권한 없음", content = @Content()),
-            @ApiResponse(responseCode = "404", description = "Board 정보 없음", content = @Content())
+            @ApiResponse(responseCode = "403", description = "권한 없음", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "404", description = "Board 정보 없음", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PutMapping("/{id}")
     public ResponseEntity<ResUpdateBoardDto> updateBoard(@PathVariable Long id, @RequestBody ReqUpdateBoardDto reqUpdateBoardDto) {
@@ -168,8 +179,8 @@ public class BoardController {
     @Operation(summary = "Board 좋아요")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "정상 작동", content = @Content()),
-            @ApiResponse(responseCode = "403", description = "권한 없음", content = @Content()),
-            @ApiResponse(responseCode = "404", description = "Board 정보 없음", content = @Content())
+            @ApiResponse(responseCode = "403", description = "권한 없음", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "404", description = "Board 정보 없음", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PostMapping("/like/{id}")
     public ResponseEntity<Void> BoardLike(
