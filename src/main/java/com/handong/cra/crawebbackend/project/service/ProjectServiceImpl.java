@@ -1,8 +1,10 @@
 package com.handong.cra.crawebbackend.project.service;
 
+
 import com.handong.cra.crawebbackend.file.domain.S3ImageCategory;
 import com.handong.cra.crawebbackend.file.service.S3ImageService;
 import com.handong.cra.crawebbackend.file.service.S3ImageServiceImpl;
+import com.handong.cra.crawebbackend.exception.project.ProjectNotFoundException;
 import com.handong.cra.crawebbackend.project.domain.Project;
 import com.handong.cra.crawebbackend.project.domain.ProjectOrderBy;
 import com.handong.cra.crawebbackend.project.dto.CreateProjectDto;
@@ -44,13 +46,15 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     @Transactional
     public UpdateProjectDto updateProject(UpdateProjectDto updateProjectDto) { // TODO exception 처리 필요
-        Project project = projectRepository.findById(updateProjectDto.getId()).orElseThrow();
+
+        Project project = projectRepository.findById(updateProjectDto.getId()).orElseThrow(ProjectNotFoundException::new);
 
         // 변경됨
         if (updateProjectDto.getImageUrl().contains("temp/")){
             s3ImageService.transferImage(project.getImageUrl(),S3ImageCategory.DELETED);
             project.setImageUrl(s3ImageService.transferImage(updateProjectDto.getImageUrl(),S3ImageCategory.PROJECT));
         }
+
         project = project.update(updateProjectDto);
 
         return UpdateProjectDto.from(project);
@@ -59,7 +63,7 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     @Transactional
     public Boolean deleteProjectById(Long id) { // TODO exception 처리 필요
-        Project project = projectRepository.findById(id).orElseThrow();
+        Project project = projectRepository.findById(id).orElseThrow(ProjectNotFoundException::new);
         project.delete();
         s3ImageService.transferImage(project.getImageUrl(), S3ImageCategory.DELETED);
         return true;
@@ -67,7 +71,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public DetailProjectDto getDetailProjectById(Long id) {
-        Project project = projectRepository.findById(id).orElseThrow();
+        Project project = projectRepository.findById(id).orElseThrow(ProjectNotFoundException::new);
         return DetailProjectDto.from(project);
     }
 
