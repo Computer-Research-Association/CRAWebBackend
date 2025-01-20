@@ -9,8 +9,12 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ResListHavrutaBoardDto extends ResListBoardDto {
 
+    private String className;
+    private String professor;
     public ResListHavrutaBoardDto (ListHavrutaBoardDto listHavrutaBoardDto){
         super(listHavrutaBoardDto);
+        this.className = listHavrutaBoardDto.getClassName();
+        this.professor = listHavrutaBoardDto.getProfessor();
     }
 
     public static ResListHavrutaBoardDto from (ListHavrutaBoardDto listHavrutaBoardDto){
