@@ -25,7 +25,10 @@ public enum ErrorCode {
     PROJECT_NOT_FOUND(HttpStatus.NOT_FOUND, "P1", "존재하지 않는 프로젝트입니다."),
     PROJECT_PAGE_SIZE_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST, "P2", "비정상적으로 큰 Per page 값입니다."),
 
-    USER_NOT_FOUND_ERROR(HttpStatus.NOT_FOUND, "U1", "해당하는 유저가 존재하지 않습니다.");
+    USER_NOT_FOUND_ERROR(HttpStatus.NOT_FOUND, "U1", "해당하는 유저가 존재하지 않습니다."),
+
+    GALLERY_PAGE_SIZE_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST, "G4", "비정상적으로 큰 Per page 값입니다.");
+
 
     private final HttpStatus status;
     private final String code;
