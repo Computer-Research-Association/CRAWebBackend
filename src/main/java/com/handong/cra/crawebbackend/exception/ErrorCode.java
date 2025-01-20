@@ -27,7 +27,8 @@ public enum ErrorCode {
 
     USER_NOT_FOUND_ERROR(HttpStatus.NOT_FOUND, "U1", "해당하는 유저가 존재하지 않습니다."),
 
-    GALLERY_PAGE_SIZE_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST, "G4", "비정상적으로 큰 Per page 값입니다.");
+    GALLERY_NOT_FOUND_ERROR(HttpStatus.BAD_REQUEST, "G1", "비정상적으로 큰 Per page 값입니다."),
+    GALLERY_PAGE_SIZE_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST, "G2", "해당하는 갤러리(사진) 존재하지 않습니다.");
 
 
     private final HttpStatus status;

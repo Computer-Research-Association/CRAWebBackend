@@ -4,6 +4,8 @@ import com.handong.cra.crawebbackend.gallery.domain.Gallery;
 import com.handong.cra.crawebbackend.gallery.dto.request.ReqGalleryDto;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Setter
 @Getter
 @AllArgsConstructor
@@ -11,6 +13,7 @@ import lombok.*;
 public class GalleryDto {
     private Long id;
     private String imgUrl;
+    private LocalDateTime createdAt;
 
     public GalleryDto(ReqGalleryDto reqGalleryDto) {
         this.imgUrl = reqGalleryDto.getImgUrl();
@@ -19,6 +22,7 @@ public class GalleryDto {
     public GalleryDto(Gallery gallery) {
         this.id = gallery.getId();
         this.imgUrl = gallery.getImgUrl();
+        this.createdAt = gallery.getCreatedAt();
     }
 
     public static GalleryDto from(ReqGalleryDto reqGalleryDto) {
