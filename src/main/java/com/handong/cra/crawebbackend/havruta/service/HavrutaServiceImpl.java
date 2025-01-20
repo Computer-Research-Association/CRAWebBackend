@@ -97,7 +97,7 @@ public class HavrutaServiceImpl implements HavrutaService {
     @Override
     public List<ListHavrutaBoardDto> getHavrutaBoards(){
 
-        List<Board> boards = boardRepository.findAll();
+        List<Board> boards = boardRepository.findByCategory(Category.HAVRUTA);
 
         List<ListHavrutaBoardDto> listHavrutaBoardDtos = boards.stream()
                 .map(ListHavrutaBoardDto::from).filter(Objects::nonNull).toList();
