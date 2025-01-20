@@ -15,4 +15,5 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     public Page<Board> findAllByHavrutaAndDeletedFalse(Havruta havruta, Pageable pageable);
     public Board findBoardByIdAndDeletedFalse(Long id);
 
+    public List<Board> findByCategory(Category category);
 }
