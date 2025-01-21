@@ -70,7 +70,8 @@ public class BoardServiceImpl implements BoardService {
     public CreateBoardDto createBoard(CreateBoardDto createBoardDto) {
         User user = userRepository.findById(createBoardDto.getUserId()).orElseThrow(UserNotFoundException::new);
         Board board = Board.of(user, createBoardDto);
-
+        log.info("test here {}",!board.getImageUrls().isEmpty());
+        log.info("Count =  {}",board.getImageUrls().size());
         if (!board.getImageUrls().isEmpty())
             board.setImageUrls(s3ImageService.transferImage(board.getImageUrls(), S3ImageCategory.BOARD));
 
