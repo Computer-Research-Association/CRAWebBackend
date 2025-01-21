@@ -113,7 +113,7 @@ public class BoardServiceImpl implements BoardService {
         board.delete();
         if (!board.getImageUrls().isEmpty())
             s3ImageService.transferImage(board.getImageUrls(), S3ImageCategory.DELETED);
-ㅛy
+
         return true;
     }
 
