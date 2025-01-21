@@ -80,10 +80,9 @@ public class BoardServiceImpl implements BoardService {
     public UpdateBoardDto updateBoard(UpdateBoardDto updateBoardDto) {
 
         Board board = boardRepository.findById(updateBoardDto.getId()).orElseThrow(BoardNotFoundException::new);
-        board = board.update(updateBoardDto);
         //img update logic
         List<String> removeImgs = board.getImageUrls();
-        List<String> newImgs = board.getImageUrls();
+        List<String> newImgs = updateBoardDto.getImageUrls();
 
         List<String> temp = new ArrayList<>(removeImgs);
         temp.retainAll(newImgs);
@@ -92,10 +91,13 @@ public class BoardServiceImpl implements BoardService {
         newImgs.removeAll(temp);
 
         s3ImageService.transferImage(removeImgs,S3ImageCategory.DELETED);
+        newImgs = s3ImageService.transferImage(newImgs,S3ImageCategory.BOARD);
         newImgs.addAll(temp);
-        board.setImageUrls(s3ImageService.transferImage(newImgs,S3ImageCategory.BOARD));
 
-        // TODO : 새로운 url 받아서 수정해줘야 함
+
+        board = board.update(updateBoardDto);
+        board.setImageUrls(newImgs);
+
 
         return UpdateBoardDto.from(board);
     }
