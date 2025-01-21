@@ -6,6 +6,7 @@ import com.handong.cra.crawebbackend.board.dto.request.ReqCreateBoardDto;
 import com.handong.cra.crawebbackend.havruta.dto.havrutaboard.CreateHavrutaBoardDto;
 import com.handong.cra.crawebbackend.havruta.dto.havrutaboard.request.ReqCreateHavrutaBoardDto;
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -21,6 +22,8 @@ public class CreateBoardDto {
     private String content;
     private Category category; //= Category.valueOf("HAVRUTA");
     private List<String> imageUrls;
+    private List<MultipartFile> files;
+    private List<String> fileUrls;
 
     private Long id = null;
     private LocalDateTime createdAt = null;
@@ -32,7 +35,7 @@ public class CreateBoardDto {
         this.content = reqCreateBoardDto.getContent();
         this.category = Category.values()[reqCreateBoardDto.getCategory()];
         this.imageUrls = reqCreateBoardDto.getImageUrls();
-
+        this.files = reqCreateBoardDto.getFiles();
     }
 
     public CreateBoardDto(Board board) {
@@ -43,6 +46,7 @@ public class CreateBoardDto {
         this.category = board.getCategory();
         this.imageUrls = board.getImageUrls();
         this.createdAt = board.getCreatedAt();
+        this.fileUrls = board.getFileUrls();
     }
 
     public CreateBoardDto(CreateHavrutaBoardDto createHavrutaBoardDto, Long userId) {

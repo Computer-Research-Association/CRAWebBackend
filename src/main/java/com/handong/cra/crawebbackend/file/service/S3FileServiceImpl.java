@@ -7,9 +7,7 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.handong.cra.crawebbackend.file.domain.S3ImageCategory;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,7 +18,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class S3ImageServiceImpl implements S3ImageService {
+public class S3FileServiceImpl implements S3FileService {
     private final AmazonS3 amazonS3;
 
     @Value("${spring.cloud.aws.s3.bucket}")
@@ -37,14 +35,14 @@ public class S3ImageServiceImpl implements S3ImageService {
     }
 
     @Override
-    public String uploadImage(MultipartFile image) {
+    public String uploadFile(MultipartFile file, S3ImageCategory s3ImageCategory) {
         // filename -> uuid
-        String filename = "temp/" + UUID.randomUUID();
+        String filename = "file/" + s3ImageCategory.toString().toLowerCase() + "/" + UUID.randomUUID() + "_" + file.getOriginalFilename();
         try {
             ObjectMetadata metadata = new ObjectMetadata();
-            metadata.setContentLength(image.getSize());
-            metadata.setContentType(image.getContentType());
-            PutObjectRequest putObjectRequest = new PutObjectRequest(bucket, filename, image.getInputStream(), metadata);
+            metadata.setContentLength(file.getSize());
+            metadata.setContentType(file.getContentType());
+            PutObjectRequest putObjectRequest = new PutObjectRequest(bucket, filename, file.getInputStream(), metadata);
             amazonS3.putObject(putObjectRequest);
             return getPublicUrl(filename);
         } catch (Exception e) {
@@ -52,7 +50,7 @@ public class S3ImageServiceImpl implements S3ImageService {
         }
     }
 
-    public String transferImage(String path, S3ImageCategory s3ImageCategory) {
+    public String transferFile(String path, S3ImageCategory s3ImageCategory) {
         String key = getKeyFromUrl(path);
         String filename = Objects.requireNonNull(key).substring("temp/".length());
         try {
@@ -68,12 +66,21 @@ public class S3ImageServiceImpl implements S3ImageService {
         }
     }
 
-    public List<String> transferImage(List<String> paths, S3ImageCategory s3ImageCategory) {
+    public List<String> transferFile(List<String> paths, S3ImageCategory s3ImageCategory) {
         List<String> urls = new ArrayList<>();
         for (String path : paths)
-            urls.add(transferImage(path, s3ImageCategory));
+            urls.add(transferFile(path, s3ImageCategory));
         return urls;
     }
+
+//
+//    public Boolean deleteImageById(Long id) {
+//        S3Image s3Image = s3ImageRepository.findById(id).orElseThrow(() -> new RuntimeException("데이터가 없어요"));
+//        DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(bucket, s3Image.getKey());
+//        amazonS3.deleteObject(deleteObjectRequest);
+//        s3ImageRepository.deleteById(id);
+//        return true;
+//    }
 
 
 }

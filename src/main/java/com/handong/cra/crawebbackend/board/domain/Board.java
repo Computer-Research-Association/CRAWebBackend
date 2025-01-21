@@ -29,6 +29,12 @@ public class Board extends BaseEntity {
     private String content;
 
     @ElementCollection
+    @CollectionTable(name = "board_files", joinColumns = @JoinColumn(name = "board_id"))
+    @Column(name = "file_url")
+    @Setter
+    private List<String> fileUrls = new ArrayList<>();
+
+    @ElementCollection
     @CollectionTable(name = "board_images", joinColumns = @JoinColumn(name = "board_id"))
     @Column(name = "image_url")
     @Setter
@@ -59,6 +65,7 @@ public class Board extends BaseEntity {
         this.category = createBoardDto.getCategory();
         this.content = createBoardDto.getContent();
         this.imageUrls = createBoardDto.getImageUrls();
+        this.fileUrls = createBoardDto.getFileUrls();
         view = 0L;
     }
 

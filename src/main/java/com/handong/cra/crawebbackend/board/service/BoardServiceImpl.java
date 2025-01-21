@@ -6,6 +6,7 @@ import com.handong.cra.crawebbackend.board.domain.BoardOrderBy;
 import com.handong.cra.crawebbackend.board.dto.*;
 import com.handong.cra.crawebbackend.board.repository.BoardRepository;
 import com.handong.cra.crawebbackend.file.domain.S3ImageCategory;
+import com.handong.cra.crawebbackend.file.service.S3FileService;
 import com.handong.cra.crawebbackend.file.service.S3ImageService;
 import com.handong.cra.crawebbackend.exception.board.BoardLikeBadRequestException;
 import com.handong.cra.crawebbackend.exception.board.BoardNotFoundException;
@@ -37,6 +38,7 @@ public class BoardServiceImpl implements BoardService {
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
     private final S3ImageService s3ImageService;
+    private final S3FileService s3FileService;
 
     @Override
     @Transactional
@@ -69,6 +71,10 @@ public class BoardServiceImpl implements BoardService {
     @Transactional
     public CreateBoardDto createBoard(CreateBoardDto createBoardDto) {
         User user = userRepository.findById(createBoardDto.getUserId()).orElseThrow(UserNotFoundException::new);
+        List<String> fileUrls = new ArrayList<>();
+        fileUrls = createBoardDto.getFiles().stream().map((file) -> s3FileService.uploadFile(file, S3ImageCategory.BOARD)).toList();
+        createBoardDto.setFileUrls(fileUrls);
+
         Board board = Board.of(user, createBoardDto);
         board.setImageUrls(s3ImageService.transferImage(board.getImageUrls(), S3ImageCategory.BOARD));
         board = boardRepository.save(board);

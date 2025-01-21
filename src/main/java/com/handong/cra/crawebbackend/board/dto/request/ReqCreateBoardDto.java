@@ -3,6 +3,7 @@ package com.handong.cra.crawebbackend.board.dto.request;
 import com.handong.cra.crawebbackend.board.domain.Category;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Calendar;
 import java.util.List;
@@ -28,4 +29,6 @@ public class ReqCreateBoardDto {
     private Integer category;
     @Schema(description = "사진들 url")
     private List<String> imageUrls;
+    @Schema(description = "첨부파일")
+    private List<MultipartFile> files;
 }
