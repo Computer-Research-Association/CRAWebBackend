@@ -1,9 +1,6 @@
 package com.handong.cra.crawebbackend.gallery.controller;
 
 import com.handong.cra.crawebbackend.board.domain.BoardOrderBy;
-import com.handong.cra.crawebbackend.board.domain.Category;
-import com.handong.cra.crawebbackend.board.dto.ListBoardDto;
-import com.handong.cra.crawebbackend.board.dto.response.ResListBoardDto;
 import com.handong.cra.crawebbackend.exception.gallery.GalleryPageSizeLimitExceededException;
 import com.handong.cra.crawebbackend.gallery.dto.GalleryDto;
 import com.handong.cra.crawebbackend.gallery.dto.response.ResGalleryDto;

@@ -8,6 +8,8 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.handong.cra.crawebbackend.file.domain.S3ImageCategory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Service;
@@ -21,6 +23,7 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class S3ImageServiceImpl implements S3ImageService {
+    private static final Logger log = LoggerFactory.getLogger(S3ImageServiceImpl.class);
     private final AmazonS3 amazonS3;
 
     @Value("${spring.cloud.aws.s3.bucket}")
@@ -54,15 +57,19 @@ public class S3ImageServiceImpl implements S3ImageService {
 
     public String transferImage(String path, S3ImageCategory s3ImageCategory) {
         String key = getKeyFromUrl(path);
-        String filename = Objects.requireNonNull(key).substring("temp/".length());
+        log.info("key = {}", key);
+        String filename = Objects.requireNonNull(key).substring(key.indexOf("/"));
+        log.info("filename = {}", filename);
+
+        String newPath = s3ImageCategory.toString().toLowerCase()  + filename;
         try {
             CopyObjectRequest copyObjectRequest =
-                    new CopyObjectRequest(bucket, key, bucket, s3ImageCategory.toString().toLowerCase() + "/" + filename);
+                    new CopyObjectRequest(bucket, key, bucket, newPath);
             DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(bucket, key);
 
             amazonS3.copyObject(copyObjectRequest);
             amazonS3.deleteObject(deleteObjectRequest);
-            return   getPublicUrl(filename);
+            return getPublicUrl(newPath);
         } catch (Exception e) {
             return null;
         }
