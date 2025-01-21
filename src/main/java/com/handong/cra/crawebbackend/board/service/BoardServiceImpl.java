@@ -70,7 +70,10 @@ public class BoardServiceImpl implements BoardService {
     public CreateBoardDto createBoard(CreateBoardDto createBoardDto) {
         User user = userRepository.findById(createBoardDto.getUserId()).orElseThrow(UserNotFoundException::new);
         Board board = Board.of(user, createBoardDto);
-        board.setImageUrls(s3ImageService.transferImage(board.getImageUrls(), S3ImageCategory.BOARD));
+
+        if (!board.getImageUrls().isEmpty())
+            board.setImageUrls(s3ImageService.transferImage(board.getImageUrls(), S3ImageCategory.BOARD));
+
         board = boardRepository.save(board);
         return CreateBoardDto.from(board);
     }
@@ -80,23 +83,24 @@ public class BoardServiceImpl implements BoardService {
     public UpdateBoardDto updateBoard(UpdateBoardDto updateBoardDto) {
 
         Board board = boardRepository.findById(updateBoardDto.getId()).orElseThrow(BoardNotFoundException::new);
-        //img update logic
-        List<String> removeImgs = board.getImageUrls();
-        List<String> newImgs = updateBoardDto.getImageUrls();
+        if (!updateBoardDto.getImageUrls().isEmpty()) {
+            //img update logic
+            List<String> removeImgs = board.getImageUrls();
+            List<String> newImgs = updateBoardDto.getImageUrls();
 
-        List<String> temp = new ArrayList<>(removeImgs);
-        temp.retainAll(newImgs);
+            List<String> temp = new ArrayList<>(removeImgs);
+            temp.retainAll(newImgs);
 
-        removeImgs.removeAll(temp);
-        newImgs.removeAll(temp);
+            removeImgs.removeAll(temp);
+            newImgs.removeAll(temp);
 
-        s3ImageService.transferImage(removeImgs,S3ImageCategory.DELETED);
-        newImgs = s3ImageService.transferImage(newImgs,S3ImageCategory.BOARD);
-        newImgs.addAll(temp);
+            s3ImageService.transferImage(removeImgs, S3ImageCategory.DELETED);
+            newImgs = s3ImageService.transferImage(newImgs, S3ImageCategory.BOARD);
+            newImgs.addAll(temp);
 
-
+            board.setImageUrls(newImgs);
+        }
         board = board.update(updateBoardDto);
-        board.setImageUrls(newImgs);
 
 
         return UpdateBoardDto.from(board);
@@ -107,8 +111,9 @@ public class BoardServiceImpl implements BoardService {
     public Boolean deleteBoardById(Long id) {
         Board board = boardRepository.findById(id).orElseThrow(UserNotFoundException::new);
         board.delete();
-        s3ImageService.transferImage(board.getImageUrls(), S3ImageCategory.DELETED);
-
+        if (!board.getImageUrls().isEmpty())
+            s3ImageService.transferImage(board.getImageUrls(), S3ImageCategory.DELETED);
+ㅛy
         return true;
     }
 

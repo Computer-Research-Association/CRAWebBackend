@@ -81,7 +81,7 @@ public class Board extends BaseEntity {
     public Board update(UpdateBoardDto updateBoardDto) {
         this.title = updateBoardDto.getTitle();
         this.content = updateBoardDto.getContent();
-        this.imageUrls = updateBoardDto.getImageUrls();
+//        this.imageUrls = updateBoardDto.getImageUrls(); // 다른 로직에서 처리
         return this;
     }
 
