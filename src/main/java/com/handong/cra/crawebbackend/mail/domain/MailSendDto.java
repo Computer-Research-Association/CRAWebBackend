@@ -11,4 +11,5 @@ public class MailSendDto {
     private String sendEmail;
     private MailCategory mailCategory;
     private String username;
+    private String url;
 }

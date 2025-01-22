@@ -34,6 +34,7 @@ public class MailService {
 
             // change to username
             content = content.replace("#username", mailSendDto.getUsername());
+            content = content.replace("#url", mailSendDto.getUrl());
 
             mimeMessageHelper.setText(content, true);
 
@@ -42,7 +43,7 @@ public class MailService {
 
             log.info("send Email to {}, category = {}", mailSendDto.getSendEmail(), mailSendDto.getMailCategory().toString());
         } catch (Exception e) {
-            log.info("메일 발송 실패!");
+            log.error("Fail sending Email!");
             throw new RuntimeException(e);
         }
     }
