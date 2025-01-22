@@ -49,7 +49,7 @@ public class ProjectServiceImpl implements ProjectService {
 
         Project project = projectRepository.findById(updateProjectDto.getId()).orElseThrow(ProjectNotFoundException::new);
 
-        // 변경됨
+        // 수정됨
         if (updateProjectDto.getImageUrl().contains("temp/")){
             s3ImageService.transferImage(project.getImageUrl(),S3ImageCategory.DELETED);
             project.setImageUrl(s3ImageService.transferImage(updateProjectDto.getImageUrl(),S3ImageCategory.PROJECT));
