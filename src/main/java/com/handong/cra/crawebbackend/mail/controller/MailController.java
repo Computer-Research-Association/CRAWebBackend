@@ -1,11 +1,11 @@
 package com.handong.cra.crawebbackend.mail.controller;
 
-import jakarta.mail.internet.MimeMessage;
+import com.handong.cra.crawebbackend.mail.domain.MailDto;
+import com.handong.cra.crawebbackend.mail.service.MailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -14,26 +14,17 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class MailController {
 
-    private final JavaMailSender javaMailSender;
+    private final MailService mailService;
 
-    @PostMapping("/test")
-    public ResponseEntity<Void> testMailSander(){
-        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
-        try {
-            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, false, "UTF-8");
-            mimeMessageHelper.setTo(emailMessage.getTo()); // 메일 수신자
-            mimeMessageHelper.setSubject(emailMessage.getSubject()); // 메일 제목
-            mimeMessageHelper.setText(emailMessage.getMessage(), false); // 메일 본문 내용, HTML 여부
-            javaMailSender.send(mimeMessage);
-            log.info("Success!!");
-        } catch (Exception e) {
-            log.info("fail!!");
-            throw new RuntimeException(e);
-        }
-
-
-
+    @GetMapping("/simple")
+    public ResponseEntity<Void> sendSimpleMailMessage(@RequestBody MailDto mailDto) {
+        mailService.sendSimpleMailMessage(mailDto);
         return ResponseEntity.ok().build();
     }
 
+    @GetMapping("/html")
+    public ResponseEntity<Void> sendMimeMessage(@RequestBody MailDto mailDto) {
+        mailService.sendMimeMessage(mailDto);
+        return ResponseEntity.ok().build();
+    }
 }
