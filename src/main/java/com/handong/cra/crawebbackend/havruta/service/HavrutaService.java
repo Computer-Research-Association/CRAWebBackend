@@ -22,6 +22,7 @@ public interface HavrutaService {
 
     public List<ListHavrutaBoardDto> getHavrutaBoards();
     public List<ListHavrutaBoardDto> getHavrutaBoardsByHavrutaId(Long id);
+    public List<ListHavrutaBoardDto> getPaginationAllHavrutaBoard(Long page, Integer perPage, BoardOrderBy value, Boolean isASC);
     public List<ListHavrutaBoardDto> getPaginationHavrutaBoard(Long id,Long page, Integer perPage, BoardOrderBy value, Boolean isASC);
     public DetailHavrutaBoardDto getDetailHavrutaBoardByBoardId(Long id);
     public CreateHavrutaBoardDto createHavrutaBoard(CreateHavrutaBoardDto createHavrutaBoardDto);

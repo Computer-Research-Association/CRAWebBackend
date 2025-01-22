@@ -116,6 +116,21 @@ public class HavrutaServiceImpl implements HavrutaService {
     }
 
     @Override
+    public List<ListHavrutaBoardDto> getPaginationAllHavrutaBoard(Long page, Integer perPage, BoardOrderBy boardOrderBy, Boolean isASC){
+        HashMap<BoardOrderBy, String> map = new HashMap<>();
+        map.put(BoardOrderBy.DATE, "createdAt");
+        map.put(BoardOrderBy.LIKECOUNT, "likeCount");
+
+        Sort sort = Sort.by(map.get(boardOrderBy));
+        sort = (isASC) ? sort.ascending() : sort.descending();
+        Pageable pageable = PageRequest.of(Math.toIntExact(page), perPage, sort);
+
+        Page<Board> boards = boardRepository.findByCategoryAndDeletedFalse(Category.HAVRUTA, pageable);
+
+        return boards.stream().map(ListHavrutaBoardDto::from).toList();
+    }
+
+    @Override
     public List<ListHavrutaBoardDto> getPaginationHavrutaBoard(Long id, Long page, Integer perPage, BoardOrderBy boardOrderBy, Boolean isASC) {
         HashMap<BoardOrderBy, String> map = new HashMap<>();
         map.put(BoardOrderBy.DATE, "createdAt");
