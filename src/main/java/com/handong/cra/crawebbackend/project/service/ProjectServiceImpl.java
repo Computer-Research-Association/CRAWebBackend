@@ -1,6 +1,7 @@
 package com.handong.cra.crawebbackend.project.service;
 
 
+import com.handong.cra.crawebbackend.exception.project.ProjectSemesterParseError;
 import com.handong.cra.crawebbackend.file.domain.S3ImageCategory;
 import com.handong.cra.crawebbackend.file.service.S3ImageService;
 import com.handong.cra.crawebbackend.file.service.S3ImageServiceImpl;
@@ -36,6 +37,10 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     @Transactional
     public CreateProjectDto createProject(CreateProjectDto createProjectDto) {
+
+        if (createProjectDto.getSemester().length() > 4 || !createProjectDto.getSemester().contains("-")){
+            throw new ProjectSemesterParseError();
+        }
         Project project = Project.from(createProjectDto);
         project.setImageUrl(s3ImageService.transferImage(project.getImageUrl(), S3ImageCategory.PROJECT));
         project = projectRepository.save(project); // save 된 Entity 가져옴

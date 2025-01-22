@@ -24,6 +24,7 @@ public enum ErrorCode {
 
     PROJECT_NOT_FOUND(HttpStatus.NOT_FOUND, "P1", "존재하지 않는 프로젝트입니다."),
     PROJECT_PAGE_SIZE_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST, "P2", "비정상적으로 큰 Per page 값입니다."),
+    PROJECT_SEMESTER_PARSE_ERROR(HttpStatus.BAD_REQUEST, "P3", "잘못된 학기 수 값 입니다. EX) 25-1"),
 
     USER_NOT_FOUND_ERROR(HttpStatus.NOT_FOUND, "U1", "해당하는 유저가 존재하지 않습니다."),
 
