@@ -81,15 +81,4 @@ public class S3ImageServiceImpl implements S3ImageService {
             urls.add(transferImage(path, s3ImageCategory));
         return urls;
     }
-
-//
-//    public Boolean deleteImageById(Long id) {
-//        S3Image s3Image = s3ImageRepository.findById(id).orElseThrow(() -> new RuntimeException("데이터가 없어요"));
-//        DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(bucket, s3Image.getKey());
-//        amazonS3.deleteObject(deleteObjectRequest);
-//        s3ImageRepository.deleteById(id);
-//        return true;
-//    }
-
-
 }
