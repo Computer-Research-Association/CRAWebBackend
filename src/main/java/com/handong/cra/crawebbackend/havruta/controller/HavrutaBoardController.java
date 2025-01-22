@@ -48,6 +48,17 @@ public class HavrutaBoardController {
         return ResponseEntity.status(HttpStatus.CREATED).body(ResCreateHavrutaBoardDto.from(havrutaService.createHavrutaBoard(CreateHavrutaBoardDto.from(reqCreateHavrutaBoardDto))));
     }
 
+    @GetMapping("/page/{page}")
+    public ResponseEntity<List<ResListHavrutaBoardDto>> getPaginationAllHavrutaBoard(
+            @PathVariable Long page,
+            @RequestParam(required = false, defaultValue = "0") Integer perPage,
+            @RequestParam(required = false, defaultValue = "0") Integer orderBy,
+            @RequestParam(required = false, defaultValue = "true") Boolean isASC
+    ){
+        List<ListHavrutaBoardDto> listHavrutaBoardDtos = havrutaService.getPaginationAllHavrutaBoard(page, perPage, BoardOrderBy.values()[orderBy], isASC);
+        return ResponseEntity.ok(listHavrutaBoardDtos.stream().map(ResListHavrutaBoardDto::from).toList());
+    }
+
     @GetMapping("/{id}/page/{page}")
     public ResponseEntity<List<ResListHavrutaBoardDto>> getPaginationHavrutaBoard(
             @PathVariable Long id,
