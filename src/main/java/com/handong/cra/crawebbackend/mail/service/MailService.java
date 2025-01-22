@@ -20,8 +20,9 @@ public class MailService {
     public void sendMimeMessage(MailSendDto mailSendDto) {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
 
+
         try {
-            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, false, "UTF-8");
+            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
 
             // set email to send
             mimeMessageHelper.setTo(mailSendDto.getSendEmail());
@@ -33,8 +34,10 @@ public class MailService {
             String content = mailSendDto.getMailCategory().getTemplate().getContentAsString(Charset.defaultCharset());
 
             // change to username
-            content = content.replace("#username", mailSendDto.getUsername());
-            content = content.replace("#url", mailSendDto.getUrl());
+            if (mailSendDto.getUsername()!=null)
+                content = content.replace("#username", mailSendDto.getUsername());
+            if (mailSendDto.getUrl() != null)
+                content = content.replace("#url", mailSendDto.getUrl());
 
             mimeMessageHelper.setText(content, true);
 
