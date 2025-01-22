@@ -6,10 +6,10 @@ import lombok.*;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class MailDto {
-
+@Builder
+public class MailSendDto {
     private int id;
-    private String name;
-    private String email;
-    private String message;
+    private String title;
+    private String sendEmail;
+    private MailCategory mailCategory;
 }

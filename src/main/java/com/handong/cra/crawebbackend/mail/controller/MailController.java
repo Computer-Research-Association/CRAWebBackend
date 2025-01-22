@@ -16,12 +16,6 @@ public class MailController {
 
     private final MailService mailService;
 
-    @GetMapping("/simple")
-    public ResponseEntity<Void> sendSimpleMailMessage(@RequestBody MailDto mailDto) {
-        mailService.sendSimpleMailMessage(mailDto);
-        return ResponseEntity.ok().build();
-    }
-
     @GetMapping("/html")
     public ResponseEntity<Void> sendMimeMessage(@RequestBody MailDto mailDto) {
         mailService.sendMimeMessage(mailDto);

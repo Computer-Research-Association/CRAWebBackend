@@ -1,6 +1,7 @@
 package com.handong.cra.crawebbackend.mail.service;
 
 import com.handong.cra.crawebbackend.mail.domain.MailDto;
+import com.handong.cra.crawebbackend.mail.domain.MailSendDto;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,24 +22,28 @@ public class MailService {
     private final JavaMailSender javaMailSender;
 
     @Value("classpath:templates/password-email.html")
+    private Resource passwordTemplate;
+    private final String PASSWORD_MAIL_TITLE = "[CRA] 비밀번호 재설정 안내";
+
+    @Value("classpath:templates/password-email.html")
     private Resource emailTemplate;
 
-    public void sendSimpleMailMessage(MailDto mailDto) {
-        try {
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom(mailDto.getEmail());
-            message.setTo("email@email.com");
-            message.setSubject(mailDto.getName());
-            message.setText(mailDto.getMessage() + " "+ mailDto.getEmail());
-            javaMailSender.send(message);
-            log.info("메일 발송 성공!");
-        } catch (Exception e) {
-            log.info("메일 발송 실패!");
-            throw new RuntimeException(e);
-        }
-    }
+//    public void sendSimpleMailMessage(MailDto mailDto) {
+//        try {
+//            SimpleMailMessage message = new SimpleMailMessage();
+//            message.setFrom(mailDto.getEmail());
+////            message.setTo("email@email.com");
+//            message.setSubject(mailDto.getName());
+//            message.setText(mailDto.getMessage() + " "+ mailDto.getEmail());
+//            javaMailSender.send(message);
+//            log.info("메일 발송 성공!");
+//        } catch (Exception e) {
+//            log.info("메일 발송 실패!");
+//            throw new RuntimeException(e);
+//        }
+//    }
 
-    public void sendMimeMessage(MailDto mailDto) {
+    public void sendMimeMessage(MailSendDto mailSendDto) {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
 
         try{
@@ -47,10 +52,10 @@ public class MailService {
             // 메일을 받을 수신자 설정
             mimeMessageHelper.setTo("email@email.com");
             // 메일의 제목 설정
-            mimeMessageHelper.setSubject("[CRA] 비밀번호 재설정 안내");
+            mimeMessageHelper.setSubject("");
 
             // html 문법 적용한 메일의 내용
-            String content = emailTemplate.getContentAsString(Charset.defaultCharset());
+            String content = passwordTemplate.getContentAsString(Charset.defaultCharset());
 
             // 메일의 내용 설정
             mimeMessageHelper.setText(content, true);
