@@ -8,8 +8,7 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 public class MailSendDto {
-    private int id;
-    private String title;
     private String sendEmail;
     private MailCategory mailCategory;
+    private String username;
 }
