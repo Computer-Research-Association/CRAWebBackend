@@ -69,7 +69,7 @@ public class Project extends BaseEntity {
         this.gitHubUrl = updateProjectDto.getGitHubUrl();
         this.serviceUrl = updateProjectDto.getServiceUrl();
         this.members = updateProjectDto.getMembers();
-//        this.imageUrl = updateProjectDto.getImageUrl(); // service 로직에서 처리
+        this.imageUrl = updateProjectDto.getImageUrl();
         return this;
     }
 }

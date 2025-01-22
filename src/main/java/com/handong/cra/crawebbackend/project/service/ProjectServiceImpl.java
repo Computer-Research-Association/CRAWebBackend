@@ -53,11 +53,16 @@ public class ProjectServiceImpl implements ProjectService {
     public UpdateProjectDto updateProject(UpdateProjectDto updateProjectDto) { // TODO exception 처리 필요
 
         Project project = projectRepository.findById(updateProjectDto.getId()).orElseThrow(ProjectNotFoundException::new);
+        String newImgUrl= "";
 
         // 수정됨
         if (updateProjectDto.getImageUrl().contains("temp/")){
+            log.info("Project img 수정 로직 진행");
             s3ImageService.transferImage(project.getImageUrl(),S3ImageCategory.DELETED);
-            project.setImageUrl(s3ImageService.transferImage(updateProjectDto.getImageUrl(),S3ImageCategory.PROJECT));
+            newImgUrl = s3ImageService.transferImage(updateProjectDto.getImageUrl(),S3ImageCategory.PROJECT);
+//            project.setImageUrl(newImgUrl);
+            updateProjectDto.setImageUrl(newImgUrl);
+            log.info("Project img 수정 완료");
         }
 
         project = project.update(updateProjectDto);
