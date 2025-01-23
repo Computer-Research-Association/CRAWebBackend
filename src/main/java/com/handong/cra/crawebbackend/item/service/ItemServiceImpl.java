@@ -30,7 +30,7 @@ public class ItemServiceImpl implements ItemService {
     @Transactional
     public CreateItemDto createItem(CreateItemDto createItemDto) {
         if (createItemDto.getImageUrl() != null)
-            createItemDto.setCreatedAt(s3ImageService.transferImage(item.getImageUrl(), S3ImageCategory.ITEM));
+            createItemDto.setImageUrl(s3ImageService.transferImage(createItemDto.getImageUrl(), S3ImageCategory.ITEM));
 
         Item item = Item.from(createItemDto);
         item = itemRepository.save(item);
