@@ -5,13 +5,14 @@ import com.amazonaws.services.s3.model.CopyObjectRequest;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.handong.cra.crawebbackend.exception.s3image.S3ImageTransferException;
+import com.handong.cra.crawebbackend.exception.s3image.S3ImageUploadException;
+import com.handong.cra.crawebbackend.exception.s3image.S3ImageUrlException;
 import com.handong.cra.crawebbackend.file.domain.S3ImageCategory;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -30,8 +31,8 @@ public class S3ImageServiceImpl implements S3ImageService {
     private String bucket;
 
     private String getKeyFromUrl(String url) {
-        String originUrl = getPublicUrl("");
-        if (!url.startsWith(originUrl)) return null;
+        String originUrl = getPublicUrl(""); // get aws s3 url
+        if (!url.startsWith(originUrl)) throw new S3ImageUrlException();
         else return url.substring(originUrl.length());
     }
 
@@ -51,15 +52,18 @@ public class S3ImageServiceImpl implements S3ImageService {
             amazonS3.putObject(putObjectRequest);
             return getPublicUrl(filename);
         } catch (Exception e) {
-            return null;
+            throw new S3ImageUploadException();
         }
     }
 
     public String transferImage(String path, S3ImageCategory s3ImageCategory) {
         String key = getKeyFromUrl(path);
-        log.info("key = {}", key);
+        log.debug("key = {}", key);
         String filename = Objects.requireNonNull(key).substring(key.indexOf("/"));
-        log.info("filename = {}", filename);
+        log.debug("filename = {}", filename);
+
+        // wrong url
+        if (!path.contains(getKeyFromUrl(""))) throw new S3ImageUrlException();
 
         String newPath = s3ImageCategory.toString().toLowerCase()  + filename;
         try {
@@ -71,7 +75,7 @@ public class S3ImageServiceImpl implements S3ImageService {
             amazonS3.deleteObject(deleteObjectRequest);
             return getPublicUrl(newPath);
         } catch (Exception e) {
-            return null;
+            throw new S3ImageTransferException();
         }
     }
 
@@ -81,6 +85,4 @@ public class S3ImageServiceImpl implements S3ImageService {
             urls.add(transferImage(path, s3ImageCategory));
         return urls;
     }
-
-
 }

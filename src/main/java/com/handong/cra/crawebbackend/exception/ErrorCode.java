@@ -24,11 +24,13 @@ public enum ErrorCode {
 
     PROJECT_NOT_FOUND(HttpStatus.NOT_FOUND, "P1", "존재하지 않는 프로젝트입니다."),
     PROJECT_PAGE_SIZE_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST, "P2", "비정상적으로 큰 Per page 값입니다."),
+    PROJECT_SEMESTER_PARSE(HttpStatus.BAD_REQUEST, "P3", "잘못된 학기 수 값 입니다. EX) 25-1"),
 
     USER_NOT_FOUND_ERROR(HttpStatus.NOT_FOUND, "U1", "해당하는 유저가 존재하지 않습니다."),
 
-    GALLERY_NOT_FOUND_ERROR(HttpStatus.BAD_REQUEST, "G1", "비정상적으로 큰 Per page 값입니다."),
-    GALLERY_PAGE_SIZE_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST, "G2", "해당하는 갤러리(사진) 존재하지 않습니다.");
+    S3IMAGE_UPLOAD(HttpStatus.INTERNAL_SERVER_ERROR, "S3I1","이미지 업로드중 에러가 발생했습니다."),
+    S3IMAGE_TRANSFER(HttpStatus.INTERNAL_SERVER_ERROR, "S3I2","이미지 경로 이동중 에러가 발생했습니다."),
+    S3IMAGE_URL(HttpStatus.BAD_REQUEST,  "S3I3","잘못된 이미지 url 입니다");
 
 
     private final HttpStatus status;

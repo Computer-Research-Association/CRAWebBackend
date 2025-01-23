@@ -23,6 +23,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -152,7 +153,7 @@ public class BoardController {
             @ApiResponse(responseCode = "404", description = "Board 정보 없음", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PostMapping("")
-    public ResponseEntity<ResCreateBoardDto> createBoard(@RequestPart("board") ReqCreateBoardDto reqCreateBoardDto,
+    public ResponseEntity<ResCreateBoardDto> createBoard(@Valid @RequestPart("board") ReqCreateBoardDto reqCreateBoardDto,
                                                          @RequestPart("files") List<MultipartFile> files) {
         return ResponseEntity.status(HttpStatus.CREATED).body(ResCreateBoardDto.from(boardService
                 .createBoard(CreateBoardDto.of(reqCreateBoardDto, reqCreateBoardDto.getUserId(), files))));
