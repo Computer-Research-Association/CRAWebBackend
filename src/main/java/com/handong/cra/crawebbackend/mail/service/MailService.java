@@ -17,7 +17,12 @@ public class MailService {
 
     private final JavaMailSender javaMailSender;
 
-    public void sendMimeMessage(MailSendDto mailSendDto) {
+    public void sendMimeMessage(MailSendDto mailSendDto) { // TODO exception 처리?
+//        if (!mailSendDto.getSendEmail().contains("@")){
+//            throw new
+//        }
+
+
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
 
 
