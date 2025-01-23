@@ -64,7 +64,7 @@ public class S3ImageServiceImpl implements S3ImageService {
         log.debug("filename = {}", filename);
 
         // wrong url
-        if (!path.contains(getKeyFromUrl(""))) throw new S3ImageUrlException();
+        if (!path.contains(getPublicUrl(""))) throw new S3ImageUrlException();
 
         String newPath = s3ImageCategory.toString().toLowerCase()  + filename;
         try {
