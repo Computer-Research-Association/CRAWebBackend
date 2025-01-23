@@ -29,8 +29,10 @@ public class ItemServiceImpl implements ItemService {
     @Override
     @Transactional
     public CreateItemDto createItem(CreateItemDto createItemDto) {
+        if (createItemDto.getImageUrl() != null)
+            createItemDto.setCreatedAt(s3ImageService.transferImage(item.getImageUrl(), S3ImageCategory.ITEM));
+
         Item item = Item.from(createItemDto);
-        item.setImageUrl(s3ImageService.transferImage(item.getImageUrl(), S3ImageCategory.ITEM));
         item = itemRepository.save(item);
         return CreateItemDto.from(item);
     }
@@ -46,7 +48,6 @@ public class ItemServiceImpl implements ItemService {
         }
 
         item = item.update(updateItemDto);
-
         return UpdateItemDto.from(item);
     }
 
@@ -55,7 +56,9 @@ public class ItemServiceImpl implements ItemService {
     public Boolean deleteItemById(Long id) {
         Item item = itemRepository.findById(id).orElseThrow(ItemNotFoundException::new);
         item.delete();
-        s3ImageService.transferImage(item.getImageUrl(), S3ImageCategory.DELETED);
+
+        if (item.getImageUrl() != null)
+            s3ImageService.transferImage(item.getImageUrl(), S3ImageCategory.DELETED);
 
         return true;
     }
