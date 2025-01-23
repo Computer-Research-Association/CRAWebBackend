@@ -4,6 +4,9 @@ import com.handong.cra.crawebbackend.board.domain.Board;
 import com.handong.cra.crawebbackend.board.dto.UpdateBoardDto;
 import com.handong.cra.crawebbackend.havruta.dto.havrutaboard.request.ReqUpdateHavrutaBoardDto;
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -16,8 +19,8 @@ public class UpdateHavrutaBoardDto extends UpdateBoardDto {
     private String className;
     private String professor;
 
-    public UpdateHavrutaBoardDto(ReqUpdateHavrutaBoardDto reqUpdateHavrutaBoardDto){
-        super(reqUpdateHavrutaBoardDto);
+    public UpdateHavrutaBoardDto(Long id, ReqUpdateHavrutaBoardDto reqUpdateHavrutaBoardDto, List<MultipartFile> files){
+        super(id, reqUpdateHavrutaBoardDto, files);
         this.havrutaId = reqUpdateHavrutaBoardDto.getHavrutaId();
     }
 
@@ -28,8 +31,8 @@ public class UpdateHavrutaBoardDto extends UpdateBoardDto {
         this.professor = board.getHavruta().getProfessor();
     }
 
-    public static UpdateHavrutaBoardDto of(ReqUpdateHavrutaBoardDto reqUpdateHavrutaBoardDto){
-        return new UpdateHavrutaBoardDto(reqUpdateHavrutaBoardDto);
+    public static UpdateHavrutaBoardDto of(Long id, ReqUpdateHavrutaBoardDto reqUpdateHavrutaBoardDto, List<MultipartFile> files){
+        return new UpdateHavrutaBoardDto(id, reqUpdateHavrutaBoardDto, files);
     }
 
     public static UpdateHavrutaBoardDto from(Board board){

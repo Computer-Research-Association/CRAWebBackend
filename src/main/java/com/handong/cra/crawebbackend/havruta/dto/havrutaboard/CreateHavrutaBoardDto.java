@@ -4,6 +4,9 @@ import com.handong.cra.crawebbackend.board.domain.Board;
 import com.handong.cra.crawebbackend.board.dto.CreateBoardDto;
 import com.handong.cra.crawebbackend.havruta.dto.havrutaboard.request.ReqCreateHavrutaBoardDto;
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @Setter
 @Getter
@@ -25,6 +28,15 @@ public class CreateHavrutaBoardDto extends CreateBoardDto {
     public CreateHavrutaBoardDto(ReqCreateHavrutaBoardDto reqCreateHavrutaBoardDto){
         super(reqCreateHavrutaBoardDto);
         this.havrutaId = reqCreateHavrutaBoardDto.getHavrutaId();
+    }
+
+    public CreateHavrutaBoardDto(ReqCreateHavrutaBoardDto reqCreateHavrutaBoardDto, Long userId, List<MultipartFile> files) {
+        super(reqCreateHavrutaBoardDto, userId, files);
+        this.havrutaId = reqCreateHavrutaBoardDto.getHavrutaId();
+    }
+
+    public static CreateHavrutaBoardDto of(ReqCreateHavrutaBoardDto reqCreateHavrutaBoardDto, Long userId, List<MultipartFile> files) {
+        return new CreateHavrutaBoardDto(reqCreateHavrutaBoardDto, userId, files);
     }
 
     public static CreateHavrutaBoardDto from(Board board){

@@ -55,6 +55,7 @@ public class CreateBoardDto {
         this.content = createHavrutaBoardDto.getContent();
         this.category = createHavrutaBoardDto.getCategory();
         this.imageUrls = createHavrutaBoardDto.getImageUrls();
+        this.fileUrls = createHavrutaBoardDto.getFileUrls();
     }
 
     public CreateBoardDto(ReqCreateHavrutaBoardDto reqCreateHavrutaBoardDto) {

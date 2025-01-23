@@ -26,6 +26,6 @@ public interface HavrutaService {
     public List<ListHavrutaBoardDto> getPaginationHavrutaBoard(Long id,Long page, Integer perPage, BoardOrderBy value, Boolean isASC);
     public DetailHavrutaBoardDto getDetailHavrutaBoardByBoardId(Long id);
     public CreateHavrutaBoardDto createHavrutaBoard(CreateHavrutaBoardDto createHavrutaBoardDto);
-    public UpdateHavrutaBoardDto updateHavrutaBoard(Long id, UpdateHavrutaBoardDto updateHavrutaBoardDto);
+    public UpdateHavrutaBoardDto updateHavrutaBoard(UpdateHavrutaBoardDto updateHavrutaBoardDto);
 //    public Boolean deleteHavrutaBoardById(Long id);
 }
