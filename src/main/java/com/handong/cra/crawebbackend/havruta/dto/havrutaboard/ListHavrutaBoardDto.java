@@ -6,11 +6,16 @@ import lombok.*;
 
 @Setter
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 public class ListHavrutaBoardDto extends ListBoardDto {
 
+    private String className;
+    private String professor;
     public ListHavrutaBoardDto (Board board){
         super(board);
+        this.className = board.getHavruta().getClassName();
+        this.professor = board.getHavruta().getProfessor();
     }
 
     public static ListHavrutaBoardDto from (Board board){
