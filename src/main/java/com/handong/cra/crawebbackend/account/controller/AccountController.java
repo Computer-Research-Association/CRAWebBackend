@@ -10,11 +10,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/admin/account")
-public class AccountAdminController {
+@RequestMapping("/api/account")
+public class AccountController {
 
-    @GetMapping("/code/signup")
-    public ResponseEntity<?> generateSignupCodes(@RequestParam Short length){
+    @GetMapping("/change-password")
+    public ResponseEntity<?> requestChangingPassword(@RequestParam Short length){
         return ResponseEntity.ok().build();
     }
 }
