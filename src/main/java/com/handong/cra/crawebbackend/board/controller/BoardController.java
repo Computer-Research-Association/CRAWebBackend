@@ -172,7 +172,7 @@ public class BoardController {
     @PutMapping("/{id}")
     public ResponseEntity<ResUpdateBoardDto> updateBoard(@PathVariable Long id,
                                                          @RequestPart("board") ReqUpdateBoardDto reqUpdateBoardDto,
-                                                         @RequestPart(value = "files", required = false) List<MultipartFile> files) {
+                                                         @RequestPart(value = "files") List<MultipartFile> files) {
         ResUpdateBoardDto resUpdateBoardDto;
         resUpdateBoardDto = ResUpdateBoardDto.from(boardService.updateBoard(UpdateBoardDto.of(id, reqUpdateBoardDto, files)));
         return ResponseEntity.ok().body(resUpdateBoardDto);

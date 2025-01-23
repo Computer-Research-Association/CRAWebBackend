@@ -11,11 +11,13 @@ import com.handong.cra.crawebbackend.havruta.dto.havrutaboard.response.ResDetail
 import com.handong.cra.crawebbackend.havruta.dto.havrutaboard.response.ResListHavrutaBoardDto;
 import com.handong.cra.crawebbackend.havruta.dto.havrutaboard.response.ResUpdateHavrutaBoardDto;
 import com.handong.cra.crawebbackend.havruta.service.HavrutaService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -43,8 +45,9 @@ public class HavrutaBoardController {
     }
 
     @PostMapping("")
-    public ResponseEntity<ResCreateHavrutaBoardDto> createHavrutaBoard(@RequestBody ReqCreateHavrutaBoardDto reqCreateHavrutaBoardDto){
-        return ResponseEntity.status(HttpStatus.CREATED).body(ResCreateHavrutaBoardDto.from(havrutaService.createHavrutaBoard(CreateHavrutaBoardDto.from(reqCreateHavrutaBoardDto))));
+    public ResponseEntity<ResCreateHavrutaBoardDto> createHavrutaBoard(@Valid @RequestPart("board") ReqCreateHavrutaBoardDto reqCreateHavrutaBoardDto,
+                                                                       @RequestPart("files")List<MultipartFile> files){
+        return ResponseEntity.status(HttpStatus.CREATED).body(ResCreateHavrutaBoardDto.from(havrutaService.createHavrutaBoard(CreateHavrutaBoardDto.of(reqCreateHavrutaBoardDto, reqCreateHavrutaBoardDto.getUserId(), files))));
     }
 
     @GetMapping("/page/{page}")
@@ -71,9 +74,11 @@ public class HavrutaBoardController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ResUpdateHavrutaBoardDto> updateHavrutaBoard(@PathVariable Long id, @RequestBody ReqUpdateHavrutaBoardDto requpdateHavrutaBoardDto){
+    public ResponseEntity<ResUpdateHavrutaBoardDto> updateHavrutaBoard(@PathVariable Long id,
+                                                                       @RequestPart("board") ReqUpdateHavrutaBoardDto requpdateHavrutaBoardDto,
+                                                                       @RequestPart(value = "files") List<MultipartFile> files){
         ResUpdateHavrutaBoardDto resUpdateHavrutaBoardDto;
-        resUpdateHavrutaBoardDto = ResUpdateHavrutaBoardDto.from(havrutaService.updateHavrutaBoard(id, UpdateHavrutaBoardDto.of(requpdateHavrutaBoardDto)));
+        resUpdateHavrutaBoardDto = ResUpdateHavrutaBoardDto.from(havrutaService.updateHavrutaBoard(UpdateHavrutaBoardDto.of(id, requpdateHavrutaBoardDto, files)));
         return ResponseEntity.ok().body(resUpdateHavrutaBoardDto);
     }
 }
