@@ -2,6 +2,7 @@ package com.handong.cra.crawebbackend.board.dto.request;
 
 import com.handong.cra.crawebbackend.board.domain.Category;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.util.Calendar;
@@ -20,12 +21,18 @@ public class ReqCreateBoardDto {
     private Long userId;
     //-----------------------------------------
 
+    @NotNull
     @Schema(description = "글 제목")
     private String title;
+
+    @NotNull
     @Schema(description = "글 내용")
     private String content;
+
+    @NotNull
     @Schema(description = "글 카테고리")
     private Integer category;
+
     @Schema(description = "사진들 url")
     private List<String> imageUrls;
 }

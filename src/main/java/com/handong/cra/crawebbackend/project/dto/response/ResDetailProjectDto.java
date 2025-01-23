@@ -21,7 +21,7 @@ public class ResDetailProjectDto {
     private String gitHubUrl;
     private String serviceUrl;
     private List<String> members = new ArrayList<>();
-    private List<String> imageUrls = new ArrayList<>();
+    private String imageUrl;
 
     private Boolean deleted;
     private LocalDateTime createAt;
@@ -36,7 +36,7 @@ public class ResDetailProjectDto {
         this.gitHubUrl = detailProjectDto.getGitHubUrl();
         this.serviceUrl = detailProjectDto.getServiceUrl();
         this.members = detailProjectDto.getMembers();
-        this.imageUrls =detailProjectDto.getImageUrls();
+        this.imageUrl =detailProjectDto.getImageUrl();
         this.deleted = false;
         this.createAt = detailProjectDto.getCreateAt();
         this.updatedAt = detailProjectDto.getUpdatedAt();

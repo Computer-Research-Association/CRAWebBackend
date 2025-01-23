@@ -5,6 +5,8 @@ import com.handong.cra.crawebbackend.board.domain.Category;
 import com.handong.cra.crawebbackend.board.domain.BoardOrderBy;
 import com.handong.cra.crawebbackend.board.dto.*;
 import com.handong.cra.crawebbackend.board.repository.BoardRepository;
+import com.handong.cra.crawebbackend.file.domain.S3ImageCategory;
+import com.handong.cra.crawebbackend.file.service.S3ImageService;
 import com.handong.cra.crawebbackend.exception.board.BoardLikeBadRequestException;
 import com.handong.cra.crawebbackend.exception.board.BoardNotFoundException;
 import com.handong.cra.crawebbackend.exception.user.UserNotFoundException;
@@ -22,6 +24,7 @@ import org.springframework.data.domain.Pageable;
 
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -33,6 +36,7 @@ import java.util.Objects;
 public class BoardServiceImpl implements BoardService {
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
+    private final S3ImageService s3ImageService;
 
     @Override
     @Transactional
@@ -67,6 +71,11 @@ public class BoardServiceImpl implements BoardService {
     public CreateBoardDto createBoard(CreateBoardDto createBoardDto) {
         User user = userRepository.findById(createBoardDto.getUserId()).orElseThrow(UserNotFoundException::new);
         Board board = Board.of(user, createBoardDto);
+        log.info("test here {}",!board.getImageUrls().isEmpty());
+        log.info("Count =  {}",board.getImageUrls().size());
+        if (!board.getImageUrls().isEmpty())
+            board.setImageUrls(s3ImageService.transferImage(board.getImageUrls(), S3ImageCategory.BOARD));
+
         board = boardRepository.save(board);
         return CreateBoardDto.from(board);
     }
@@ -74,15 +83,39 @@ public class BoardServiceImpl implements BoardService {
     @Override
     @Transactional
     public UpdateBoardDto updateBoard(UpdateBoardDto updateBoardDto) {
+
         Board board = boardRepository.findById(updateBoardDto.getId()).orElseThrow(BoardNotFoundException::new);
+        if (!updateBoardDto.getImageUrls().isEmpty()) {
+            //img update logic
+            List<String> removeImgs = board.getImageUrls();
+            List<String> newImgs = updateBoardDto.getImageUrls();
+
+            List<String> temp = new ArrayList<>(removeImgs);
+            temp.retainAll(newImgs);
+
+            removeImgs.removeAll(temp);
+            newImgs.removeAll(temp);
+
+            s3ImageService.transferImage(removeImgs, S3ImageCategory.DELETED);
+            newImgs = s3ImageService.transferImage(newImgs, S3ImageCategory.BOARD);
+            newImgs.addAll(temp);
+
+            board.setImageUrls(newImgs);
+        }
         board = board.update(updateBoardDto);
+
+
         return UpdateBoardDto.from(board);
     }
 
     @Override
     @Transactional
     public Boolean deleteBoardById(Long id) {
-        boardRepository.findById(id).orElseThrow(UserNotFoundException::new).delete();
+        Board board = boardRepository.findById(id).orElseThrow(UserNotFoundException::new);
+        board.delete();
+        if (!board.getImageUrls().isEmpty())
+            s3ImageService.transferImage(board.getImageUrls(), S3ImageCategory.DELETED);
+
         return true;
     }
 

@@ -20,6 +20,7 @@ public class Item extends BaseEntity {
     @Column(length = 2048, nullable = false)
     private String description;
 
+    @Setter
     @Column(name = "imgae_url", length = 256)
     private String imageUrl;
 

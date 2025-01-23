@@ -20,7 +20,7 @@ public class ResUpdateProjectDto {
     private String gitHubUrl;
     private String serviceUrl;
     private List<String> members = new ArrayList<>();
-    private List<String> imageUrls = new ArrayList<>();
+    private String imageUrl;
 
     private Boolean deleted;
     private LocalDateTime createAt;
@@ -35,7 +35,7 @@ public class ResUpdateProjectDto {
         this.gitHubUrl = updateProjectDto.getGitHubUrl();
         this.serviceUrl = updateProjectDto.getServiceUrl();
         this.members = updateProjectDto.getMembers();
-        this.imageUrls = updateProjectDto.getImageUrls();
+        this.imageUrl = updateProjectDto.getImageUrl();
         this.deleted = updateProjectDto.getDeleted();
         this.createAt = updateProjectDto.getCreateAt();
         this.updatedAt = updateProjectDto.getUpdatedAt();

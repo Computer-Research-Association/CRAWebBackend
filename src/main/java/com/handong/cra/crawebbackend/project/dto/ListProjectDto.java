@@ -30,7 +30,7 @@ public class ListProjectDto {
         this.serviceName = project.getServiceName();
 //        this.content = project.getContent();
         this.members = project.getMembers();
-        this.imageUrl = project.getImageUrls().get(0); // 대표 이미지만 가져오기
+        this.imageUrl = project.getImageUrl();
         this.deleted = project.getDeleted();
         this.createAt = project.getCreatedAt();
     }

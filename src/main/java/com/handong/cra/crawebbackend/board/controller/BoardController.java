@@ -23,7 +23,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -36,7 +38,9 @@ import java.util.List;
 @Tag(name = "Board API", description = "Board 관련 컨트롤러.")
 public class BoardController {
     private final BoardService boardService;
-    private final Integer MAX_PAGE_SIZE = 100;
+
+    @Value("${spring.data.page.MAX_PER_PAGE}")
+    private Integer MAX_PAGE_SIZE;
 
 
     @Parameters(value = {
@@ -148,7 +152,7 @@ public class BoardController {
             @ApiResponse(responseCode = "404", description = "Board 정보 없음", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PostMapping("")
-    public ResponseEntity<ResCreateBoardDto> createBoard(@RequestBody ReqCreateBoardDto reqCreateBoardDto) {
+    public ResponseEntity<ResCreateBoardDto> createBoard(@Valid @RequestBody ReqCreateBoardDto reqCreateBoardDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(ResCreateBoardDto.from(boardService
                 .createBoard(CreateBoardDto.of(reqCreateBoardDto, reqCreateBoardDto.getUserId()))));
     }

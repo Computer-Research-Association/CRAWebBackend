@@ -3,6 +3,7 @@ package com.handong.cra.crawebbackend.user.domain;
 import com.handong.cra.crawebbackend.auth.dto.SignupDto;
 import com.handong.cra.crawebbackend.board.domain.Board;
 import com.handong.cra.crawebbackend.common.domain.BaseEntity;
+import com.handong.cra.crawebbackend.user.dto.UpdateUserDto;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -37,6 +38,10 @@ public class User extends BaseEntity implements UserDetails {
 
     @Column(nullable = false)
     private String term;
+
+    @Setter
+    @Column(name = "img_url")
+    private String imgUrl;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
@@ -82,5 +87,12 @@ public class User extends BaseEntity implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of();
+    }
+
+
+
+    public User update(UpdateUserDto updateUserDto){
+        this.imgUrl = updateUserDto.getImgUrl();
+        return this;
     }
 }

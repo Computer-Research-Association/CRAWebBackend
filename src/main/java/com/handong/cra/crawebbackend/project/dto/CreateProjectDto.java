@@ -1,5 +1,6 @@
 package com.handong.cra.crawebbackend.project.dto;
 
+import com.handong.cra.crawebbackend.project.domain.Project;
 import com.handong.cra.crawebbackend.project.dto.request.ReqCreateProjectDto;
 import lombok.*;
 
@@ -19,7 +20,7 @@ public class CreateProjectDto {
     private String gitHubUrl;
     private String serviceUrl;
     private List<String> members = new ArrayList<>();
-    private List<String> imageUrls = new ArrayList<>();
+    private String imageUrl;
 
     //res 전달용
     private Long id = null;
@@ -33,10 +34,24 @@ public class CreateProjectDto {
         this.gitHubUrl = reqCreateProjectDto.getGitHubUrl();
         this.serviceUrl = reqCreateProjectDto.getServiceUrl();
         this.members = reqCreateProjectDto.getMembers();
-        this.imageUrls = reqCreateProjectDto.getImageUrls();
+        this.imageUrl = reqCreateProjectDto.getImageUrl();
+    }
+    public CreateProjectDto(Project project) {
+        this.semester = project.getSemester();
+        this.teamName = project.getTeamName();
+        this.serviceName = project.getServiceName();
+        this.content = project.getContent();
+        this.gitHubUrl = project.getGitHubUrl();
+        this.serviceUrl = project.getServiceUrl();
+        this.members = project.getMembers();
+        this.imageUrl = project.getImageUrl();
     }
 
     public static CreateProjectDto from(ReqCreateProjectDto reqCreateProjectDto) {
         return new CreateProjectDto(reqCreateProjectDto);
+    }
+
+    public static CreateProjectDto from(Project project) {
+        return new CreateProjectDto(project);
     }
 }

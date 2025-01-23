@@ -21,7 +21,7 @@ public class ResCreateProjectDto {
     private String gitHubUrl;
     private String serviceUrl;
     private List<String> members = new ArrayList<>();
-    private List<String> imageUrls = new ArrayList<>();
+    private String imageUrl;
 
     private Boolean deleted;
     private LocalDateTime createdAt;
@@ -35,7 +35,7 @@ public class ResCreateProjectDto {
         this.gitHubUrl = createProjectDto.getGitHubUrl();
         this.serviceUrl = createProjectDto.getServiceUrl();
         this.members = createProjectDto.getMembers();
-        this.imageUrls = createProjectDto.getImageUrls();
+        this.imageUrl = createProjectDto.getImageUrl();
         this.deleted = false;
         this.createdAt = createProjectDto.getCreatedAt();
     }

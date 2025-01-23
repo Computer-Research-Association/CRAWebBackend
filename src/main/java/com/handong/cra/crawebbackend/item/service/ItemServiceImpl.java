@@ -1,5 +1,7 @@
 package com.handong.cra.crawebbackend.item.service;
 
+import com.handong.cra.crawebbackend.file.domain.S3ImageCategory;
+import com.handong.cra.crawebbackend.file.service.S3ImageService;
 import com.handong.cra.crawebbackend.exception.item.ItemNotFoundException;
 import com.handong.cra.crawebbackend.item.domain.Item;
 import com.handong.cra.crawebbackend.item.domain.ItemCategory;
@@ -16,17 +18,20 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
+    private final S3ImageService s3ImageService;
 
     @Override
     @Transactional
     public CreateItemDto createItem(CreateItemDto createItemDto) {
+        if (createItemDto.getImageUrl() != null)
+            createItemDto.setImageUrl(s3ImageService.transferImage(createItemDto.getImageUrl(), S3ImageCategory.ITEM));
+
         Item item = Item.from(createItemDto);
         item = itemRepository.save(item);
         return CreateItemDto.from(item);
@@ -36,6 +41,12 @@ public class ItemServiceImpl implements ItemService {
     @Transactional
     public UpdateItemDto updateItem(Long id, UpdateItemDto updateItemDto) {
         Item item = itemRepository.findById(id).orElseThrow(ItemNotFoundException::new);
+
+        if (updateItemDto.getImageUrl().contains("temp")) { // 변경됨
+            s3ImageService.transferImage(item.getImageUrl(), S3ImageCategory.DELETED);
+            updateItemDto.setImageUrl(s3ImageService.transferImage(updateItemDto.getImageUrl(), S3ImageCategory.ITEM));
+        }
+
         item = item.update(updateItemDto);
         return UpdateItemDto.from(item);
     }
@@ -43,7 +54,12 @@ public class ItemServiceImpl implements ItemService {
     @Override
     @Transactional
     public Boolean deleteItemById(Long id) {
-        itemRepository.findById(id).orElseThrow(ItemNotFoundException::new).delete();
+        Item item = itemRepository.findById(id).orElseThrow(ItemNotFoundException::new);
+        item.delete();
+
+        if (item.getImageUrl() != null)
+            s3ImageService.transferImage(item.getImageUrl(), S3ImageCategory.DELETED);
+
         return true;
     }
 
