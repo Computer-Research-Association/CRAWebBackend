@@ -7,15 +7,19 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.handong.cra.crawebbackend.file.domain.S3ImageCategory;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class S3FileServiceImpl implements S3FileService {
@@ -31,7 +35,14 @@ public class S3FileServiceImpl implements S3FileService {
     }
 
     private String getPublicUrl(String fileName) {
-        return String.format("https://%s.s3.%s.amazonaws.com/%s", bucket, amazonS3.getRegionName(), fileName);
+        try {
+            String encodedFileName = URLEncoder.encode(fileName, "UTF-8");
+            encodedFileName = encodedFileName.replace("+", "%20");
+
+            return String.format("https://%s.s3.%s.amazonaws.com/%s", bucket, amazonS3.getRegionName(), encodedFileName);
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -50,9 +61,32 @@ public class S3FileServiceImpl implements S3FileService {
         }
     }
 
+    @Override
+    public List<String> uploadFiles(List<MultipartFile> files, S3ImageCategory s3ImageCategory) {
+        List<String> result = new ArrayList<>();
+        files.forEach(file -> {
+            String filename = "file/" + s3ImageCategory.toString().toLowerCase() + "/" + UUID.randomUUID() + "_" + file.getOriginalFilename();
+            try {
+                ObjectMetadata metadata = new ObjectMetadata();
+                metadata.setContentLength(file.getSize());
+                metadata.setContentType(file.getContentType());
+                PutObjectRequest putObjectRequest = new PutObjectRequest(bucket, filename, file.getInputStream(), metadata);
+                amazonS3.putObject(putObjectRequest);
+                result.add(getPublicUrl(filename));
+            } catch (Exception e) {
+                log.error(e.getMessage());
+            }
+        });
+
+        return result;
+    }
+
     public String transferFile(String path, S3ImageCategory s3ImageCategory) {
         String key = getKeyFromUrl(path);
-        String filename = Objects.requireNonNull(key).substring("temp/".length());
+        log.info("key = {}", key);
+        String filename = Objects.requireNonNull(key).substring(key.indexOf("/"));
+        log.info("filename = {}", filename);
+
         try {
             CopyObjectRequest copyObjectRequest =
                     new CopyObjectRequest(bucket, key, bucket, s3ImageCategory.toString().toLowerCase() + "/" + filename);

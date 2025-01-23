@@ -89,6 +89,7 @@ public class Board extends BaseEntity {
         this.title = updateBoardDto.getTitle();
         this.content = updateBoardDto.getContent();
         this.imageUrls = updateBoardDto.getImageUrls();
+        this.fileUrls = updateBoardDto.getFileUrls();
         return this;
     }
 

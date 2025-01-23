@@ -29,6 +29,4 @@ public class ReqCreateBoardDto {
     private Integer category;
     @Schema(description = "사진들 url")
     private List<String> imageUrls;
-    @Schema(description = "첨부파일")
-    private List<MultipartFile> files;
 }

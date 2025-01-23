@@ -71,8 +71,7 @@ public class BoardServiceImpl implements BoardService {
     @Transactional
     public CreateBoardDto createBoard(CreateBoardDto createBoardDto) {
         User user = userRepository.findById(createBoardDto.getUserId()).orElseThrow(UserNotFoundException::new);
-        List<String> fileUrls = new ArrayList<>();
-        fileUrls = createBoardDto.getFiles().stream().map((file) -> s3FileService.uploadFile(file, S3ImageCategory.BOARD)).toList();
+        List<String> fileUrls = s3FileService.uploadFiles(createBoardDto.getFiles(), S3ImageCategory.BOARD);
         createBoardDto.setFileUrls(fileUrls);
 
         Board board = Board.of(user, createBoardDto);
@@ -86,6 +85,10 @@ public class BoardServiceImpl implements BoardService {
     public UpdateBoardDto updateBoard(UpdateBoardDto updateBoardDto) {
 
         Board board = boardRepository.findById(updateBoardDto.getId()).orElseThrow(BoardNotFoundException::new);
+
+        List<String> fileUrls = s3FileService.uploadFiles(updateBoardDto.getFiles(), S3ImageCategory.BOARD);
+        updateBoardDto.setFileUrls(fileUrls);
+
         //img update logic
         List<String> removeImgs = board.getImageUrls();
         List<String> newImgs = updateBoardDto.getImageUrls();
@@ -114,6 +117,7 @@ public class BoardServiceImpl implements BoardService {
         Board board = boardRepository.findById(id).orElseThrow(UserNotFoundException::new);
         board.delete();
         s3ImageService.transferImage(board.getImageUrls(), S3ImageCategory.DELETED);
+        s3FileService.transferFile(board.getImageUrls(), S3ImageCategory.DELETED);
 
         return true;
     }

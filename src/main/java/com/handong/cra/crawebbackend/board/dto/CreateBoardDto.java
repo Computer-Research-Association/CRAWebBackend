@@ -29,13 +29,13 @@ public class CreateBoardDto {
     private LocalDateTime createdAt = null;
 
 
-    public CreateBoardDto(ReqCreateBoardDto reqCreateBoardDto, Long userId) {
+    public CreateBoardDto(ReqCreateBoardDto reqCreateBoardDto, Long userId, List<MultipartFile> files) {
         this.userId = userId;
         this.title = reqCreateBoardDto.getTitle();
         this.content = reqCreateBoardDto.getContent();
         this.category = Category.values()[reqCreateBoardDto.getCategory()];
         this.imageUrls = reqCreateBoardDto.getImageUrls();
-        this.files = reqCreateBoardDto.getFiles();
+        this.files = files;
     }
 
     public CreateBoardDto(Board board) {
@@ -67,8 +67,8 @@ public class CreateBoardDto {
     }
 
     // TODO : user logic
-    public static CreateBoardDto of(ReqCreateBoardDto reqCreateBoardDto, Long userId) {
-        return new CreateBoardDto(reqCreateBoardDto, userId);
+    public static CreateBoardDto of(ReqCreateBoardDto reqCreateBoardDto, Long userId, List<MultipartFile> files) {
+        return new CreateBoardDto(reqCreateBoardDto, userId, files);
     }
 
     public static CreateBoardDto from(Board board) {
