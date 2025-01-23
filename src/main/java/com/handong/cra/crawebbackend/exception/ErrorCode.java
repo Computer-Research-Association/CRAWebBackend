@@ -28,6 +28,9 @@ public enum ErrorCode {
 
     USER_NOT_FOUND_ERROR(HttpStatus.NOT_FOUND, "U1", "해당하는 유저가 존재하지 않습니다."),
 
+    ACCOUNT_CODE_NOT_FOUND(HttpStatus.NOT_FOUND, "A1", "해당하는 코드가 존재하지 않습니다."),
+    ACCOUNT_CODE_EXPIRED(HttpStatus.GONE, "A2", "만료된 코드입니다"),
+
     S3IMAGE_UPLOAD(HttpStatus.INTERNAL_SERVER_ERROR, "S3I1","이미지 업로드중 에러가 발생했습니다."),
     S3IMAGE_TRANSFER(HttpStatus.INTERNAL_SERVER_ERROR, "S3I2","이미지 경로 이동중 에러가 발생했습니다."),
     S3IMAGE_URL(HttpStatus.BAD_REQUEST,  "S3I3","잘못된 이미지 url 입니다");

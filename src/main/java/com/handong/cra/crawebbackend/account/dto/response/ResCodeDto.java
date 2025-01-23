@@ -18,7 +18,9 @@ public class ResCodeDto {
     private LocalDateTime createdAt;
 
     public ResCodeDto(CodeDto codeDto) {
-        this.code = codeDto
+        this.code = codeDto.getCode();
+        this.manageTokenCategory = codeDto.getManageTokenCategory();
+        this.createdAt = codeDto.getCreatedAt();
     }
 
 

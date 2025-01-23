@@ -1,7 +1,6 @@
 package com.handong.cra.crawebbackend.account.controller;
 
 
-import com.handong.cra.crawebbackend.account.dto.CodeDto;
 import com.handong.cra.crawebbackend.account.dto.response.ResCodeDto;
 import com.handong.cra.crawebbackend.account.service.AccountService;
 import lombok.RequiredArgsConstructor;
