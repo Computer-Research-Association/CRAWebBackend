@@ -4,6 +4,7 @@ import com.handong.cra.crawebbackend.board.domain.Board;
 import com.handong.cra.crawebbackend.board.dto.request.ReqUpdateBoardDto;
 import com.handong.cra.crawebbackend.havruta.dto.havrutaboard.request.ReqUpdateHavrutaBoardDto;
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -22,20 +23,22 @@ public class UpdateBoardDto {
     private List<String> imageUrls;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private List<MultipartFile> files;
+    private List<String> fileUrls;
 
 
     // TODO: add havrutaid
 
 
-    public UpdateBoardDto(Long id, ReqUpdateBoardDto reqUpdateBoardDto) {
+    public UpdateBoardDto(Long id, ReqUpdateBoardDto reqUpdateBoardDto, List<MultipartFile> files) {
         // TODO : User Logic
         this.userId = reqUpdateBoardDto.getUserId();
-
         this.id = id;
         this.deleted = reqUpdateBoardDto.getDeleted();
         this.title = reqUpdateBoardDto.getTitle();
         this.content = reqUpdateBoardDto.getContent();
         this.imageUrls = reqUpdateBoardDto.getImageUrls();
+        this.files = files;
     }
 
     public UpdateBoardDto(Board board) {
@@ -56,8 +59,8 @@ public class UpdateBoardDto {
         this.imageUrls = reqUpdateHavrutaBoardDto.getImageUrls();
     }
 
-    public static UpdateBoardDto of(Long id, ReqUpdateBoardDto reqUpdateBoardDto) {
-        return new UpdateBoardDto(id, reqUpdateBoardDto);
+    public static UpdateBoardDto of(Long id, ReqUpdateBoardDto reqUpdateBoardDto, List<MultipartFile> files) {
+        return new UpdateBoardDto(id, reqUpdateBoardDto, files);
     }
 
 

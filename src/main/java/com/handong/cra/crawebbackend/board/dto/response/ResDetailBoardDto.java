@@ -38,6 +38,9 @@ public class ResDetailBoardDto {
     @Schema(description = "사진 주소 목록")
     private List<String> imageUrls;
 
+    @Schema(description = "파일 주소 목록")
+    private List<String> fileUrls;
+
     @Schema(description = "글 생성 시간")
     private LocalDateTime createdAt;
 
@@ -53,6 +56,7 @@ public class ResDetailBoardDto {
         this.likeCount = detailBoardDto.getLikeCount();
         this.view = detailBoardDto.getView();
         this.imageUrls = detailBoardDto.getImageUrls();
+        this.fileUrls = detailBoardDto.getFileUrls();
         this.createdAt = detailBoardDto.getCreatedAt();
         this.updatedAt = detailBoardDto.getUpdatedAt();
     }

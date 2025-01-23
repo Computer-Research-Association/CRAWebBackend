@@ -20,6 +20,7 @@ public class DetailBoardDto {
     private Long likeCount;
     private Long view;
     private List<String> imageUrls;
+    private List<String> fileUrls;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -32,6 +33,7 @@ public class DetailBoardDto {
         this.likeCount =  (long) board.getLikedUsers().size();
         this.view = board.getView();
         this.imageUrls = board.getImageUrls();
+        this.fileUrls = board.getFileUrls();
         this.createdAt = board.getCreatedAt();
         this.updatedAt = board.getUpdatedAt();
     }

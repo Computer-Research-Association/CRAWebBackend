@@ -6,6 +6,7 @@ import com.handong.cra.crawebbackend.board.domain.BoardOrderBy;
 import com.handong.cra.crawebbackend.board.dto.*;
 import com.handong.cra.crawebbackend.board.repository.BoardRepository;
 import com.handong.cra.crawebbackend.file.domain.S3ImageCategory;
+import com.handong.cra.crawebbackend.file.service.S3FileService;
 import com.handong.cra.crawebbackend.file.service.S3ImageService;
 import com.handong.cra.crawebbackend.exception.board.BoardLikeBadRequestException;
 import com.handong.cra.crawebbackend.exception.board.BoardNotFoundException;
@@ -37,6 +38,7 @@ public class BoardServiceImpl implements BoardService {
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
     private final S3ImageService s3ImageService;
+    private final S3FileService s3FileService;
 
     @Override
     @Transactional
@@ -70,6 +72,9 @@ public class BoardServiceImpl implements BoardService {
     @Transactional
     public CreateBoardDto createBoard(CreateBoardDto createBoardDto) {
         User user = userRepository.findById(createBoardDto.getUserId()).orElseThrow(UserNotFoundException::new);
+        List<String> fileUrls = s3FileService.uploadFiles(createBoardDto.getFiles(), S3ImageCategory.BOARD);
+        createBoardDto.setFileUrls(fileUrls);
+
         Board board = Board.of(user, createBoardDto);
         log.info("test here {}",!board.getImageUrls().isEmpty());
         log.info("Count =  {}",board.getImageUrls().size());
@@ -85,6 +90,10 @@ public class BoardServiceImpl implements BoardService {
     public UpdateBoardDto updateBoard(UpdateBoardDto updateBoardDto) {
 
         Board board = boardRepository.findById(updateBoardDto.getId()).orElseThrow(BoardNotFoundException::new);
+
+        List<String> fileUrls = s3FileService.uploadFiles(updateBoardDto.getFiles(), S3ImageCategory.BOARD);
+        updateBoardDto.setFileUrls(fileUrls);
+
         if (!updateBoardDto.getImageUrls().isEmpty()) {
             //img update logic
             List<String> removeImgs = board.getImageUrls();
@@ -113,6 +122,7 @@ public class BoardServiceImpl implements BoardService {
     public Boolean deleteBoardById(Long id) {
         Board board = boardRepository.findById(id).orElseThrow(UserNotFoundException::new);
         board.delete();
+
         if (!board.getImageUrls().isEmpty())
             s3ImageService.transferImage(board.getImageUrls(), S3ImageCategory.DELETED);
 

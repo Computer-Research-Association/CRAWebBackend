@@ -29,6 +29,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -152,9 +153,10 @@ public class BoardController {
             @ApiResponse(responseCode = "404", description = "Board 정보 없음", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PostMapping("")
-    public ResponseEntity<ResCreateBoardDto> createBoard(@Valid @RequestBody ReqCreateBoardDto reqCreateBoardDto) {
+    public ResponseEntity<ResCreateBoardDto> createBoard(@Valid @RequestPart("board") ReqCreateBoardDto reqCreateBoardDto,
+                                                         @RequestPart("files") List<MultipartFile> files) {
         return ResponseEntity.status(HttpStatus.CREATED).body(ResCreateBoardDto.from(boardService
-                .createBoard(CreateBoardDto.of(reqCreateBoardDto, reqCreateBoardDto.getUserId()))));
+                .createBoard(CreateBoardDto.of(reqCreateBoardDto, reqCreateBoardDto.getUserId(), files))));
     }
 
 
@@ -168,9 +170,11 @@ public class BoardController {
             @ApiResponse(responseCode = "404", description = "Board 정보 없음", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PutMapping("/{id}")
-    public ResponseEntity<ResUpdateBoardDto> updateBoard(@PathVariable Long id, @RequestBody ReqUpdateBoardDto reqUpdateBoardDto) {
+    public ResponseEntity<ResUpdateBoardDto> updateBoard(@PathVariable Long id,
+                                                         @RequestPart("board") ReqUpdateBoardDto reqUpdateBoardDto,
+                                                         @RequestPart(value = "files", required = false) List<MultipartFile> files) {
         ResUpdateBoardDto resUpdateBoardDto;
-        resUpdateBoardDto = ResUpdateBoardDto.from(boardService.updateBoard(UpdateBoardDto.of(id, reqUpdateBoardDto)));
+        resUpdateBoardDto = ResUpdateBoardDto.from(boardService.updateBoard(UpdateBoardDto.of(id, reqUpdateBoardDto, files)));
         return ResponseEntity.ok().body(resUpdateBoardDto);
     }
 

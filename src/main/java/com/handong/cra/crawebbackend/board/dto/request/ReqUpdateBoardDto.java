@@ -26,4 +26,5 @@ public class ReqUpdateBoardDto {
     private String content;
     @Schema(description = "사진 주소 목록")
     private List<String> imageUrls;
+
 }
