@@ -57,6 +57,7 @@ public class S3ImageServiceImpl implements S3ImageService {
     }
 
     public String transferImage(String path, S3ImageCategory s3ImageCategory) {
+        log.info("image transfer. url = {} to {}", path, s3ImageCategory.toString());
         String key = getKeyFromUrl(path);
         log.debug("key = {}", key);
         String filename = Objects.requireNonNull(key).substring(key.indexOf("/"));
