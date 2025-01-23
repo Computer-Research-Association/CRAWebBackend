@@ -32,7 +32,7 @@ public class S3ImageServiceImpl implements S3ImageService {
 
     private String getKeyFromUrl(String url) {
         String originUrl = getPublicUrl(""); // get aws s3 url
-        if (!url.startsWith(originUrl)) throw new S3ImageUrlException();
+        if (!url.contains(originUrl)) throw new S3ImageUrlException();
         else return url.substring(originUrl.length());
     }
 
