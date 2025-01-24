@@ -19,7 +19,7 @@ public class AccountAdminController {
 
     private final AccountService accountService;
 
-    @GetMapping("/code/signup")
+    @GetMapping("/code/signup") // 가입 코드 생성
     public ResponseEntity<List<ResCodeDto>> generateSignupCodes(@RequestParam Short length){
         return ResponseEntity.ok(accountService.generateSignupCodes(length).stream().map(ResCodeDto::from).toList());
     }
