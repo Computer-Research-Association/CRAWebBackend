@@ -20,6 +20,7 @@ public class SignupDto {
     private String githubId;
     private Long studentNumber;
     private String term;
+    private String code;
     private UserRoleSet roles;
 
     public SignupDto(ReqSignupDto reqSignupDto) {
@@ -30,7 +31,9 @@ public class SignupDto {
         this.githubId = reqSignupDto.getGithubId();
         this.studentNumber = reqSignupDto.getStudentNumber();
         this.term = reqSignupDto.getTerm();
+        this.code = reqSignupDto.getCode();
         this.roles = UserRoleSet.getDefault(UserRoleEnum.USER);
+
     }
 
     public static SignupDto from(ReqSignupDto reqSignupDto) {

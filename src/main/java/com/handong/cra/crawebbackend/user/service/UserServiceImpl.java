@@ -44,9 +44,7 @@ public class UserServiceImpl implements UserService {
         log.info("pass: {}", password);
         User user = userRepository.findByUsername(username);
 
-        if (user == null) {
-            throw new UserNotFoundException();
-        }
+        if (user == null) throw new UserNotFoundException();
 
         return LoginUserDto.from(user);
     }
@@ -87,7 +85,7 @@ public class UserServiceImpl implements UserService {
         }
 
         User user = userRepository.findByUsername(updateUserPasswordDto.getUsername());
-//        if (user == null)
+        if (user == null) throw new UserNotFoundException();
         user.setPassword(passwordEncoder.encode(newPassword));
     }
 }

@@ -15,4 +15,5 @@ public class ReqSignupDto {
     private String githubId;
     private Long studentNumber;
     private String term;
+    private String code;
 }

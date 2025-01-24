@@ -13,6 +13,8 @@ import com.handong.cra.crawebbackend.mail.service.MailService;
 import com.handong.cra.crawebbackend.user.domain.User;
 import com.handong.cra.crawebbackend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -21,6 +23,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class AccountServiceImpl implements AccountService {
     private final ManageTokenRepository manageTokenRepository;
@@ -48,6 +51,9 @@ public class AccountServiceImpl implements AccountService {
             throw new AccountCodeNotFoundException();
         else if (!manageToken.getExpireDate().isAfter(LocalDateTime.now())) // 만료됨
             throw new AccountCodeExpiredException();
+
+        // passed!
+        manageTokenRepository.delete(manageToken);
     }
 
     private CodeDto generateToken(ManageTokenCategory manageTokenCategory) {
@@ -82,5 +88,24 @@ public class AccountServiceImpl implements AccountService {
     public Boolean validUsername(String username) {
         User user = userRepository.findByUsername(username);
         return user == null;
+    }
+
+    // 주기적으로 토큰 DB 정리
+    @Scheduled(cron = "0 0 12 * * *", zone = "Asia/Seoul")
+    private void deleteTokens() {
+        int count = 0;
+        log.info("===================================");
+        log.info("cron bot start");
+        List<ManageToken> manageTokens = manageTokenRepository.findAll();
+        for (ManageToken manageToken : manageTokens) {
+            if (manageToken.getExpireDate().isBefore(LocalDateTime.now())) {
+                manageTokenRepository.delete(manageToken);
+                count++;
+            }
+        }
+
+
+        log.info("cron bot end! {} token deleted!", count);
+        log.info("===================================");
     }
 }

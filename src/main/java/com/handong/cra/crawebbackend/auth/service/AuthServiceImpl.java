@@ -1,5 +1,7 @@
 package com.handong.cra.crawebbackend.auth.service;
 
+import com.handong.cra.crawebbackend.account.domain.ManageTokenCategory;
+import com.handong.cra.crawebbackend.account.service.AccountService;
 import com.handong.cra.crawebbackend.auth.dto.LoginDto;
 import com.handong.cra.crawebbackend.auth.dto.ReissueTokenDto;
 import com.handong.cra.crawebbackend.auth.dto.SignupDto;
@@ -8,7 +10,6 @@ import com.handong.cra.crawebbackend.user.dto.LoginUserDto;
 import com.handong.cra.crawebbackend.user.service.UserService;
 import com.handong.cra.crawebbackend.util.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -19,12 +20,14 @@ public class AuthServiceImpl implements AuthService {
     private final UserService userService;
     private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
+    private final AccountService accountService;
 
     @Override
     public SignupDto signup(SignupDto signupDto) {
         if (userService.isUserExist(signupDto.getUsername())) {
             return null;
         }
+        accountService.codeValidCheck(signupDto.getCode(), ManageTokenCategory.SIGNUP);
 
         signupDto.setPassword(passwordEncoder.encode(signupDto.getPassword()));
 
