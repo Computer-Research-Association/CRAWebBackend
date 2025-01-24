@@ -20,6 +20,7 @@ public class User extends BaseEntity implements UserDetails {
     @Column(nullable = false, unique = true)
     private String username;
 
+    @Setter
     private String password;
 
     @Column(nullable = false)

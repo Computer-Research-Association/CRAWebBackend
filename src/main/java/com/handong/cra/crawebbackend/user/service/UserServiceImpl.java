@@ -1,5 +1,7 @@
 package com.handong.cra.crawebbackend.user.service;
 
+import com.handong.cra.crawebbackend.account.domain.ManageTokenCategory;
+import com.handong.cra.crawebbackend.account.service.AccountService;
 import com.handong.cra.crawebbackend.auth.dto.SignupDto;
 import com.handong.cra.crawebbackend.file.domain.S3ImageCategory;
 import com.handong.cra.crawebbackend.file.service.S3ImageService;
@@ -7,12 +9,15 @@ import com.handong.cra.crawebbackend.exception.user.UserNotFoundException;
 import com.handong.cra.crawebbackend.user.domain.User;
 import com.handong.cra.crawebbackend.user.dto.LoginUserDto;
 import com.handong.cra.crawebbackend.user.dto.UpdateUserDto;
+import com.handong.cra.crawebbackend.user.dto.UpdateUserPasswordDto;
 import com.handong.cra.crawebbackend.user.repository.UserRepository;
+import com.handong.cra.crawebbackend.util.AESUtill;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -25,6 +30,8 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final S3ImageService s3ImageService;
+    private final AccountService accountService;
+    private final PasswordEncoder passwordEncoder;
 
 
     @Override
@@ -59,11 +66,28 @@ public class UserServiceImpl implements UserService {
         //img logic
         if (updateUserDto.getImgUrl().contains("temp/")) {
             if (user.getImgUrl() != null)
-                s3ImageService.transferImage(user.getImgUrl(),S3ImageCategory.DELETED);
+                s3ImageService.transferImage(user.getImgUrl(), S3ImageCategory.DELETED);
             updateUserDto.setImgUrl(s3ImageService.transferImage(updateUserDto.getImgUrl(), S3ImageCategory.USER));
         }
         user = user.update(updateUserDto);
 
         return UpdateUserDto.from(user);
+    }
+
+    @Override
+    public void updateUserPassword(UpdateUserPasswordDto updateUserPasswordDto) {
+        // code valid check - > 문제 있으면 throw
+        accountService.codeValidCheck(updateUserPasswordDto.getCode(), ManageTokenCategory.PASSWORD_CHANGE);
+        String newPassword = "";
+        try {
+            newPassword = AESUtill.AESDecrypt(updateUserPasswordDto.getPassword());
+        } catch (Exception e) {
+//            throw new
+            return ;
+        }
+
+        User user = userRepository.findByUsername(updateUserPasswordDto.getUsername());
+//        if (user == null)
+        user.setPassword(passwordEncoder.encode(newPassword));
     }
 }
