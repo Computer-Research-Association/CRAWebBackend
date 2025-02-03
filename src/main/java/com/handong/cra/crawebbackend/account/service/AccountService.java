@@ -11,7 +11,7 @@ public interface AccountService {
 
     public List<CodeDto> generateSignupCodes(Short length);
 
-    public void codeValidCheck(String code, ManageTokenCategory manageTokenCategory);
+    public Long codeValidCheck(String code, ManageTokenCategory manageTokenCategory);
 
     public void requestChangingPassword(String username);
 

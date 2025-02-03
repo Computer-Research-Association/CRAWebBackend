@@ -3,6 +3,7 @@ package com.handong.cra.crawebbackend.user.service;
 import com.handong.cra.crawebbackend.account.domain.ManageTokenCategory;
 import com.handong.cra.crawebbackend.account.service.AccountService;
 import com.handong.cra.crawebbackend.auth.dto.SignupDto;
+import com.handong.cra.crawebbackend.exception.user.UserInvalidPasswordException;
 import com.handong.cra.crawebbackend.file.domain.S3ImageCategory;
 import com.handong.cra.crawebbackend.file.service.S3ImageService;
 import com.handong.cra.crawebbackend.exception.user.UserNotFoundException;
@@ -75,17 +76,16 @@ public class UserServiceImpl implements UserService {
     @Override
     public void updateUserPassword(UpdateUserPasswordDto updateUserPasswordDto) {
         // code valid check - > 문제 있으면 throw
-        accountService.codeValidCheck(updateUserPasswordDto.getCode(), ManageTokenCategory.PASSWORD_CHANGE);
         String newPassword = "";
         try {
             newPassword = AESUtill.AESDecrypt(updateUserPasswordDto.getPassword());
         } catch (Exception e) {
-//            throw new
-            return ;
+            throw new UserInvalidPasswordException();
         }
 
-        User user = userRepository.findByUsername(updateUserPasswordDto.getUsername());
-        if (user == null) throw new UserNotFoundException();
+        Long userId = accountService.codeValidCheck(updateUserPasswordDto.getCode(), ManageTokenCategory.PASSWORD_CHANGE);
+
+        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         user.setPassword(passwordEncoder.encode(newPassword));
     }
 }

@@ -72,6 +72,8 @@ public class JwtTokenProvider {
         return new ResTokenDto(userId, accessToken, newRefreshToken);
     }
 
+
+
     public Boolean validateToken(String token) {
         SecretKey jwtSecretKey = Keys.hmacShaKeyFor(secret.getBytes());
 

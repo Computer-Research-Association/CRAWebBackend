@@ -24,7 +24,7 @@ public class User extends BaseEntity implements UserDetails {
     private String password;
 
     @Column(nullable = false)
-    private String name;
+    private String name; // 닉네임
 
     @Column(nullable = false)
     private String email;
@@ -39,6 +39,9 @@ public class User extends BaseEntity implements UserDetails {
 
     @Column(nullable = false)
     private String term;
+
+//    @Column(nullable = false)
+    private String greetingMessage;
 
     @Setter
     @Column(name = "img_url")

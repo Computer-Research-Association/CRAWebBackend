@@ -42,9 +42,8 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void codeValidCheck(String code, ManageTokenCategory manageTokenCategory) {
+    public Long codeValidCheck(String code, ManageTokenCategory manageTokenCategory) {
         ManageToken manageToken = manageTokenRepository.findByCode(code);
-
         if (manageToken == null) // 없음
             throw new AccountCodeNotFoundException();
         else if (manageToken.getManageTokenCategory() != manageTokenCategory) // 코드는 있는데, 카테고리가 다름
@@ -52,8 +51,14 @@ public class AccountServiceImpl implements AccountService {
         else if (!manageToken.getExpireDate().isAfter(LocalDateTime.now())) // 만료됨
             throw new AccountCodeExpiredException();
 
-        // passed!
+        Long userId = manageToken.getUserId();
+
         manageTokenRepository.delete(manageToken);
+
+        if (userId != null) return userId;
+        else return 0L;
+
+        // passed!
     }
 
     private CodeDto generateToken(ManageTokenCategory manageTokenCategory) {
@@ -63,13 +68,21 @@ public class AccountServiceImpl implements AccountService {
         return CodeDto.of(manageTokenRepository.save(ManageToken.from(codeDto)));
     }
 
+    // password
+    private CodeDto generateToken(ManageTokenCategory manageTokenCategory, Long userId) {
+        LocalDateTime expireDate = getExpireDate(LocalDateTime.now());
+        String uuid = UUID.randomUUID().toString();
+        CodeDto codeDto = CodeDto.of(uuid, manageTokenCategory, userId, expireDate);
+        return CodeDto.of(manageTokenRepository.save(ManageToken.from(codeDto)));
+    }
+
     @Override
     public void requestChangingPassword(String username) {
         User user = userRepository.findByUsername(username);
         if (user == null) throw new UserNotFoundException();
 
         // 토큰 발행
-        CodeDto codeDto = generateToken(ManageTokenCategory.PASSWORD_CHANGE);
+        CodeDto codeDto = generateToken(ManageTokenCategory.PASSWORD_CHANGE, user.getId());
 
         String passwordChangeUrl = /*TODO : url here*/ "?code=" + codeDto.getCode();
 

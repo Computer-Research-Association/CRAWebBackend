@@ -27,6 +27,7 @@ public enum ErrorCode {
     PROJECT_SEMESTER_PARSE(HttpStatus.BAD_REQUEST, "P3", "잘못된 학기 수 값 입니다. EX) 25-1"),
 
     USER_NOT_FOUND_ERROR(HttpStatus.NOT_FOUND, "U1", "해당하는 유저가 존재하지 않습니다."),
+    USER_INVALID_PASSWORD(HttpStatus.BAD_REQUEST, "U2", "변경하려는 패스워드가 잘못되었습니다."),
 
     ACCOUNT_CODE_NOT_FOUND(HttpStatus.NOT_FOUND, "A1", "해당하는 코드가 존재하지 않습니다."),
     ACCOUNT_CODE_EXPIRED(HttpStatus.GONE, "A2", "만료된 코드입니다"),
