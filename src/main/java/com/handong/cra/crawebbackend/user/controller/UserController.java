@@ -1,7 +1,6 @@
 package com.handong.cra.crawebbackend.user.controller;
 
 
-import com.handong.cra.crawebbackend.project.dto.UpdateProjectDto;
 import com.handong.cra.crawebbackend.user.dto.UpdateUserDto;
 import com.handong.cra.crawebbackend.user.dto.UpdateUserPasswordDto;
 import com.handong.cra.crawebbackend.user.dto.request.ReqUpdateUserDto;
@@ -26,7 +25,7 @@ public class UserController {
 
 
     @PutMapping("/password-change")
-    public ResponseEntity<Void> updatePassword(@RequestParam ReqUpdateUserPasswordDto reqUpdateUserPasswordDto) {
+    public ResponseEntity<Void> updatePassword(@RequestBody ReqUpdateUserPasswordDto reqUpdateUserPasswordDto) {
          userService.updateUserPassword(UpdateUserPasswordDto.from(reqUpdateUserPasswordDto));
          return ResponseEntity.ok().build();
 

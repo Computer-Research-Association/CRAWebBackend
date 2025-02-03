@@ -21,7 +21,7 @@ public class AccountController {
         else return ResponseEntity.unprocessableEntity().build(); // 이미 존재함.
     }
 
-    @PostMapping("/change-password")
+    @PostMapping("/password-change")
     public ResponseEntity<?> requestChangingPassword(@RequestParam String username) {
         accountService.requestChangingPassword(username);
         return ResponseEntity.ok().build();

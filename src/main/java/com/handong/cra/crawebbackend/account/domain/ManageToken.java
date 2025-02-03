@@ -4,12 +4,15 @@ import com.handong.cra.crawebbackend.account.dto.CodeDto;
 import com.handong.cra.crawebbackend.common.domain.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ManageToken extends BaseEntity {
     @Column(nullable = false)
     private String code;
