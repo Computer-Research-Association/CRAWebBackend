@@ -154,7 +154,7 @@ public class BoardController {
     })
     @PostMapping("")
     public ResponseEntity<ResCreateBoardDto> createBoard(@Valid @RequestPart("board") ReqCreateBoardDto reqCreateBoardDto,
-                                                         @RequestPart("files", required = false) List<MultipartFile> files) {
+                                                         @RequestPart(value = "files", required = false) List<MultipartFile> files) {
         return ResponseEntity.status(HttpStatus.CREATED).body(ResCreateBoardDto.from(boardService
                 .createBoard(CreateBoardDto.of(reqCreateBoardDto, reqCreateBoardDto.getUserId(), files))));
     }
