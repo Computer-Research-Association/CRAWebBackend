@@ -72,12 +72,14 @@ public class BoardServiceImpl implements BoardService {
     @Transactional
     public CreateBoardDto createBoard(CreateBoardDto createBoardDto) {
         User user = userRepository.findById(createBoardDto.getUserId()).orElseThrow(UserNotFoundException::new);
-        List<String> fileUrls = s3FileService.uploadFiles(createBoardDto.getFiles(), S3ImageCategory.BOARD);
-        createBoardDto.setFileUrls(fileUrls);
+        if (createBoardDto.getFiles() != null) {
+            List<String> fileUrls = s3FileService.uploadFiles(createBoardDto.getFiles(), S3ImageCategory.BOARD);
+            createBoardDto.setFileUrls(fileUrls);
+        }
 
         Board board = Board.of(user, createBoardDto);
-        log.info("test here {}",!board.getImageUrls().isEmpty());
-        log.info("Count =  {}",board.getImageUrls().size());
+        log.info("test here {}", !board.getImageUrls().isEmpty());
+        log.info("Count =  {}", board.getImageUrls().size());
         if (!board.getImageUrls().isEmpty())
             board.setImageUrls(s3ImageService.transferImage(board.getImageUrls(), S3ImageCategory.BOARD));
 
@@ -90,9 +92,10 @@ public class BoardServiceImpl implements BoardService {
     public UpdateBoardDto updateBoard(UpdateBoardDto updateBoardDto) {
 
         Board board = boardRepository.findById(updateBoardDto.getId()).orElseThrow(BoardNotFoundException::new);
-
-        List<String> fileUrls = s3FileService.uploadFiles(updateBoardDto.getFiles(), S3ImageCategory.BOARD);
-        updateBoardDto.setFileUrls(fileUrls);
+        if (updateBoardDto.getFiles() != null) {
+            List<String> fileUrls = s3FileService.uploadFiles(updateBoardDto.getFiles(), S3ImageCategory.BOARD);
+            updateBoardDto.setFileUrls(fileUrls);
+        }
 
         if (!updateBoardDto.getImageUrls().isEmpty()) {
             //img update logic
