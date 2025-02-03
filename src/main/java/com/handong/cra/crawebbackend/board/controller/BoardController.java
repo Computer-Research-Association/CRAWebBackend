@@ -154,7 +154,7 @@ public class BoardController {
     })
     @PostMapping("")
     public ResponseEntity<ResCreateBoardDto> createBoard(@Valid @RequestPart("board") ReqCreateBoardDto reqCreateBoardDto,
-                                                         @RequestPart("files") List<MultipartFile> files) {
+                                                         @RequestPart("files", required = false) List<MultipartFile> files) {
         return ResponseEntity.status(HttpStatus.CREATED).body(ResCreateBoardDto.from(boardService
                 .createBoard(CreateBoardDto.of(reqCreateBoardDto, reqCreateBoardDto.getUserId(), files))));
     }
@@ -172,7 +172,7 @@ public class BoardController {
     @PutMapping("/{id}")
     public ResponseEntity<ResUpdateBoardDto> updateBoard(@PathVariable Long id,
                                                          @RequestPart("board") ReqUpdateBoardDto reqUpdateBoardDto,
-                                                         @RequestPart(value = "files") List<MultipartFile> files) {
+                                                         @RequestPart(value = "files", required = false) List<MultipartFile> files) {
         ResUpdateBoardDto resUpdateBoardDto;
         resUpdateBoardDto = ResUpdateBoardDto.from(boardService.updateBoard(UpdateBoardDto.of(id, reqUpdateBoardDto, files)));
         return ResponseEntity.ok().body(resUpdateBoardDto);
