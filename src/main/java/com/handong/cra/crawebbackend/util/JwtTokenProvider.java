@@ -52,10 +52,9 @@ public class JwtTokenProvider {
 
     public ResTokenDto generateTokenByLogin(String username) {
         Long userId = userRepository.findByUsername(username).getId();
-        String accessToken = generateToken(userId, accessExpiration);
         String refreshToken = generateToken(userId, refreshExpiration);
         refreshTokenRepository.save(new RefreshToken(userId, refreshToken));
-        return new ResTokenDto(userId, accessToken, refreshToken);
+        return ResTokenDto.of(userId, null, refreshToken);
     }
 
     @Transactional
@@ -67,11 +66,8 @@ public class JwtTokenProvider {
             return null;
         }
         String accessToken = generateToken(reissueTokenDto.getUserId(), accessExpiration);
-        String newRefreshToken = generateToken(reissueTokenDto.getUserId(), refreshExpiration);
-        savedToken.setRefreshToken(newRefreshToken);
-        return new ResTokenDto(userId, accessToken, newRefreshToken);
+        return ResTokenDto.of(userId, accessToken, null);
     }
-
 
 
     public Boolean validateToken(String token) {
