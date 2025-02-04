@@ -50,6 +50,8 @@ public class BoardMDParser {
 
     public static String extractPlainText(String markdown) {
         Parser parser = Parser.builder().build();
+        markdown = markdown.replaceAll("(?i)<br\\s*/?>", " ");
+
         Node document = parser.parse(markdown);
 
         StringBuilder sb = new StringBuilder();
@@ -60,9 +62,19 @@ public class BoardMDParser {
 
     private static void extractText(Node node, StringBuilder sb) {
         if (node instanceof Text) {
-            sb.append(((Text) node).getLiteral());
+            sb.append(((Text) node).getLiteral()).append(" ");
         } else if (node instanceof SoftLineBreak || node instanceof HardLineBreak) {
-            sb.append("\n"); // 줄바꿈 유지
+            sb.append(" "); // 줄바꿈 유지
+        } else if (node instanceof HtmlInline htmlInline) {
+            // `<br>` 태그가 포함된 경우 줄바꿈 추가
+            if (htmlInline.getLiteral().equalsIgnoreCase("<br>") || htmlInline.getLiteral().equalsIgnoreCase("<br/>")) {
+                sb.append(" ");
+            }
+        } else if (node instanceof HtmlBlock htmlBlock) {
+            // `<br>` 태그만 포함된 HTML 블록 처리
+            if (htmlBlock.getLiteral().trim().equalsIgnoreCase("<br>") || htmlBlock.getLiteral().trim().equalsIgnoreCase("<br/>")) {
+                sb.append(" ");
+            }
         } else if (!(node instanceof Link || node instanceof Image)) {
             // Link, Image 노드는 무시하고 다른 노드는 계속 탐색
             Node child = node.getFirstChild();
