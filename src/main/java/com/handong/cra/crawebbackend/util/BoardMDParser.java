@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.commonmark.node.*;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.text.TextContentRenderer;
+import org.commonmark.renderer.markdown.MarkdownRenderer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -25,7 +26,7 @@ public class BoardMDParser {
         List<String> copyUrls = new ArrayList<>(newUrls);
         replaceImageUrls(document, copyUrls);
 
-        TextContentRenderer renderer = TextContentRenderer.builder().build();
+        MarkdownRenderer renderer = MarkdownRenderer.builder().build();
         return renderer.render(document);
     }
 
