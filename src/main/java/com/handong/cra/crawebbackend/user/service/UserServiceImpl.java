@@ -11,6 +11,7 @@ import com.handong.cra.crawebbackend.user.domain.User;
 import com.handong.cra.crawebbackend.user.dto.LoginUserDto;
 import com.handong.cra.crawebbackend.user.dto.UpdateUserDto;
 import com.handong.cra.crawebbackend.user.dto.UpdateUserPasswordDto;
+import com.handong.cra.crawebbackend.user.dto.UserDetailDto;
 import com.handong.cra.crawebbackend.user.repository.UserRepository;
 import com.handong.cra.crawebbackend.util.AESUtill;
 import jakarta.transaction.Transactional;
@@ -72,6 +73,14 @@ public class UserServiceImpl implements UserService {
         user = user.update(updateUserDto);
 
         return UpdateUserDto.from(user);
+    }
+
+    @Override
+    public UserDetailDto getUserDetailByUsername(String username) {
+        User user = userRepository.findByUsername(username);
+        if (user == null) throw  new UserNotFoundException();
+
+        return UserDetailDto.from(user);
     }
 
     @Override

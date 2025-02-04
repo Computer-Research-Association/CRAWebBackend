@@ -1,6 +1,7 @@
 package com.handong.cra.crawebbackend.user.dto.response;
 
 
+import com.handong.cra.crawebbackend.user.dto.UpdateUserDto;
 import com.handong.cra.crawebbackend.user.dto.UserDetailDto;
 import lombok.*;
 
@@ -10,16 +11,23 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ResUserDetailDto {
     private String name;
+    private String email;
+    private Long studentId;
     private String term;
     private String githubId;
-    private String greetingMessage;
-    private Long studentNumber;
+    private String imgUrl;
 
 
     public ResUserDetailDto(UserDetailDto userDetailDto){
-//        this.name = userDetailDto
+        this.name = userDetailDto.getName();
+        this.email = userDetailDto.getEmail();
+        this.studentId = userDetailDto.getStudentId();
+        this.term = userDetailDto.getTerm();
+        this.githubId = userDetailDto.getGithubId();
+        this.imgUrl = userDetailDto.getImgUrl();
     }
 
-
-    // 기수 이름, 학번 한마디 깃헙주소
+    public static ResUserDetailDto from (UserDetailDto userDetailDto){
+        return new ResUserDetailDto(userDetailDto);
+    }
 }

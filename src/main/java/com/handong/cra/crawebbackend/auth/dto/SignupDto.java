@@ -18,7 +18,7 @@ public class SignupDto {
     private String email;
     private String name;
     private String githubId;
-    private Long studentNumber;
+    private Long studentId;
     private String term;
     private String code;
     private UserRoleSet roles;
@@ -29,7 +29,7 @@ public class SignupDto {
         this.email = reqSignupDto.getEmail();
         this.name = reqSignupDto.getName();
         this.githubId = reqSignupDto.getGithubId();
-        this.studentNumber = reqSignupDto.getStudentNumber();
+        this.studentId = reqSignupDto.getStudentId();
         this.term = reqSignupDto.getTerm();
         this.code = reqSignupDto.getCode();
         this.roles = UserRoleSet.getDefault(UserRoleEnum.USER);

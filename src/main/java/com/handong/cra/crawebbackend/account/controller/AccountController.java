@@ -33,17 +33,4 @@ public class AccountController {
         accountService.requestChangingPassword(username);
         return ResponseEntity.ok().build();
     }
-//
-//    //test
-//    @PostMapping("/valid/code/signup")
-//    public ResponseEntity<Void> signupCodeValidCheck(@RequestParam String code) {
-//        accountService.codeValidCheck(code, ManageTokenCategory.SIGNUP);
-//        return ResponseEntity.ok().build();
-//    }
-//
-//    @PostMapping("/valid/code/password-change")
-//    public ResponseEntity<Void> passwordChangeCodeValidCheck(@RequestParam String code) {
-//        accountService.codeValidCheck(code, ManageTokenCategory.PASSWORD_CHANGE);
-//        return ResponseEntity.ok().build();
-//    }
 }

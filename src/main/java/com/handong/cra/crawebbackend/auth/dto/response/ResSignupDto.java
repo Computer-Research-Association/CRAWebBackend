@@ -23,7 +23,7 @@ public class ResSignupDto {
         this.email = signupDto.getEmail();
         this.name = signupDto.getName();
         this.githubId = signupDto.getGithubId();
-        this.studentNumber = signupDto.getStudentNumber();
+        this.studentNumber = signupDto.getStudentId();
         this.term = signupDto.getTerm();
     }
 
