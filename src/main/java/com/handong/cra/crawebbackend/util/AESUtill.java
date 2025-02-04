@@ -1,17 +1,24 @@
 package com.handong.cra.crawebbackend.util;
 
-import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.util.Base64;
 
+@Component
 public class AESUtill {
-    private static final String ALGORITHM = "AES/CBC/PKCS5Padding";
-    // TODO : 변경 ㄱㄱ
-    private static final String SECURITY_KEY = "1234567890123456";
-    private static final String IV = "1234567890123456";
+
+    @Value("${aes.algorithm}")
+    private static String ALGORITHM;
+
+    @Value("${aes.security-keu}")
+    private static String SECURITY_KEY;
+
+    @Value("${aes.iv}")
+    private static String IV;
 
     public static String AESDecrypt(String input) throws Exception {
         SecretKeySpec keySpec = new SecretKeySpec(SECURITY_KEY.getBytes(), "AES");

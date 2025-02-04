@@ -1,8 +1,6 @@
 package com.handong.cra.crawebbackend.auth.domain;
 
 import com.handong.cra.crawebbackend.user.domain.User;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
