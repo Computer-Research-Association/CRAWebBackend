@@ -16,4 +16,6 @@ public interface AccountService {
     public void requestChangingPassword(String username);
 
     public Boolean validUsername(String username);
+
+    public String findUsername(Integer studentId, String name, String email);
 }

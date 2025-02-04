@@ -103,6 +103,15 @@ public class AccountServiceImpl implements AccountService {
         return user == null;
     }
 
+    @Override
+    public String findUsername(Integer studentId, String name, String email) {
+        User user = userRepository.findByNameAndStudentIdAndEmail(name, studentId, email);
+
+        if (user == null) throw new UserNotFoundException();
+
+        return user.getUsername();
+    }
+
     // 주기적으로 토큰 DB 정리
     @Scheduled(cron = "0 0 12 * * *", zone = "Asia/Seoul")
     private void deleteTokens() {
