@@ -6,17 +6,14 @@ import com.handong.cra.crawebbackend.common.domain.BaseEntity;
 import com.handong.cra.crawebbackend.user.dto.UpdateUserDto;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class User extends BaseEntity implements UserDetails {
+public class User extends BaseEntity{
     @Column(nullable = false, unique = true)
     private String username;
 
@@ -56,6 +53,7 @@ public class User extends BaseEntity implements UserDetails {
     )
     private List<Board> likedBoards = new ArrayList<>();
 
+
     public User(String username, String name, String password, String githubId, String email, UserRoleSet role, Long studentId, String term) {
         this.username = username;
         this.name = name;
@@ -87,13 +85,8 @@ public class User extends BaseEntity implements UserDetails {
     }
     public void unlikeBoard(Board board){
         this.likedBoards.remove(board);
-    }
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
     }
-
 
 
     public User update(UpdateUserDto updateUserDto){
