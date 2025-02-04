@@ -1,5 +1,6 @@
 package com.handong.cra.crawebbackend.board.service;
 
+import com.amazonaws.services.s3.AmazonS3;
 import com.handong.cra.crawebbackend.board.domain.Board;
 import com.handong.cra.crawebbackend.board.domain.Category;
 import com.handong.cra.crawebbackend.board.domain.BoardOrderBy;
@@ -13,10 +14,12 @@ import com.handong.cra.crawebbackend.exception.board.BoardNotFoundException;
 import com.handong.cra.crawebbackend.exception.user.UserNotFoundException;
 import com.handong.cra.crawebbackend.user.domain.User;
 import com.handong.cra.crawebbackend.user.repository.UserRepository;
+import com.handong.cra.crawebbackend.util.BoardMDParser;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.PageRequest;
@@ -39,6 +42,10 @@ public class BoardServiceImpl implements BoardService {
     private final UserRepository userRepository;
     private final S3ImageService s3ImageService;
     private final S3FileService s3FileService;
+    private final AmazonS3 amazonS3;
+
+    @Value("${spring.cloud.aws.s3.bucket}")
+    private String bucket;
 
     @Override
     @Transactional
@@ -72,6 +79,7 @@ public class BoardServiceImpl implements BoardService {
     @Transactional
     public CreateBoardDto createBoard(CreateBoardDto createBoardDto) {
         User user = userRepository.findById(createBoardDto.getUserId()).orElseThrow(UserNotFoundException::new);
+        BoardMDParser parser = new BoardMDParser(amazonS3, bucket);
         if (createBoardDto.getFiles() != null) {
             List<String> fileUrls = s3FileService.uploadFiles(createBoardDto.getFiles(), S3ImageCategory.BOARD);
             createBoardDto.setFileUrls(fileUrls);
@@ -80,8 +88,10 @@ public class BoardServiceImpl implements BoardService {
         Board board = Board.of(user, createBoardDto);
         log.info("test here {}", !board.getImageUrls().isEmpty());
         log.info("Count =  {}", board.getImageUrls().size());
-        if (!board.getImageUrls().isEmpty())
+        if (!board.getImageUrls().isEmpty()) {
             board.setImageUrls(s3ImageService.transferImage(board.getImageUrls(), S3ImageCategory.BOARD));
+            board.setContent(parser.updateImageUrls(board.getContent(), board.getImageUrls()));
+        }
 
         board = boardRepository.save(board);
         return CreateBoardDto.from(board);

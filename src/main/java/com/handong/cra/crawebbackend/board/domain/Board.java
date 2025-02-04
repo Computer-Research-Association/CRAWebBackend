@@ -26,6 +26,7 @@ public class Board extends BaseEntity {
     private Category category;
 
     @Column(length = 2048, nullable = false)
+    @Setter
     private String content;
 
     @ElementCollection
