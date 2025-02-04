@@ -100,8 +100,9 @@ public class BoardServiceImpl implements BoardService {
     @Override
     @Transactional
     public UpdateBoardDto updateBoard(UpdateBoardDto updateBoardDto) {
-
+        BoardMDParser parser = new BoardMDParser(amazonS3, bucket);
         Board board = boardRepository.findById(updateBoardDto.getId()).orElseThrow(BoardNotFoundException::new);
+
         if (updateBoardDto.getFiles() != null) {
             List<String> fileUrls = s3FileService.uploadFiles(updateBoardDto.getFiles(), S3ImageCategory.BOARD);
             updateBoardDto.setFileUrls(fileUrls);
@@ -123,6 +124,7 @@ public class BoardServiceImpl implements BoardService {
             newImgs.addAll(temp);
 
             board.setImageUrls(newImgs);
+            board.setContent(parser.updateImageUrls(board.getContent(), board.getImageUrls()));
         }
         board = board.update(updateBoardDto);
 
