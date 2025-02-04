@@ -2,8 +2,10 @@ package com.handong.cra.crawebbackend.board.dto.response;
 
 import com.handong.cra.crawebbackend.board.domain.Category;
 import com.handong.cra.crawebbackend.board.dto.ListBoardDto;
+import com.handong.cra.crawebbackend.util.BoardMDParser;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
+import org.commonmark.parser.Parser;
 
 import java.time.LocalDateTime;
 
@@ -41,16 +43,16 @@ public class ResListBoardDto {
     private LocalDateTime updatedAt;
 
     public ResListBoardDto(ListBoardDto listBoardDto) {
+        BoardMDParser boardMDParser = new BoardMDParser();
+
         this.id = listBoardDto.getId();
         this.userId = listBoardDto.getId();
         this.title = listBoardDto.getTitle();
 
         // 길이 제한
-        String temp = listBoardDto.getContent();
-        if (temp.length() > 90) temp = listBoardDto.getContent().substring(0, 90) + "...";
-
+        String temp = BoardMDParser.extractPlainText(listBoardDto.getContent()).replace('\n', ' ');
+        if (temp.length() > 90) temp = temp.substring(0, 90) + "...";
         this.content = temp;
-
 
         this.category = listBoardDto.getCategory();
         this.likeCount = listBoardDto.getLikeCount();
