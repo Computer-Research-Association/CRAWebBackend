@@ -34,7 +34,7 @@ dependencies {
     implementation 'io.awspring.cloud:spring-cloud-aws-starter:3.3.0-RC1'
     implementation 'com.amazonaws:aws-java-sdk-s3:1.12.780'
     implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
-    implementation 'org.commonmark:commonmark:0.21.0'
+    implementation 'org.commonmark:commonmark:0.24.0'
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     runtimeOnly 'com.mysql:mysql-connector-j'

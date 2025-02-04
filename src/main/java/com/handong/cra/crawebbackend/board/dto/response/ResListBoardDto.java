@@ -43,8 +43,6 @@ public class ResListBoardDto {
     private LocalDateTime updatedAt;
 
     public ResListBoardDto(ListBoardDto listBoardDto) {
-        BoardMDParser boardMDParser = new BoardMDParser();
-
         this.id = listBoardDto.getId();
         this.userId = listBoardDto.getId();
         this.title = listBoardDto.getTitle();
