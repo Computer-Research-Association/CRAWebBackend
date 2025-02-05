@@ -15,7 +15,9 @@ public class MailSendDto {
     @NotNull
     private MailCategory mailCategory;
 
+
     // datas
     private String username;
     private String url;
+    private String code;
 }

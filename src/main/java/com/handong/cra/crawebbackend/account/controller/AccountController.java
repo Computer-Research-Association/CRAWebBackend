@@ -29,13 +29,20 @@ public class AccountController {
     }
 
     @PostMapping("/password-change")
-    public ResponseEntity<?> requestChangingPassword(@RequestParam String username) {
+    public ResponseEntity<Void> requestChangingPassword(@RequestParam String username) {
         accountService.requestChangingPassword(username);
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("")
-    public ResponseEntity<?> emailVerification(){
+    @PostMapping("/valid/email-request")
+    public ResponseEntity<Void> emailVerification(@RequestParam String email){
+        accountService.emailValidCheck(email);
+        return ResponseEntity.ok().build();
+    }
 
+    @PostMapping("/valid/email")
+    public ResponseEntity<Void> emailCodeCheck(@RequestParam String code) {
+
+        return ResponseEntity.ok().build();
     }
 }

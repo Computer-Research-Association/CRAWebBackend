@@ -9,5 +9,5 @@ import lombok.*;
 public class ReqFindUsernameDto {
     private String name;
     private String email;
-    private Integer studentId;
+    private Long studentId;
 }

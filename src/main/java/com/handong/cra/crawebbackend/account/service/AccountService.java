@@ -17,5 +17,7 @@ public interface AccountService {
 
     public Boolean validUsername(String username);
 
-    public String findUsername(Integer studentId, String name, String email);
+    public String findUsername(Long studentId, String name, String email);
+
+    public void emailValidCheck(String email);
 }

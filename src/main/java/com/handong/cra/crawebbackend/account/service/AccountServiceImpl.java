@@ -104,12 +104,33 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public String findUsername(Integer studentId, String name, String email) {
+    public String findUsername(Long studentId, String name, String email) {
         User user = userRepository.findByNameAndStudentIdAndEmail(name, studentId, email);
 
         if (user == null) throw new UserNotFoundException();
 
         return user.getUsername();
+    }
+
+    @Override
+    public void emailValidCheck(String email) {
+
+        User user = userRepository.findByEmail(email);
+        if (user != null) {
+            log.info("이미 존재하는 이메일 ");
+            return;
+        }
+
+        log.info(ManageTokenCategory.EMAIL_VALID.toString());
+        CodeDto codeDto =  generateToken(ManageTokenCategory.EMAIL_VALID);
+        String code = codeDto.getCode();
+
+        MailSendDto mailSendDto = MailSendDto.builder().mailCategory(MailCategory.EMAILVALID_EMAIL)
+                .code(code)
+                .sendEmail(email)
+                .build();
+
+        mailService.sendMimeMessage(mailSendDto);
     }
 
     // 주기적으로 토큰 DB 정리
