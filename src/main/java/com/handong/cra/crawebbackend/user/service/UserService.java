@@ -10,8 +10,8 @@ public interface UserService {
     public Boolean isUserExist(String username);
     public LoginUserDto getUserIfRegistered(String username, String password);
     public SignupDto save(SignupDto signupDto);
-    public UpdateUserDto updateUserInfo(Long id ,UpdateUserDto updateUserDto);
+    public String updateUserProfileImage(Long userid ,String imgUrl);
+    public UpdateUserDto updateUserInfo(UpdateUserDto updateUserDto);
     public UserDetailDto getUserDetailByUsername(String username);
-
     public void updateUserPassword(UpdateUserPasswordDto updateUserPasswordDto);
 }

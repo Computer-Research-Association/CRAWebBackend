@@ -53,6 +53,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public SignupDto save(SignupDto signupDto) {
         User user = User.from(signupDto);
         userRepository.save(user);
@@ -61,15 +62,23 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UpdateUserDto updateUserInfo(Long id, UpdateUserDto updateUserDto) {
-        User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("no user"));
+    @Transactional
+    public String updateUserProfileImage(Long userid, String imgUrl) {
+        if (imgUrl == null || !imgUrl.contains("temp/")) return null;
 
-        //img logic
-        if (updateUserDto.getImgUrl().contains("temp/")) {
-            if (user.getImgUrl() != null)
-                s3ImageService.transferImage(user.getImgUrl(), S3ImageCategory.DELETED);
-            updateUserDto.setImgUrl(s3ImageService.transferImage(updateUserDto.getImgUrl(), S3ImageCategory.USER));
-        }
+        User user = userRepository.getUserById(userid);
+        if (user == null) throw new UserNotFoundException();
+
+        // 기존 이미지 삭제
+        if (user.getImgUrl() != null) s3ImageService.transferImage(user.getImgUrl(), S3ImageCategory.DELETED);
+
+        user.setImgUrl(s3ImageService.transferImage(imgUrl, S3ImageCategory.USER));
+        return user.getImgUrl();
+    }
+
+    @Override
+    public UpdateUserDto updateUserInfo(UpdateUserDto updateUserDto) {
+        User user = userRepository.findById(updateUserDto.getUserId()).orElseThrow(UserNotFoundException::new);
         user = user.update(updateUserDto);
 
         return UpdateUserDto.from(user);
@@ -78,7 +87,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDetailDto getUserDetailByUsername(String username) {
         User user = userRepository.findByUsername(username);
-        if (user == null) throw  new UserNotFoundException();
+        if (user == null) throw new UserNotFoundException();
 
         return UserDetailDto.from(user);
     }

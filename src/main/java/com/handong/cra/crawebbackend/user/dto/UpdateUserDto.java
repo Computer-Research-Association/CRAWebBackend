@@ -10,7 +10,8 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class UpdateUserDto {
-    String imgUrl;
+    private Long userId;
+    private String imgUrl;
     //TODO : 수정할 데이터 추가
 
 
@@ -18,18 +19,16 @@ public class UpdateUserDto {
         this.imgUrl = user.getImgUrl();
     }
 
-    public UpdateUserDto (ReqUpdateUserDto reqUpdateUserDto){
+    public UpdateUserDto (Long userId, ReqUpdateUserDto reqUpdateUserDto){
+        this.userId = userId;
         this.imgUrl = reqUpdateUserDto.getImgUrl();
-    }
-    public UpdateUserDto (ResUpdateUserDto resUpdateUserDto){
-        this.imgUrl = resUpdateUserDto.getImgUrl();
     }
 
     public static UpdateUserDto from(User user){
         return new UpdateUserDto(user);
     }
-    public static UpdateUserDto from(ReqUpdateUserDto reqUpdateUserDto){
-        return new UpdateUserDto(reqUpdateUserDto);
+    public static UpdateUserDto from(Long userId, ReqUpdateUserDto reqUpdateUserDto){
+        return new UpdateUserDto(userId, reqUpdateUserDto);
     }
 
 }

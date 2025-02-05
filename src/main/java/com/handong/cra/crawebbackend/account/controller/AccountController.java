@@ -33,4 +33,9 @@ public class AccountController {
         accountService.requestChangingPassword(username);
         return ResponseEntity.ok().build();
     }
+
+    @PostMapping("")
+    public ResponseEntity<?> emailVerification(){
+
+    }
 }

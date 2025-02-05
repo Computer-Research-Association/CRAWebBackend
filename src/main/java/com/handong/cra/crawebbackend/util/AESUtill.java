@@ -11,14 +11,26 @@ import java.util.Base64;
 @Component
 public class AESUtill {
 
-    @Value("${aes.algorithm}")
-    private static String ALGORITHM;
 
-    @Value("${aes.security-keu}")
-    private static String SECURITY_KEY;
+    @Value("${aes.algorithm}")
+    private void setAlgorithm(String algorithm) {
+        ALGORITHM = algorithm;
+    }
+
+    @Value("${aes.security-key}")
+    private void setSecurityKey(String securityKey) {
+        SECURITY_KEY = securityKey;
+    }
 
     @Value("${aes.iv}")
+    private void setIv(String iv) {
+        IV = iv;
+    }
+
+    private static String ALGORITHM;
+    private static String SECURITY_KEY;
     private static String IV;
+
 
     public static String AESDecrypt(String input) throws Exception {
         SecretKeySpec keySpec = new SecretKeySpec(SECURITY_KEY.getBytes(), "AES");
