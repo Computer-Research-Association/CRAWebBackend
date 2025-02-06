@@ -26,12 +26,12 @@ public class UserController {
     @PutMapping("/image")
     public ResponseEntity<String> updateUserProfileImage(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestParam String imgUrl) {
         log.info("userid = {}", customUserDetails.getUser().getId());
-        return ResponseEntity.ok(userService.updateUserProfileImage(customUserDetails.getUser().getId(), imgUrl));
+        return ResponseEntity.ok(userService.updateUserProfileImage(customUserDetails.getUserId(), imgUrl));
     }
 
     @PutMapping("/info")
     public ResponseEntity<ResUpdateUserDto> updateUserInfo(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody ReqUpdateUserDto reqUpdateUserDto) {
-        return ResponseEntity.ok(ResUpdateUserDto.from((userService.updateUserInfo(UpdateUserDto.from(customUserDetails.getUser().getId(), reqUpdateUserDto)))));
+        return ResponseEntity.ok(ResUpdateUserDto.from((userService.updateUserInfo(UpdateUserDto.from(customUserDetails.getUserId(), reqUpdateUserDto)))));
     }
 
 
