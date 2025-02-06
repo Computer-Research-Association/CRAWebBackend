@@ -2,6 +2,7 @@ package com.handong.cra.crawebbackend.util;
 
 import com.handong.cra.crawebbackend.auth.domain.RefreshToken;
 import com.handong.cra.crawebbackend.auth.dto.ReissueTokenDto;
+import com.handong.cra.crawebbackend.auth.dto.TokenDto;
 import com.handong.cra.crawebbackend.auth.dto.response.ResTokenDto;
 import com.handong.cra.crawebbackend.auth.repository.RefreshTokenRepository;
 import com.handong.cra.crawebbackend.user.repository.UserRepository;
@@ -50,16 +51,15 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    public ResTokenDto generateTokenByLogin(String username) {
+    public TokenDto generateTokenByLogin(String username) {
         Long userId = userRepository.findByUsername(username).getId();
-        String accessToken = generateToken(userId, accessExpiration);
         String refreshToken = generateToken(userId, refreshExpiration);
         refreshTokenRepository.save(new RefreshToken(userId, refreshToken));
-        return new ResTokenDto(userId, accessToken, refreshToken);
+        return TokenDto.of(userId, null, refreshToken);
     }
 
     @Transactional
-    public ResTokenDto reissueToken(ReissueTokenDto reissueTokenDto) {
+    public TokenDto reissueToken(ReissueTokenDto reissueTokenDto) {
         RefreshToken savedToken = refreshTokenRepository.getRefreshTokenByUserId(reissueTokenDto.getUserId());
         Long userId = savedToken.getUserId();
         if (!savedToken.getRefreshToken().equals(reissueTokenDto.getRefreshToken())) {
@@ -67,10 +67,9 @@ public class JwtTokenProvider {
             return null;
         }
         String accessToken = generateToken(reissueTokenDto.getUserId(), accessExpiration);
-        String newRefreshToken = generateToken(reissueTokenDto.getUserId(), refreshExpiration);
-        savedToken.setRefreshToken(newRefreshToken);
-        return new ResTokenDto(userId, accessToken, newRefreshToken);
+        return TokenDto.of(userId, accessToken, null);
     }
+
 
     public Boolean validateToken(String token) {
         SecretKey jwtSecretKey = Keys.hmacShaKeyFor(secret.getBytes());

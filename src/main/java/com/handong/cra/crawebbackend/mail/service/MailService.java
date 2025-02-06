@@ -43,6 +43,8 @@ public class MailService {
                 content = content.replace("#username", mailSendDto.getUsername());
             if (mailSendDto.getUrl() != null)
                 content = content.replace("#url", mailSendDto.getUrl());
+            if (mailSendDto.getCode() != null)
+                content=content.replace("#verification_code", mailSendDto.getCode());
 
             mimeMessageHelper.setText(content, true);
 
