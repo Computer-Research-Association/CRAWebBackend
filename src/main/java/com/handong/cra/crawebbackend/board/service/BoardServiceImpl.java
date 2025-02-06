@@ -35,7 +35,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
-
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -60,18 +59,18 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public List<ListBoardDto> getPaginationBoard(Category category, Long page, Integer perPage, BoardOrderBy boardOrderBy, Boolean isASC) {
+    public List<ListBoardDto> getPaginationBoard(PageBoardDto pageBoardDto) {
 
         HashMap<BoardOrderBy, String> map = new HashMap<>();
         map.put(BoardOrderBy.DATE, "createdAt");
         map.put(BoardOrderBy.LIKECOUNT, "likeCount");
 
-        Sort sort = Sort.by(map.get(boardOrderBy));
+        Sort sort = Sort.by(map.get(pageBoardDto.getOrderBy()));
 
-        sort = (isASC) ? sort.ascending() : sort.descending();
+        sort = (pageBoardDto.getIsASC()) ? sort.ascending() : sort.descending();
 
-        Pageable pageable = PageRequest.of(Math.toIntExact(page), perPage, sort);
-        Page<Board> boards = boardRepository.findAllByCategoryAndDeletedFalse(category, pageable);
+        Pageable pageable = PageRequest.of(Math.toIntExact(pageBoardDto.getPage()), pageBoardDto.getPerPage(), sort);
+        Page<Board> boards = boardRepository.findAllByCategoryAndDeletedFalse(pageBoardDto.getCategory(), pageable);
 
         return boards.stream().map(ListBoardDto::from).toList();
     }
@@ -164,7 +163,7 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     public DetailBoardDto getDetailBoardById(Long id) {
-        Board board = boardRepository.findBoardByIdAndDeletedFalse(  id);
+        Board board = boardRepository.findBoardByIdAndDeletedFalse(id);
         if (board == null) {
             throw new BoardNotFoundException();
         }
@@ -174,7 +173,7 @@ public class BoardServiceImpl implements BoardService {
     @Override
     @Transactional
     public void ascendingBoardView(Long id) {
-        Board board = boardRepository.findById(id).orElseThrow(() -> new RuntimeException("no data"));
+        Board board = boardRepository.findById(id).orElseThrow(BoardNotFoundException::new);
         board.increaseView();
     }
 
@@ -184,18 +183,14 @@ public class BoardServiceImpl implements BoardService {
         Board board = boardRepository.findById(boardId).orElseThrow(BoardNotFoundException::new);
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         if (isLiked && !board.getLikedUsers().contains(user)) {
-            log.info("Add Listing");
             board.like(user);
             user.likeBoard(board);
         } else if (!isLiked && board.getLikedUsers().contains(user)) {
-            log.info("Remove Listing");
             board.unlike(user);
             user.unlikeBoard(board);
         } else {
             // exception
             throw new BoardLikeBadRequestException();
         }
-
-        log.info("user list size = {}, board list size = {}", user.getLikedBoards().size(), board.getLikedUsers().size());
     }
 }

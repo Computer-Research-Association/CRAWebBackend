@@ -53,10 +53,18 @@ public class UpdateBoardDto {
         this.imageUrls = reqUpdateHavrutaBoardDto.getImageUrls();
     }
 
+    public UpdateBoardDto(Long userId, Long boardId) {
+        this.userId = userId;
+        this.id = boardId;
+    }
+
     public static UpdateBoardDto of(Long userId, Long boardId, ReqUpdateBoardDto reqUpdateBoardDto, List<MultipartFile> files) {
         return new UpdateBoardDto(userId, boardId, reqUpdateBoardDto, files);
     }
 
+    public static UpdateBoardDto of (Long userId, Long boardId){
+        return new UpdateBoardDto(userId, boardId);
+    }
 
     public static UpdateBoardDto from(Board board) {
         return new UpdateBoardDto(board);

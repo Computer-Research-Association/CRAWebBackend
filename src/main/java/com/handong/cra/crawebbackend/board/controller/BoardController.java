@@ -5,6 +5,7 @@ import com.handong.cra.crawebbackend.board.domain.Category;
 import com.handong.cra.crawebbackend.board.domain.BoardOrderBy;
 import com.handong.cra.crawebbackend.board.dto.CreateBoardDto;
 import com.handong.cra.crawebbackend.board.dto.ListBoardDto;
+import com.handong.cra.crawebbackend.board.dto.PageBoardDto;
 import com.handong.cra.crawebbackend.board.dto.UpdateBoardDto;
 import com.handong.cra.crawebbackend.board.dto.request.ReqCreateBoardDto;
 import com.handong.cra.crawebbackend.board.dto.request.ReqUpdateBoardDto;
@@ -57,7 +58,7 @@ public class BoardController {
     })
     @DeleteMapping("/{boardId}")
     public ResponseEntity<Void> deleteBoard(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Long boardId) {
-        boardService.deleteBoardById(customUserDetails.getUserId(), boardId);
+        boardService.deleteBoardById(UpdateBoardDto.of(customUserDetails.getUserId(), boardId));
         return ResponseEntity.ok().build();
     }
 
@@ -140,7 +141,16 @@ public class BoardController {
         if (perPage > MAX_PAGE_SIZE) {
             throw new BoardPageSizeLimitExceededException();
         }
-        List<ListBoardDto> listBoardDtos = boardService.getPaginationBoard(Category.values()[category], page, perPage, BoardOrderBy.values()[orderBy], isASC);
+
+        PageBoardDto pageBoardDto = PageBoardDto.builder()
+                .category(Category.values()[category])
+                .page(page)
+                .perPage(perPage)
+                .orderBy(BoardOrderBy.values()[orderBy])
+                .isASC(isASC)
+                .build();
+
+        List<ListBoardDto> listBoardDtos = boardService.getPaginationBoard(pageBoardDto);
         return ResponseEntity.ok(listBoardDtos.stream().map(ResListBoardDto::from).toList());
     }
 

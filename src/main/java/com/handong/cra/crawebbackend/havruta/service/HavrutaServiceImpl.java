@@ -4,6 +4,7 @@ import com.handong.cra.crawebbackend.board.domain.BoardOrderBy;
 import com.handong.cra.crawebbackend.board.domain.Category;
 import com.handong.cra.crawebbackend.board.dto.UpdateBoardDto;
 import com.handong.cra.crawebbackend.board.repository.BoardRepository;
+import com.handong.cra.crawebbackend.exception.auth.AuthForbiddenActionException;
 import com.handong.cra.crawebbackend.exception.board.BoardNotFoundException;
 import com.handong.cra.crawebbackend.exception.havruta.HavrutaNotFoundException;
 import com.handong.cra.crawebbackend.exception.user.UserNotFoundException;
@@ -22,6 +23,7 @@ import com.handong.cra.crawebbackend.havruta.dto.havrutaboard.ListHavrutaBoardDt
 import com.handong.cra.crawebbackend.havruta.dto.havrutaboard.UpdateHavrutaBoardDto;
 import com.handong.cra.crawebbackend.havruta.repository.HavrutaRepository;
 import com.handong.cra.crawebbackend.user.domain.User;
+import com.handong.cra.crawebbackend.user.domain.UserRoleEnum;
 import com.handong.cra.crawebbackend.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -186,6 +188,10 @@ public class HavrutaServiceImpl implements HavrutaService {
     public UpdateHavrutaBoardDto updateHavrutaBoard(UpdateHavrutaBoardDto updateHavrutaBoardDto) {
         Long id = updateHavrutaBoardDto.getId();
         Board board = boardRepository.findById(id).orElseThrow(BoardNotFoundException::new);
+        User user = userRepository.findById(updateHavrutaBoardDto.getUserId()).orElseThrow(UserNotFoundException::new);
+
+        if (!user.getId().equals(board.getUser().getId()) || !user.getRoles().hasRole(UserRoleEnum.ADMIN))
+            throw new AuthForbiddenActionException();
 
         List<String> fileUrls = s3FileService.uploadFiles(updateHavrutaBoardDto.getFiles(), S3ImageCategory.BOARD);
         updateHavrutaBoardDto.setFileUrls(fileUrls);
