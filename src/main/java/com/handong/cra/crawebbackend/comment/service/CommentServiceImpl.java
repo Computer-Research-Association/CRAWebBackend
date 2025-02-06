@@ -73,8 +73,8 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    public Boolean deleteCommentById(Long id) {
-        Comment comment = commentRepository.findById(id).orElseThrow(CommentNotFoundException::new);
+    public Boolean deleteCommentById(Long userId, Long commentId) {
+        Comment comment = commentRepository.findById(commentId).orElseThrow(CommentNotFoundException::new);
         comment.delete();
 
         List<Comment> comments = comment.getCommentList();

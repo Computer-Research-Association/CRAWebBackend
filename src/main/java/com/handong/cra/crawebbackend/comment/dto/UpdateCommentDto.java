@@ -11,11 +11,12 @@ import lombok.*;
 @Builder
 public class UpdateCommentDto {
     private Long id;
+    private Long userId;
     private String content;
     private Boolean deleted;
 
 
-    public UpdateCommentDto(ReqUpdateCommentDto reqUpdateCommentDto, Long id) {
+    public UpdateCommentDto(Long userId, ReqUpdateCommentDto reqUpdateCommentDto, Long id) {
         this.id = id;
         this.content = reqUpdateCommentDto.getContent();
         this.deleted = reqUpdateCommentDto.getDeleted();
@@ -27,11 +28,11 @@ public class UpdateCommentDto {
         this.deleted = comment.getDeleted();
     }
 
-    public static UpdateCommentDto of(ReqUpdateCommentDto reqUpdateCommentDto, Long id) {
-        return new UpdateCommentDto(reqUpdateCommentDto, id);
+    public static UpdateCommentDto of(Long userId, ReqUpdateCommentDto reqUpdateCommentDto, Long id) {
+        return new UpdateCommentDto(userId, reqUpdateCommentDto, id);
     }
 
-    public static UpdateCommentDto from(Comment comment){
+    public static UpdateCommentDto from(Comment comment) {
         return new UpdateCommentDto(comment);
     }
 }

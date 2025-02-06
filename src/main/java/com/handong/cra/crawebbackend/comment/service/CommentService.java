@@ -10,6 +10,6 @@ public interface CommentService {
     public CreateCommentDto createComment(CreateCommentDto createCommentDto);
     public List<ListCommentDto> getCommentsByBoardId(Long boardId);
     public UpdateCommentDto updateComment(UpdateCommentDto updateCommentDto);
-    public Boolean deleteCommentById(Long id);
+    public Boolean deleteCommentById(Long userId, Long id);
     public Long getCommentCount(Long boardId);
 }
