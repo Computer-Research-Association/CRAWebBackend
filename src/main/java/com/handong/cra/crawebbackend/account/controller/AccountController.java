@@ -40,9 +40,9 @@ public class AccountController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/valid/email")
+    @PostMapping("/valid/email-code")
     public ResponseEntity<Void> emailCodeCheck(@RequestParam String code) {
-
+        accountService.codeValidCheck(code, ManageTokenCategory.EMAIL_VALID);
         return ResponseEntity.ok().build();
     }
 }
