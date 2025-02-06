@@ -23,14 +23,10 @@ import java.util.List;
 public class HavrutaAdminController {
     private final HavrutaService havrutaService;
 
-    @GetMapping
-    public ResponseEntity<List<ResListHavrutaDto>> getHavrutas() {
-        return ResponseEntity.ok().body(havrutaService.getAllHavrutas().stream().map(ResListHavrutaDto::from).toList());
-    }
 
-    @GetMapping("/view/{id}")
-    public ResponseEntity<ResDetailHavrutaDto> getHavrutaById(@PathVariable Long id) {
-        ResDetailHavrutaDto resDetailHavrutaDto = ResDetailHavrutaDto.from(havrutaService.getHavrutaById(id));
+    @GetMapping("/view/{havrutaId}")
+    public ResponseEntity<ResDetailHavrutaDto> getHavrutaById(@PathVariable Long havrutaId) {
+        ResDetailHavrutaDto resDetailHavrutaDto = ResDetailHavrutaDto.from(havrutaService.getHavrutaById(havrutaId));
 
         if(resDetailHavrutaDto == null) return ResponseEntity.notFound().build();
 
@@ -46,16 +42,16 @@ public class HavrutaAdminController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ResUpdateHavrutaDto> updateHavruta(@PathVariable Long id, @RequestBody ReqUpdateHavrutaDto reqUpdateHavrutaDto) {
-        ResUpdateHavrutaDto resUpdateHavrutaDto = ResUpdateHavrutaDto.from(havrutaService.updateHavruta(UpdateHavrutaDto.of(id, reqUpdateHavrutaDto)));;
+    @PutMapping("/{havrutaId}")
+    public ResponseEntity<ResUpdateHavrutaDto> updateHavruta(@PathVariable Long havrutaId, @RequestBody ReqUpdateHavrutaDto reqUpdateHavrutaDto) {
+        ResUpdateHavrutaDto resUpdateHavrutaDto = ResUpdateHavrutaDto.from(havrutaService.updateHavruta(UpdateHavrutaDto.of(havrutaId, reqUpdateHavrutaDto)));;
 
         return ResponseEntity.ok().body(resUpdateHavrutaDto);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteHavruta(@PathVariable Long id) {
-        if (havrutaService.deleteHavruta(id)) {
+    @DeleteMapping("/{havrutaId}")
+    public ResponseEntity<Void> deleteHavruta(@PathVariable Long havrutaId) {
+        if (havrutaService.deleteHavruta(havrutaId)) {
             return ResponseEntity.ok().build();
         }
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();

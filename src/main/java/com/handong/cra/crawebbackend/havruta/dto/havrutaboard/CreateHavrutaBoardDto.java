@@ -25,25 +25,26 @@ public class CreateHavrutaBoardDto extends CreateBoardDto {
         this.className = board.getHavruta().getClassName();
         this.professor = board.getHavruta().getProfessor();
     }
-    public CreateHavrutaBoardDto(ReqCreateHavrutaBoardDto reqCreateHavrutaBoardDto){
-        super(reqCreateHavrutaBoardDto);
+
+    public CreateHavrutaBoardDto(Long userId, ReqCreateHavrutaBoardDto reqCreateHavrutaBoardDto) {
+        super(userId, reqCreateHavrutaBoardDto);
         this.havrutaId = reqCreateHavrutaBoardDto.getHavrutaId();
     }
 
-    public CreateHavrutaBoardDto(ReqCreateHavrutaBoardDto reqCreateHavrutaBoardDto, Long userId, List<MultipartFile> files) {
-        super(reqCreateHavrutaBoardDto, userId, files);
+    public CreateHavrutaBoardDto(Long userId, ReqCreateHavrutaBoardDto reqCreateHavrutaBoardDto, List<MultipartFile> files) {
+        super(userId, reqCreateHavrutaBoardDto, files);
         this.havrutaId = reqCreateHavrutaBoardDto.getHavrutaId();
     }
 
-    public static CreateHavrutaBoardDto of(ReqCreateHavrutaBoardDto reqCreateHavrutaBoardDto, Long userId, List<MultipartFile> files) {
-        return new CreateHavrutaBoardDto(reqCreateHavrutaBoardDto, userId, files);
+    public static CreateHavrutaBoardDto of(Long userId, ReqCreateHavrutaBoardDto reqCreateHavrutaBoardDto, List<MultipartFile> files) {
+        return new CreateHavrutaBoardDto(userId, reqCreateHavrutaBoardDto, files);
     }
 
-    public static CreateHavrutaBoardDto from(Board board){
+    public static CreateHavrutaBoardDto from(Board board) {
         return new CreateHavrutaBoardDto(board);
     }
 
-    public static CreateHavrutaBoardDto from(ReqCreateHavrutaBoardDto reqCreateHavrutaBoardDto){
-        return new CreateHavrutaBoardDto(reqCreateHavrutaBoardDto);
+    public static CreateHavrutaBoardDto from(Long userId, ReqCreateHavrutaBoardDto reqCreateHavrutaBoardDto) {
+        return new CreateHavrutaBoardDto(userId, reqCreateHavrutaBoardDto);
     }
 }

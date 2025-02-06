@@ -6,6 +6,7 @@ import com.handong.cra.crawebbackend.board.domain.Category;
 import com.handong.cra.crawebbackend.board.domain.BoardOrderBy;
 import com.handong.cra.crawebbackend.board.dto.*;
 import com.handong.cra.crawebbackend.board.repository.BoardRepository;
+import com.handong.cra.crawebbackend.exception.auth.AuthForbiddenActionException;
 import com.handong.cra.crawebbackend.file.domain.S3ImageCategory;
 import com.handong.cra.crawebbackend.file.service.S3FileService;
 import com.handong.cra.crawebbackend.file.service.S3ImageService;
@@ -13,6 +14,7 @@ import com.handong.cra.crawebbackend.exception.board.BoardLikeBadRequestExceptio
 import com.handong.cra.crawebbackend.exception.board.BoardNotFoundException;
 import com.handong.cra.crawebbackend.exception.user.UserNotFoundException;
 import com.handong.cra.crawebbackend.user.domain.User;
+import com.handong.cra.crawebbackend.user.domain.UserRoleEnum;
 import com.handong.cra.crawebbackend.user.repository.UserRepository;
 import com.handong.cra.crawebbackend.util.BoardMDParser;
 import jakarta.transaction.Transactional;
@@ -134,13 +136,19 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     @Transactional
-    public Boolean deleteBoardById(Long id) {
-        Board board = boardRepository.findById(id).orElseThrow(UserNotFoundException::new);
-        board.delete();
+    public Boolean deleteBoardById(Long userId, Long boardId) {
+        Board board = boardRepository.findById(boardId).orElseThrow(BoardNotFoundException::new);
 
-        if (!board.getImageUrls().isEmpty())
-            s3ImageService.transferImage(board.getImageUrls(), S3ImageCategory.DELETED);
+        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
 
+        // 작성한 유저 이거나, 어드민인 경우
+        if (Objects.equals(user.getId(), userId) || user.getRoles().hasRole(UserRoleEnum.ADMIN)) {
+            board.delete();
+            if (!board.getImageUrls().isEmpty())
+                s3ImageService.transferImage(board.getImageUrls(), S3ImageCategory.DELETED);
+        } else { // 권한 없음
+            throw new AuthForbiddenActionException();
+        }
         return true;
     }
 

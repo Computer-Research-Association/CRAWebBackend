@@ -1,5 +1,6 @@
 package com.handong.cra.crawebbackend.board.controller;
 
+import com.handong.cra.crawebbackend.auth.domain.CustomUserDetails;
 import com.handong.cra.crawebbackend.board.domain.Category;
 import com.handong.cra.crawebbackend.board.domain.BoardOrderBy;
 import com.handong.cra.crawebbackend.board.dto.CreateBoardDto;
@@ -28,6 +29,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -53,12 +55,11 @@ public class BoardController {
             @ApiResponse(responseCode = "403", description = "권한 없음"),
             @ApiResponse(responseCode = "404", description = "Board 정보 없음")
     })
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteBoard(@PathVariable Long id) {
-        boardService.deleteBoardById(id);
+    @DeleteMapping("/{boardId}")
+    public ResponseEntity<Void> deleteBoard(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Long boardId) {
+        boardService.deleteBoardById(customUserDetails.getUserId(), boardId);
         return ResponseEntity.ok().build();
     }
-
 
 
     @Parameters(value = {
@@ -83,7 +84,6 @@ public class BoardController {
     }
 
     // 조회수 상승 없이 데이터 읽어옴
-
     @Parameters(value = {
             @Parameter(name = "id", description = "Board id to read detail"),
     })
@@ -93,14 +93,13 @@ public class BoardController {
             @ApiResponse(responseCode = "403", description = "권한 없음", content = @Content()),
             @ApiResponse(responseCode = "404", description = "Board 정보 없음", content = @Content()),
     })
-    @GetMapping("/view/{id}")
-    public ResponseEntity<ResDetailBoardDto> getDetailBoard(@PathVariable Long id) {
-        ResDetailBoardDto resDetailBoardDto = ResDetailBoardDto.from(boardService.getDetailBoardById(id));
+    @GetMapping("/view/{boardId}")
+    public ResponseEntity<ResDetailBoardDto> getDetailBoard(@PathVariable Long boardId) {
+        ResDetailBoardDto resDetailBoardDto = ResDetailBoardDto.from(boardService.getDetailBoardById(boardId));
         return ResponseEntity.ok().body(resDetailBoardDto);
     }
 
     // 조회수 상승
-
     @Parameters(value = {
             @Parameter(name = "id", description = "Board ascending View"),
     })
@@ -110,14 +109,13 @@ public class BoardController {
             @ApiResponse(responseCode = "403", description = "권한 없음"),
             @ApiResponse(responseCode = "404", description = "Board 정보 없음")
     })
-    @PostMapping("/view/{id}")
-    public ResponseEntity<Void> ascendingBoardView(@PathVariable Long id) {
-        boardService.ascendingBoardView(id);
+    @PostMapping("/view/{boardId}")
+    public ResponseEntity<Void> ascendingBoardView(@PathVariable Long boardId) {
+        boardService.ascendingBoardView(boardId);
         return ResponseEntity.ok().build();
     }
 
 
-    // TODO Category 처리 할것
     @Parameters(value = {
             @Parameter(name = "category", description = "0 = NOTICE, 1 = ACADEMIC, 2 = HAVRUTA"),
             @Parameter(name = "page", description = "Board Listing page"),
@@ -134,7 +132,7 @@ public class BoardController {
     @GetMapping("/{category}/page/{page}")
     public ResponseEntity<List<ResListBoardDto>> getPaginationBoard(
             @PathVariable Integer category,
-            @PathVariable Long page,
+            @PathVariable Long page, // 0부터 시작
             @RequestParam(required = false, defaultValue = "0") Integer perPage,
             @RequestParam(required = false, defaultValue = "0") Integer orderBy,
             @RequestParam(required = false, defaultValue = "true") Boolean isASC
@@ -142,7 +140,7 @@ public class BoardController {
         if (perPage > MAX_PAGE_SIZE) {
             throw new BoardPageSizeLimitExceededException();
         }
-        List<ListBoardDto> listBoardDtos = boardService.getPaginationBoard(Category.values()[category],page, perPage, BoardOrderBy.values()[orderBy], isASC);
+        List<ListBoardDto> listBoardDtos = boardService.getPaginationBoard(Category.values()[category], page, perPage, BoardOrderBy.values()[orderBy], isASC);
         return ResponseEntity.ok(listBoardDtos.stream().map(ResListBoardDto::from).toList());
     }
 
@@ -153,10 +151,13 @@ public class BoardController {
             @ApiResponse(responseCode = "404", description = "Board 정보 없음", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PostMapping("")
-    public ResponseEntity<ResCreateBoardDto> createBoard(@Valid @RequestPart("board") ReqCreateBoardDto reqCreateBoardDto,
-                                                         @RequestPart(value = "files", required = false) List<MultipartFile> files) {
+    public ResponseEntity<ResCreateBoardDto> createBoard(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails,
+            @Valid @RequestPart("board") ReqCreateBoardDto reqCreateBoardDto,
+            @RequestPart(value = "files", required = false) List<MultipartFile> files) {
+
         return ResponseEntity.status(HttpStatus.CREATED).body(ResCreateBoardDto.from(boardService
-                .createBoard(CreateBoardDto.of(reqCreateBoardDto, reqCreateBoardDto.getUserId(), files))));
+                .createBoard(CreateBoardDto.of(customUserDetails.getUserId(), reqCreateBoardDto, files))));
     }
 
 
@@ -169,19 +170,20 @@ public class BoardController {
             @ApiResponse(responseCode = "403", description = "권한 없음", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
             @ApiResponse(responseCode = "404", description = "Board 정보 없음", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
-    @PutMapping("/{id}")
-    public ResponseEntity<ResUpdateBoardDto> updateBoard(@PathVariable Long id,
-                                                         @RequestPart("board") ReqUpdateBoardDto reqUpdateBoardDto,
-                                                         @RequestPart(value = "files", required = false) List<MultipartFile> files) {
+    @PutMapping("/{boardId}")
+    public ResponseEntity<ResUpdateBoardDto> updateBoard(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails,
+            @PathVariable Long boardId,
+            @RequestPart("board") ReqUpdateBoardDto reqUpdateBoardDto,
+            @RequestPart(value = "files", required = false) List<MultipartFile> files) {
         ResUpdateBoardDto resUpdateBoardDto;
-        resUpdateBoardDto = ResUpdateBoardDto.from(boardService.updateBoard(UpdateBoardDto.of(id, reqUpdateBoardDto, files)));
+        resUpdateBoardDto = ResUpdateBoardDto.from(boardService.updateBoard(UpdateBoardDto.of(customUserDetails.getUserId(), boardId, reqUpdateBoardDto, files)));
         return ResponseEntity.ok().body(resUpdateBoardDto);
     }
 
 
     @Parameters(value = {
             @Parameter(name = "id", description = "Board의 id"),
-            @Parameter(name = "userId", description = "User Id (하드코딩)"),
             @Parameter(name = "isLike", description = "좋아요 -> true 취소 -> false")
     })
     @Operation(summary = "Board 좋아요")
@@ -193,10 +195,9 @@ public class BoardController {
     @PostMapping("/like/{id}")
     public ResponseEntity<Void> BoardLike(
             @PathVariable Long id,
-            @RequestParam Long userId,
-            @RequestParam(defaultValue = "true") Boolean isLike)
-    {
-        boardService.boardLike(id ,userId, isLike);
+            @AuthenticationPrincipal CustomUserDetails customUserDetails,
+            @RequestParam(defaultValue = "true") Boolean isLike) {
+        boardService.boardLike(id, customUserDetails.getUserId(), isLike);
         return ResponseEntity.ok().build();
     }
 }

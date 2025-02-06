@@ -17,19 +17,18 @@ import java.util.List;
 @AllArgsConstructor
 public class CreateBoardDto {
 
+    private Long id;
     private Long userId;
     private String title;
     private String content;
-    private Category category; //= Category.valueOf("HAVRUTA");
+    private Category category;
     private List<String> imageUrls;
     private List<MultipartFile> files;
     private List<String> fileUrls;
-
-    private Long id = null;
-    private LocalDateTime createdAt = null;
+    private LocalDateTime createdAt;
 
 
-    public CreateBoardDto(ReqCreateBoardDto reqCreateBoardDto, Long userId, List<MultipartFile> files) {
+    public CreateBoardDto(Long userId, ReqCreateBoardDto reqCreateBoardDto, List<MultipartFile> files) {
         this.userId = userId;
         this.title = reqCreateBoardDto.getTitle();
         this.content = reqCreateBoardDto.getContent();
@@ -49,7 +48,7 @@ public class CreateBoardDto {
         this.fileUrls = board.getFileUrls();
     }
 
-    public CreateBoardDto(CreateHavrutaBoardDto createHavrutaBoardDto, Long userId) {
+    public CreateBoardDto(Long userId, CreateHavrutaBoardDto createHavrutaBoardDto) {
         this.userId = userId;
         this.title = createHavrutaBoardDto.getTitle();
         this.content = createHavrutaBoardDto.getContent();
@@ -58,8 +57,8 @@ public class CreateBoardDto {
         this.fileUrls = createHavrutaBoardDto.getFileUrls();
     }
 
-    public CreateBoardDto(ReqCreateHavrutaBoardDto reqCreateHavrutaBoardDto) {
-        this.userId = reqCreateHavrutaBoardDto.getUserId();
+    public CreateBoardDto(Long userId, ReqCreateHavrutaBoardDto reqCreateHavrutaBoardDto) {
+        this.userId = userId;
         this.title = reqCreateHavrutaBoardDto.getTitle();
         this.content = reqCreateHavrutaBoardDto.getContent();
         this.category = Category.values()[reqCreateHavrutaBoardDto.getCategory()];
@@ -68,14 +67,15 @@ public class CreateBoardDto {
     }
 
     // TODO : user logic
-    public static CreateBoardDto of(ReqCreateBoardDto reqCreateBoardDto, Long userId, List<MultipartFile> files) {
-        return new CreateBoardDto(reqCreateBoardDto, userId, files);
+    public static CreateBoardDto of(Long userId, ReqCreateBoardDto reqCreateBoardDto, List<MultipartFile> files) {
+        return new CreateBoardDto(userId, reqCreateBoardDto, files);
     }
 
     public static CreateBoardDto from(Board board) {
         return new CreateBoardDto(board);
     }
-    public static CreateBoardDto from(CreateHavrutaBoardDto createHavrutaBoardDto, Long userId) {
-        return new CreateBoardDto(createHavrutaBoardDto, userId);
+
+    public static CreateBoardDto from(Long userId, CreateHavrutaBoardDto createHavrutaBoardDto) {
+        return new CreateBoardDto(userId, createHavrutaBoardDto);
     }
 }

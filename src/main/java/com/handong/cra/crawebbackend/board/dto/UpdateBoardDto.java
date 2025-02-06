@@ -14,7 +14,6 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class UpdateBoardDto {
-
     private Long id;
     private Long userId;
     private Boolean deleted;
@@ -26,14 +25,9 @@ public class UpdateBoardDto {
     private List<MultipartFile> files;
     private List<String> fileUrls;
 
-
-    // TODO: add havrutaid
-
-
-    public UpdateBoardDto(Long id, ReqUpdateBoardDto reqUpdateBoardDto, List<MultipartFile> files) {
-        // TODO : User Logic
-        this.userId = reqUpdateBoardDto.getUserId();
-        this.id = id;
+    public UpdateBoardDto(Long userId, Long boardId, ReqUpdateBoardDto reqUpdateBoardDto, List<MultipartFile> files) {
+        this.id = boardId;
+        this.userId = userId;
         this.deleted = reqUpdateBoardDto.getDeleted();
         this.title = reqUpdateBoardDto.getTitle();
         this.content = reqUpdateBoardDto.getContent();
@@ -52,15 +46,15 @@ public class UpdateBoardDto {
         this.updatedAt = board.getUpdatedAt();
     }
 
-    public UpdateBoardDto(ReqUpdateHavrutaBoardDto reqUpdateHavrutaBoardDto) {
-        this.userId = reqUpdateHavrutaBoardDto.getUserId();
+    public UpdateBoardDto(Long userId, ReqUpdateHavrutaBoardDto reqUpdateHavrutaBoardDto) {
+        this.userId = userId;
         this.title = reqUpdateHavrutaBoardDto.getTitle();
         this.content = reqUpdateHavrutaBoardDto.getContent();
         this.imageUrls = reqUpdateHavrutaBoardDto.getImageUrls();
     }
 
-    public static UpdateBoardDto of(Long id, ReqUpdateBoardDto reqUpdateBoardDto, List<MultipartFile> files) {
-        return new UpdateBoardDto(id, reqUpdateBoardDto, files);
+    public static UpdateBoardDto of(Long userId, Long boardId, ReqUpdateBoardDto reqUpdateBoardDto, List<MultipartFile> files) {
+        return new UpdateBoardDto(userId, boardId, reqUpdateBoardDto, files);
     }
 
 

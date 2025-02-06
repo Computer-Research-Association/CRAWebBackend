@@ -48,4 +48,8 @@ public class CustomUserDetails implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return user.getRoles().getAuthorities();
     }
+
+    public Long getUserId(){
+        return user.getId();
+    }
 }

@@ -71,7 +71,7 @@ public class Board extends BaseEntity {
     }
 
     public Board(User user, Havruta havruta, CreateHavrutaBoardDto createHavrutaBoardDto) {
-      this(user, CreateBoardDto.from(createHavrutaBoardDto, user.getId()));
+      this(user, CreateBoardDto.from(user.getId(), createHavrutaBoardDto));
       this.havruta = havruta;
     }
 

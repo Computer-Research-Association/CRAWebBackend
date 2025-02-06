@@ -48,7 +48,6 @@ public class HavrutaServiceImpl implements HavrutaService {
     private final S3FileService s3FileService;
 
     @Override
-    @Transactional
     public List<ListHavrutaDto> getAllHavrutas() {
 
         List<Havruta> havrutas = havrutaRepository.findAll();
@@ -58,10 +57,9 @@ public class HavrutaServiceImpl implements HavrutaService {
     }
 
     @Override
-    @Transactional
     public DetailHavrutaDto getHavrutaById(Long id) {
         Havruta havruta = havrutaRepository.findById(id).orElseThrow(HavrutaNotFoundException::new);
-        if (havruta.getDeleted()) return null;
+        if (havruta.getDeleted()) throw new HavrutaNotFoundException();
         return DetailHavrutaDto.from(havruta);
     }
 
@@ -175,8 +173,6 @@ public class HavrutaServiceImpl implements HavrutaService {
         createHavrutaBoardDto.setFileUrls(fileUrls);
 
         Board board = Board.of(user, havruta,createHavrutaBoardDto);
-        log.info("test here {}",!board.getImageUrls().isEmpty());
-        log.info("Count =  {}",board.getImageUrls().size());
         if (!board.getImageUrls().isEmpty())
             board.setImageUrls(s3ImageService.transferImage(board.getImageUrls(), S3ImageCategory.BOARD));
 
