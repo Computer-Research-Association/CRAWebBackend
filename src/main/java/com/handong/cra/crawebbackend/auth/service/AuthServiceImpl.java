@@ -14,10 +14,12 @@ import com.handong.cra.crawebbackend.user.service.UserService;
 import com.handong.cra.crawebbackend.util.AESUtill;
 import com.handong.cra.crawebbackend.util.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
@@ -32,8 +34,18 @@ public class AuthServiceImpl implements AuthService {
             return null;
         }
         accountService.codeValidCheck(signupDto.getCode(), ManageTokenCategory.SIGNUP);
+        String password = "";
+        try {
+            password = AESUtill.AESDecrypt(signupDto.getPassword());
+        } catch (Exception e) {
 
-        signupDto.setPassword(passwordEncoder.encode(signupDto.getPassword()));
+        }
+        if (password.isEmpty()) {
+            // 잘못된 패스워드
+        }
+
+        log.info("password aes decoded: {}", password);
+        signupDto.setPassword(passwordEncoder.encode(password));
 
         return userService.save(signupDto);
     }
