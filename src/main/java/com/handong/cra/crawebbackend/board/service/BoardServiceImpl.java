@@ -88,8 +88,6 @@ public class BoardServiceImpl implements BoardService {
         }
 
         Board board = Board.of(user, createBoardDto);
-        log.info("test here {}", !board.getImageUrls().isEmpty());
-        log.info("Count =  {}", board.getImageUrls().size());
         if (!board.getImageUrls().isEmpty()) {
             board.setImageUrls(s3ImageService.transferImage(board.getImageUrls(), S3ImageCategory.BOARD));
             board.setContent(parser.updateImageUrls(board.getContent(), board.getImageUrls()));
@@ -102,8 +100,21 @@ public class BoardServiceImpl implements BoardService {
     @Override
     @Transactional
     public UpdateBoardDto updateBoard(UpdateBoardDto updateBoardDto) {
-        BoardMDParser parser = new BoardMDParser(amazonS3, bucket);
+        // 삭제처리? -> 잘못된 요첨
+        if (updateBoardDto.getDeleted()){
+            throw new RuntimeException("wrong req");
+        }
+
         Board board = boardRepository.findById(updateBoardDto.getId()).orElseThrow(BoardNotFoundException::new);
+        User user = userRepository.findById(updateBoardDto.getUserId()).orElseThrow(UserNotFoundException::new);
+
+        // 권한 없음.
+        if (!updateBoardDto.getUserId().equals(board.getUser().getId()) || !user.getRoles().hasRole(UserRoleEnum.ADMIN)){
+            throw new AuthForbiddenActionException();
+        }
+
+
+        BoardMDParser parser = new BoardMDParser(amazonS3, bucket);
 
         if (updateBoardDto.getFiles() != null) {
             List<String> fileUrls = s3FileService.uploadFiles(updateBoardDto.getFiles(), S3ImageCategory.BOARD);
@@ -136,25 +147,24 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     @Transactional
-    public Boolean deleteBoardById(Long userId, Long boardId) {
-        Board board = boardRepository.findById(boardId).orElseThrow(BoardNotFoundException::new);
+    public Boolean deleteBoardById(UpdateBoardDto updateBoardDto) {
+        Board board = boardRepository.findById(updateBoardDto.getId()).orElseThrow(BoardNotFoundException::new);
+        User user = userRepository.findById(updateBoardDto.getUserId()).orElseThrow(UserNotFoundException::new);
 
-        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
-
-        // 작성한 유저 이거나, 어드민인 경우
-        if (Objects.equals(user.getId(), userId) || user.getRoles().hasRole(UserRoleEnum.ADMIN)) {
-            board.delete();
-            if (!board.getImageUrls().isEmpty())
-                s3ImageService.transferImage(board.getImageUrls(), S3ImageCategory.DELETED);
-        } else { // 권한 없음
+        // 권한 없음
+        if (!Objects.equals(user.getId(), updateBoardDto.getUserId()) || !user.getRoles().hasRole(UserRoleEnum.ADMIN))
             throw new AuthForbiddenActionException();
-        }
+
+        board.delete();
+        if (!board.getImageUrls().isEmpty())
+            s3ImageService.transferImage(board.getImageUrls(), S3ImageCategory.DELETED);
+
         return true;
     }
 
     @Override
     public DetailBoardDto getDetailBoardById(Long id) {
-        Board board = boardRepository.findBoardByIdAndDeletedFalse(id);
+        Board board = boardRepository.findBoardByIdAndDeletedFalse(  id);
         if (board == null) {
             throw new BoardNotFoundException();
         }
