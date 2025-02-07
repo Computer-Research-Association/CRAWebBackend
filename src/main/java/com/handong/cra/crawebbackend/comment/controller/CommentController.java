@@ -44,7 +44,7 @@ public class CommentController {
 
     @PutMapping("/{commentId}")
     public ResponseEntity<ResUpdateCommentDto> updateComment(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Long commentId, @RequestBody ReqUpdateCommentDto reqUpdateCommentDto) {
-        return ResponseEntity.ok().body(new ResUpdateCommentDto(commentService.updateComment(UpdateCommentDto.of(customUserDetails.getUserId(), reqUpdateCommentDto, commentId))));
+        return ResponseEntity.ok().body(new ResUpdateCommentDto(commentService.updateComment(UpdateCommentDto.of(commentId, customUserDetails.getUserId(), reqUpdateCommentDto))));
     }
 
     @DeleteMapping("/{commentId}")

@@ -1,6 +1,8 @@
 package com.handong.cra.crawebbackend.havruta.service;
 
+import com.handong.cra.crawebbackend.exception.auth.AuthForbiddenActionException;
 import com.handong.cra.crawebbackend.exception.havruta.HavrutaNotFoundException;
+import com.handong.cra.crawebbackend.exception.user.UserNotFoundException;
 import com.handong.cra.crawebbackend.havruta.domain.Havruta;
 import com.handong.cra.crawebbackend.board.domain.Board;
 import com.handong.cra.crawebbackend.havruta.dto.CreateHavrutaDto;
@@ -9,6 +11,9 @@ import com.handong.cra.crawebbackend.havruta.dto.ListHavrutaDto;
 import com.handong.cra.crawebbackend.havruta.dto.UpdateHavrutaDto;
 
 import com.handong.cra.crawebbackend.havruta.repository.HavrutaRepository;
+import com.handong.cra.crawebbackend.user.domain.User;
+import com.handong.cra.crawebbackend.user.domain.UserRoleEnum;
+import com.handong.cra.crawebbackend.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +27,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class HavrutaServiceImpl implements HavrutaService {
     private final HavrutaRepository havrutaRepository;
+    private final UserRepository userRepository;
 
     @Override
     public List<ListHavrutaDto> getAllHavrutas() {
@@ -43,6 +49,13 @@ public class HavrutaServiceImpl implements HavrutaService {
     @Transactional
     public CreateHavrutaDto createHavruta(CreateHavrutaDto createHavrutaDto) {
         Havruta havruta = Havruta.from(createHavrutaDto);
+        User user = userRepository.findById(createHavrutaDto.getUserId()).orElseThrow(UserNotFoundException::new);
+
+        // 권한 없음
+        if (!user.getRoles().hasRole(UserRoleEnum.ADMIN)) throw new AuthForbiddenActionException();
+
+
+
         havruta = havrutaRepository.save(havruta);
 
         return CreateHavrutaDto.from(havruta);
@@ -52,15 +65,25 @@ public class HavrutaServiceImpl implements HavrutaService {
     @Transactional
     public UpdateHavrutaDto updateHavruta(UpdateHavrutaDto updateHavrutaDto) {
         Havruta havruta = havrutaRepository.findById(updateHavrutaDto.getId()).orElseThrow(HavrutaNotFoundException::new);
+        User user = userRepository.findById(updateHavrutaDto.getUserId()).orElseThrow(UserNotFoundException::new);
+
+        // 권한 없음
+        if (!user.getRoles().hasRole(UserRoleEnum.ADMIN)) throw new AuthForbiddenActionException();
+
         havruta = havruta.update(updateHavrutaDto);
+
         return UpdateHavrutaDto.from(havruta);
     }
 
     @Override
     @Transactional
-    public Boolean deleteHavruta(Long id) {
+    public Boolean deleteHavruta(UpdateHavrutaDto updateHavrutaDto) {
         // delete managing obj
-        Havruta havruta = havrutaRepository.findById(id).orElseThrow(HavrutaNotFoundException::new);
+        Havruta havruta = havrutaRepository.findById(updateHavrutaDto.getId()).orElseThrow(HavrutaNotFoundException::new);
+        User user = userRepository.findById(updateHavrutaDto.getUserId()).orElseThrow(UserNotFoundException::new);
+
+        // 권한 없음
+        if (!user.getRoles().hasRole(UserRoleEnum.ADMIN)) throw new AuthForbiddenActionException();
 
         // delete boards
         List<Board> boards = havruta.getBoards();

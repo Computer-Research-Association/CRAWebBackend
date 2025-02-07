@@ -14,6 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 public class UpdateProjectDto {
     private Long id;
+    private Long userId;
     private String semester;
     private String teamName;
     private String serviceName;
@@ -27,8 +28,9 @@ public class UpdateProjectDto {
     private LocalDateTime createAt = null;
     private LocalDateTime updatedAt = null;
 
-    public UpdateProjectDto(Long id, ReqUpdateProjectDto reqUpdateProjectDto) {
+    public UpdateProjectDto(Long id, Long userId, ReqUpdateProjectDto reqUpdateProjectDto) {
         this.id = id;
+        this.userId = userId;
         this.semester = reqUpdateProjectDto.getSemester();
         this.teamName = reqUpdateProjectDto.getTeamName();
         this.serviceName = reqUpdateProjectDto.getServiceName();
@@ -53,8 +55,17 @@ public class UpdateProjectDto {
         this.deleted = project.getDeleted();
     }
 
-    public static UpdateProjectDto of(Long id, ReqUpdateProjectDto reqUpdateProjectDto) {
-        return new UpdateProjectDto(id, reqUpdateProjectDto);
+    public UpdateProjectDto(Long id, Long userId) {
+        this.id = id;
+        this.userId = userId;
+        this.deleted = true;
+    }
+
+    public static UpdateProjectDto of(Long id, Long userId, ReqUpdateProjectDto reqUpdateProjectDto) {
+        return new UpdateProjectDto(id, userId, reqUpdateProjectDto);
+    }
+    public static UpdateProjectDto of(Long id, Long userId) {
+        return new UpdateProjectDto(id, userId);
     }
 
     public static UpdateProjectDto from(Project project) {

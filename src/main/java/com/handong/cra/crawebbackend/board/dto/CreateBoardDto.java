@@ -51,31 +51,6 @@ public class CreateBoardDto {
         this.havrutaDto.setProfessor(board.getHavruta().getProfessor());
         this.havrutaDto.setClassname(board.getHavruta().getClassname());
     }
-
-//    public CreateBoardDto(Long userId, CreateHavrutaBoardDto createHavrutaBoardDto) {
-//        this.userId = userId;
-//        this.title = createHavrutaBoardDto.getTitle();
-//        this.content = createHavrutaBoardDto.getContent();
-//        this.category = createHavrutaBoardDto.getCategory();
-//        this.imageUrls = createHavrutaBoardDto.getImageUrls();
-//        this.fileUrls = createHavrutaBoardDto.getFileUrls();
-//        this.havrutaDto.setId(board.getHavruta().getId());
-//        this.havrutaDto.setProfessor(board.getHavruta().getProfessor());
-//        this.havrutaDto.setClassname(board.getHavruta().getClassName());
-//    }
-//
-//    public CreateBoardDto(Long userId, ReqCreateHavrutaBoardDto reqCreateHavrutaBoardDto) {
-//        this.userId = userId;
-//        this.title = reqCreateHavrutaBoardDto.getTitle();
-//        this.content = reqCreateHavrutaBoardDto.getContent();
-//        this.category = Category.values()[reqCreateHavrutaBoardDto.getCategory()];
-//        this.imageUrls = reqCreateHavrutaBoardDto.getImageUrls();
-//        this.havrutaDto.setId(reqCreateHavrutaBoardDto.getHavrutaDto().getId());
-//        this.havrutaDto.setProfessor(reqCreateHavrutaBoardDto.getHavrutaDto().getProfessor());
-//        this.havrutaDto.setClassname(reqCreateHavrutaBoardDto.getHavrutaDto().getClassname());
-//
-//    }
-
     // TODO : user logic
     public static CreateBoardDto of(Long userId, ReqCreateBoardDto reqCreateBoardDto, List<MultipartFile> files) {
         return new CreateBoardDto(userId, reqCreateBoardDto, files);
@@ -84,8 +59,4 @@ public class CreateBoardDto {
     public static CreateBoardDto from(Board board) {
         return new CreateBoardDto(board);
     }
-//
-//    public static CreateBoardDto from(Long userId, CreateHavrutaBoardDto createHavrutaBoardDto) {
-//        return new CreateBoardDto(userId, createHavrutaBoardDto);
-//    }
 }

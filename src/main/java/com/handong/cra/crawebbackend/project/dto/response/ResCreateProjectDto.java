@@ -1,6 +1,7 @@
 package com.handong.cra.crawebbackend.project.dto.response;
 
 
+import com.handong.cra.crawebbackend.exception.project.ProjectNotFoundException;
 import com.handong.cra.crawebbackend.project.dto.CreateProjectDto;
 import lombok.*;
 
@@ -41,7 +42,7 @@ public class ResCreateProjectDto {
     }
 
     public static ResCreateProjectDto of(CreateProjectDto createProjectDto) {
-        if (createProjectDto.getId() == null) return null;
+        if (createProjectDto.getId() == null) throw new ProjectNotFoundException();
         else return new ResCreateProjectDto(createProjectDto);
     }
 }

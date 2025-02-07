@@ -12,5 +12,5 @@ public interface HavrutaService {
     public DetailHavrutaDto getHavrutaById(Long id);
     public CreateHavrutaDto createHavruta(CreateHavrutaDto createHavrutaDto);
     public UpdateHavrutaDto updateHavruta(UpdateHavrutaDto updateHavrutaDto);
-    public Boolean deleteHavruta(Long id);
+    public Boolean deleteHavruta(UpdateHavrutaDto updateHavrutaDto);
 }

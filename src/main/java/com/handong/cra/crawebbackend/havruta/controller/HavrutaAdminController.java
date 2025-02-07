@@ -1,5 +1,6 @@
 package com.handong.cra.crawebbackend.havruta.controller;
 
+import com.handong.cra.crawebbackend.auth.domain.CustomUserDetails;
 import com.handong.cra.crawebbackend.havruta.dto.CreateHavrutaDto;
 import com.handong.cra.crawebbackend.havruta.dto.UpdateHavrutaDto;
 import com.handong.cra.crawebbackend.havruta.dto.request.ReqCreateHavrutaDto;
@@ -28,7 +29,7 @@ public class HavrutaAdminController {
     public ResponseEntity<ResDetailHavrutaDto> getHavrutaById(@PathVariable Long havrutaId) {
         ResDetailHavrutaDto resDetailHavrutaDto = ResDetailHavrutaDto.from(havrutaService.getHavrutaById(havrutaId));
 
-        if(resDetailHavrutaDto == null) return ResponseEntity.notFound().build();
+        if (resDetailHavrutaDto == null) return ResponseEntity.notFound().build();
 
         else return ResponseEntity.ok().body(resDetailHavrutaDto);
     }
@@ -43,15 +44,16 @@ public class HavrutaAdminController {
     }
 
     @PutMapping("/{havrutaId}")
-    public ResponseEntity<ResUpdateHavrutaDto> updateHavruta(@PathVariable Long havrutaId, @RequestBody ReqUpdateHavrutaDto reqUpdateHavrutaDto) {
-        ResUpdateHavrutaDto resUpdateHavrutaDto = ResUpdateHavrutaDto.from(havrutaService.updateHavruta(UpdateHavrutaDto.of(havrutaId, reqUpdateHavrutaDto)));;
+    public ResponseEntity<ResUpdateHavrutaDto> updateHavruta(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Long havrutaId, @RequestBody ReqUpdateHavrutaDto reqUpdateHavrutaDto) {
+        ResUpdateHavrutaDto resUpdateHavrutaDto = ResUpdateHavrutaDto.from(havrutaService.updateHavruta(UpdateHavrutaDto.of(havrutaId, customUserDetails.getUserId(), reqUpdateHavrutaDto)));
+        ;
 
         return ResponseEntity.ok().body(resUpdateHavrutaDto);
     }
 
     @DeleteMapping("/{havrutaId}")
-    public ResponseEntity<Void> deleteHavruta(@PathVariable Long havrutaId) {
-        if (havrutaService.deleteHavruta(havrutaId)) {
+    public ResponseEntity<Void> deleteHavruta(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Long havrutaId) {
+        if (havrutaService.deleteHavruta(UpdateHavrutaDto.of(havrutaId, customUserDetails.getUserId(), true))) {
             return ResponseEntity.ok().build();
         }
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();

@@ -38,11 +38,13 @@ public class DetailBoardDto {
         this.view = board.getView();
         this.imageUrls = board.getImageUrls();
         this.fileUrls = board.getFileUrls();
+
         if (board.getHavruta() != null) {
             this.getHavrutaDto().setId(board.getHavruta().getId());
             this.getHavrutaDto().setClassname(board.getHavruta().getClassname());
             this.getHavrutaDto().setProfessor(board.getHavruta().getProfessor());
         }
+
         this.createdAt = board.getCreatedAt();
         this.updatedAt = board.getUpdatedAt();
     }

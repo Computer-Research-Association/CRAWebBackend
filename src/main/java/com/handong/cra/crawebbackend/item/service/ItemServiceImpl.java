@@ -1,5 +1,7 @@
 package com.handong.cra.crawebbackend.item.service;
 
+import com.handong.cra.crawebbackend.exception.auth.AuthForbiddenActionException;
+import com.handong.cra.crawebbackend.exception.user.UserNotFoundException;
 import com.handong.cra.crawebbackend.file.domain.S3ImageCategory;
 import com.handong.cra.crawebbackend.file.service.S3ImageService;
 import com.handong.cra.crawebbackend.exception.item.ItemNotFoundException;
@@ -10,6 +12,9 @@ import com.handong.cra.crawebbackend.item.dto.DetailItemDto;
 import com.handong.cra.crawebbackend.item.dto.ListItemDto;
 import com.handong.cra.crawebbackend.item.dto.UpdateItemDto;
 import com.handong.cra.crawebbackend.item.repository.ItemRepository;
+import com.handong.cra.crawebbackend.user.domain.User;
+import com.handong.cra.crawebbackend.user.domain.UserRoleEnum;
+import com.handong.cra.crawebbackend.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -25,6 +30,7 @@ import java.util.List;
 public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
     private final S3ImageService s3ImageService;
+    private final UserRepository userRepository;
 
     @Override
     @Transactional
@@ -53,8 +59,12 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional
-    public Boolean deleteItemById(Long id) {
-        Item item = itemRepository.findById(id).orElseThrow(ItemNotFoundException::new);
+    public Boolean deleteItemById(UpdateItemDto updateItemDto) {
+        Item item = itemRepository.findById(updateItemDto.getId()).orElseThrow(ItemNotFoundException::new);
+        User user = userRepository.findById(updateItemDto.getUserId()).orElseThrow(UserNotFoundException::new);
+
+        if (!user.getRoles().hasRole(UserRoleEnum.ADMIN)) throw new AuthForbiddenActionException();
+
         item.delete();
 
         if (item.getImageUrl() != null)
@@ -65,8 +75,13 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional
-    public Boolean changeValidatingById(Long id, Boolean valid) {
-        itemRepository.findById(id).orElseThrow(ItemNotFoundException::new).setIsBorrowed(valid);
+    public Boolean changeValidatingById(UpdateItemDto updateItemDto) {
+        Item item = itemRepository.findById(updateItemDto.getId()).orElseThrow(ItemNotFoundException::new)
+        User user = userRepository.findById(updateItemDto.getUserId()).orElseThrow(UserNotFoundException::new);
+
+        if (!user.getRoles().hasRole(UserRoleEnum.ADMIN)) throw new AuthForbiddenActionException();
+
+        item.setIsBorrowed(updateItemDto.getIsBorrowed());
         return true;
     }
 

@@ -13,11 +13,13 @@ import java.time.LocalDateTime;
 public class CreateHavrutaDto {
 
     private Long id;
+    private Long userId;
     private String className;
     private String professor;
     private LocalDateTime createdAt;
 
-    public CreateHavrutaDto(ReqCreateHavrutaDto reqCreateHavrutaDto) {
+    public CreateHavrutaDto(Long userId, ReqCreateHavrutaDto reqCreateHavrutaDto) {
+        this.userId = userId;
         this.className = reqCreateHavrutaDto.getClassName();
         this.professor = reqCreateHavrutaDto.getProfessor();
     }
@@ -29,8 +31,8 @@ public class CreateHavrutaDto {
         this.createdAt = havruta.getCreatedAt();
     }
 
-    public static CreateHavrutaDto from(ReqCreateHavrutaDto reqCreateHavrutaDto) {
-        return new CreateHavrutaDto(reqCreateHavrutaDto);
+    public static CreateHavrutaDto from(Long userId, ReqCreateHavrutaDto reqCreateHavrutaDto) {
+        return new CreateHavrutaDto(userId, reqCreateHavrutaDto);
     }
 
     public static CreateHavrutaDto from(Havruta havruta) {
