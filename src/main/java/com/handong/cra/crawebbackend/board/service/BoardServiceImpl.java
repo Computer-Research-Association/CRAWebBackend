@@ -154,15 +154,26 @@ public class BoardServiceImpl implements BoardService {
     @Transactional
     public Boolean deleteBoardById(UpdateBoardDto updateBoardDto) {
         Board board = boardRepository.findById(updateBoardDto.getId()).orElseThrow(BoardNotFoundException::new);
-        User user = userRepository.findById(updateBoardDto.getUserId()).orElseThrow(UserNotFoundException::new);
-
+        User writer = userRepository.findById(board.getUser().getId()).orElseThrow(UserNotFoundException::new);
+        User reqUser = userRepository.findById(updateBoardDto.getUserId()).orElseThrow(UserNotFoundException::new);
         // 권한 없음
-        if (!Objects.equals(user.getId(), updateBoardDto.getUserId()) || !user.getRoles().hasRole(UserRoleEnum.ADMIN))
-            throw new AuthForbiddenActionException();
 
+        log.info("*********************************************");
+        log.info("*********************************************");
+        log.info("*********************************************");
+
+        if (!Objects.equals(writer.getId(), updateBoardDto.getUserId()) || !reqUser.getRoles().hasRole(UserRoleEnum.ADMIN)) {
+            log.info("userId = {} update user id = {}", writer.getId(), updateBoardDto);
+            throw new AuthForbiddenActionException();
+        }
         board.delete();
         if (!board.getImageUrls().isEmpty())
             s3ImageService.transferImage(board.getImageUrls(), S3ImageCategory.DELETED);
+
+
+        log.info("*********************************************");
+        log.info("*********************************************");
+        log.info("*********************************************");
 
         return true;
     }
