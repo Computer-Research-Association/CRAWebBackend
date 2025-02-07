@@ -30,6 +30,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -73,7 +74,8 @@ public class BoardController {
             @ApiResponse(responseCode = "403", description = "권한 없음", content = @Content()),
             @ApiResponse(responseCode = "404", description = "category 정보 없음", content = @Content())
     })
-    //TODO 어드민만 접근 가능하게 할것
+
+    @PreAuthorize("denyAll()")// 접속 불가
     @GetMapping("/{category}")
     public ResponseEntity<List<ResListBoardDto>> getBoardsByCategory(@PathVariable Integer category) {
         if (category < 0 || category >= Category.values().length) {
@@ -209,5 +211,61 @@ public class BoardController {
             @RequestParam(defaultValue = "true") Boolean isLike) {
         boardService.boardLike(id, customUserDetails.getUserId(), isLike);
         return ResponseEntity.ok().build();
+    }
+
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Havruta Board
+
+
+    @GetMapping("/havruta")
+    public ResponseEntity<List<ResListBoardDto>> getHavrutaBoards() {
+        return ResponseEntity.ok().body(boardService.getHavrutaBoards().stream().map(ResListBoardDto::from).toList());
+    }
+
+
+    @PreAuthorize("denyAll()")// 접속 불가
+    @GetMapping("/havruta/{havrutaId}")
+    public ResponseEntity<List<ResListBoardDto>> getHavrutaBoardsByHavrutaId(@PathVariable Long havrutaId) {
+        return ResponseEntity.ok().body(boardService.getHavrutaBoardsByHavrutaId(havrutaId).stream().map(ResListBoardDto::from).toList());
+    }
+
+    @GetMapping("/havruta/page/{page}")
+    public ResponseEntity<List<ResListBoardDto>> getPaginationAllHavrutaBoard(
+            @PathVariable Long page,
+            @RequestParam(required = false, defaultValue = "0") Integer perPage,
+            @RequestParam(required = false, defaultValue = "0") Integer orderBy,
+            @RequestParam(required = false, defaultValue = "true") Boolean isASC
+    ) {
+        PageBoardDto pageBoardDto = PageBoardDto.builder()
+                .category(Category.HAVRUTA)
+                .page(page)
+                .perPage(perPage)
+                .orderBy(BoardOrderBy.values()[orderBy])
+                .isASC(isASC)
+                .build();
+        List<ListBoardDto> listHavrutaBoardDtos = boardService.getPaginationAllHavrutaBoard(pageBoardDto);
+        return ResponseEntity.ok(listHavrutaBoardDtos.stream().map(ResListBoardDto::from).toList());
+    }
+
+    @GetMapping("/havruta/{havrutaId}/page/{page}")
+    public ResponseEntity<List<ResListBoardDto>> getPaginationHavrutaBoard(
+            @PathVariable Long havrutaId,
+            @PathVariable Long page,
+            @RequestParam(required = false, defaultValue = "0") Integer perPage,
+            @RequestParam(required = false, defaultValue = "0") Integer orderBy,
+            @RequestParam(required = false, defaultValue = "true") Boolean isASC
+    ) {
+
+        PageBoardDto pageBoardDto = PageBoardDto.builder()
+                .category(Category.HAVRUTA)
+                .page(page)
+                .perPage(perPage)
+                .orderBy(BoardOrderBy.values()[orderBy])
+                .isASC(isASC)
+                .build();
+
+        List<ListBoardDto> listHavrutaBoardDtos = boardService.getPaginationHavrutaBoard(havrutaId, pageBoardDto);
+        return ResponseEntity.ok(listHavrutaBoardDtos.stream().map(ResListBoardDto::from).toList());
     }
 }

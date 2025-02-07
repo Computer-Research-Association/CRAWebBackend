@@ -7,12 +7,15 @@ import com.handong.cra.crawebbackend.board.domain.BoardOrderBy;
 import com.handong.cra.crawebbackend.board.dto.*;
 import com.handong.cra.crawebbackend.board.repository.BoardRepository;
 import com.handong.cra.crawebbackend.exception.auth.AuthForbiddenActionException;
+import com.handong.cra.crawebbackend.exception.havruta.HavrutaNotFoundException;
 import com.handong.cra.crawebbackend.file.domain.S3ImageCategory;
 import com.handong.cra.crawebbackend.file.service.S3FileService;
 import com.handong.cra.crawebbackend.file.service.S3ImageService;
 import com.handong.cra.crawebbackend.exception.board.BoardLikeBadRequestException;
 import com.handong.cra.crawebbackend.exception.board.BoardNotFoundException;
 import com.handong.cra.crawebbackend.exception.user.UserNotFoundException;
+import com.handong.cra.crawebbackend.havruta.domain.Havruta;
+import com.handong.cra.crawebbackend.havruta.repository.HavrutaRepository;
 import com.handong.cra.crawebbackend.user.domain.User;
 import com.handong.cra.crawebbackend.user.domain.UserRoleEnum;
 import com.handong.cra.crawebbackend.user.repository.UserRepository;
@@ -40,6 +43,7 @@ import java.util.Objects;
 @Slf4j
 public class BoardServiceImpl implements BoardService {
     private final BoardRepository boardRepository;
+    private final HavrutaRepository havrutaRepository;
     private final UserRepository userRepository;
     private final S3ImageService s3ImageService;
     private final S3FileService s3FileService;
@@ -193,4 +197,63 @@ public class BoardServiceImpl implements BoardService {
             throw new BoardLikeBadRequestException();
         }
     }
+
+
+    private Pageable getPageable (PageBoardDto pageBoardDto){
+        HashMap<BoardOrderBy, String> map = new HashMap<>();
+        map.put(BoardOrderBy.DATE, "createdAt");
+        map.put(BoardOrderBy.LIKECOUNT, "likeCount");
+
+        Sort sort = Sort.by(map.get(pageBoardDto.getOrderBy()));
+        sort = (pageBoardDto.getIsASC()) ? sort.ascending() : sort.descending();
+        return PageRequest.of(Math.toIntExact(pageBoardDto.getPage()), pageBoardDto.getPerPage(), sort);
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // havruta board
+
+
+
+    @Override
+    public List<ListBoardDto> getHavrutaBoards() {
+
+        List<Board> boards = boardRepository.findByCategory(Category.HAVRUTA);
+
+        return boards.stream()
+                .map(ListBoardDto::from).filter(Objects::nonNull).toList();
+    }
+
+    @Override
+    public List<ListBoardDto> getHavrutaBoardsByHavrutaId(Long id) {
+        havrutaRepository.findById(id).orElseThrow(HavrutaNotFoundException::new);
+        List<Board> havrutadtos = havrutaRepository.findHavrutaByIdAndDeletedFalse(id).getBoards();
+
+        return havrutadtos.stream()
+                .map(ListBoardDto::from).filter(Objects::nonNull).filter((board) -> !board.getDeleted()).toList();
+    }
+
+    @Override
+    public List<ListBoardDto> getPaginationAllHavrutaBoard(PageBoardDto pageBoardDto) {
+
+        Pageable pageable = getPageable(pageBoardDto);
+
+        Page<Board> boards = boardRepository.findByCategoryAndDeletedFalse(Category.HAVRUTA, pageable);
+
+        return boards.stream().map(ListBoardDto::from).toList();
+    }
+
+    @Override
+    public List<ListBoardDto> getPaginationHavrutaBoard(Long havrutaId, PageBoardDto pageBoardDto) {
+
+        Pageable pageable = getPageable(pageBoardDto);
+
+        Havruta havruta = havrutaRepository.findById(havrutaId).orElseThrow();
+        Page<Board> boards = boardRepository.findAllByHavrutaAndDeletedFalse(havruta, pageable);
+
+        return boards.stream().map(ListBoardDto::from).toList();
+    }
+
+
+
+
 }

@@ -19,7 +19,7 @@ public class Havruta extends BaseEntity {
 
     @NotNull
     @Column(length = 50, nullable = false)
-    private String className;
+    private String classname;
 
     @NotNull
     @Column(length = 50, nullable = false)
@@ -28,13 +28,13 @@ public class Havruta extends BaseEntity {
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "havruta")
     private List<Board> boards;
 
-    public Havruta(String className, String professor) {
-        this.className = className;
+    public Havruta(String classname, String professor) {
+        this.classname = classname;
         this.professor = professor;
     }
 
     public Havruta(CreateHavrutaDto createHavrutaDto) {
-        this.className = createHavrutaDto.getClassName();
+        this.classname = createHavrutaDto.getClassName();
         this.professor = createHavrutaDto.getProfessor();
     }
 
@@ -42,8 +42,9 @@ public class Havruta extends BaseEntity {
         return new Havruta(createHavrutaDto);
     }
 
-    public void update(UpdateHavrutaDto updateHavrutaDto) {
-        this.className = updateHavrutaDto.getClassName();
+    public Havruta update(UpdateHavrutaDto updateHavrutaDto) {
+        this.classname = updateHavrutaDto.getClassName();
         this.professor = updateHavrutaDto.getProfessor();
+        return this;
     }
 }

@@ -1,6 +1,6 @@
 package com.handong.cra.crawebbackend.havruta.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.handong.cra.crawebbackend.havruta.domain.Havruta;
 import com.handong.cra.crawebbackend.havruta.dto.request.ReqCreateHavrutaDto;
 import lombok.*;
 
@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Builder
 public class CreateHavrutaDto {
 
     private Long id;
@@ -23,7 +22,18 @@ public class CreateHavrutaDto {
         this.professor = reqCreateHavrutaDto.getProfessor();
     }
 
+    public CreateHavrutaDto(Havruta havruta) {
+        this.id = havruta.getId();
+        this.className = havruta.getClassname();
+        this.professor = havruta.getProfessor();
+        this.createdAt = havruta.getCreatedAt();
+    }
+
     public static CreateHavrutaDto from(ReqCreateHavrutaDto reqCreateHavrutaDto) {
         return new CreateHavrutaDto(reqCreateHavrutaDto);
+    }
+
+    public static CreateHavrutaDto from(Havruta havruta) {
+        return new CreateHavrutaDto(havruta);
     }
 }

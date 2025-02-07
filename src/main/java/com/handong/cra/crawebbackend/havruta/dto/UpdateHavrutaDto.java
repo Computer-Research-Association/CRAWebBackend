@@ -25,7 +25,7 @@ public class UpdateHavrutaDto {
 
     public UpdateHavrutaDto(Havruta havruta) {
         this.id = havruta.getId();
-        this.className = havruta.getClassName();
+        this.className = havruta.getClassname();
         this.professor = havruta.getProfessor();
         this.deleted = havruta.getDeleted();
     }

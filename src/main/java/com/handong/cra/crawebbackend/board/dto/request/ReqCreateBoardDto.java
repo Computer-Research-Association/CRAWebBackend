@@ -1,12 +1,10 @@
 package com.handong.cra.crawebbackend.board.dto.request;
 
-import com.handong.cra.crawebbackend.board.domain.Category;
+import com.handong.cra.crawebbackend.havruta.dto.HavrutaDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Calendar;
 import java.util.List;
 
 @Data
@@ -31,4 +29,7 @@ public class ReqCreateBoardDto {
 
     @Schema(description = "사진들 url")
     private List<String> imageUrls;
+
+    @Schema(description = "하브루타인 경우만 전달")
+    private HavrutaDto havrutaDto;
 }

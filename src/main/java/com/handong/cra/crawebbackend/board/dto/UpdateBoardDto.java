@@ -2,7 +2,6 @@ package com.handong.cra.crawebbackend.board.dto;
 
 import com.handong.cra.crawebbackend.board.domain.Board;
 import com.handong.cra.crawebbackend.board.dto.request.ReqUpdateBoardDto;
-import com.handong.cra.crawebbackend.havruta.dto.havrutaboard.request.ReqUpdateHavrutaBoardDto;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -44,13 +43,6 @@ public class UpdateBoardDto {
         this.imageUrls = board.getImageUrls();
         this.createdAt = board.getCreatedAt();
         this.updatedAt = board.getUpdatedAt();
-    }
-
-    public UpdateBoardDto(Long userId, ReqUpdateHavrutaBoardDto reqUpdateHavrutaBoardDto) {
-        this.userId = userId;
-        this.title = reqUpdateHavrutaBoardDto.getTitle();
-        this.content = reqUpdateHavrutaBoardDto.getContent();
-        this.imageUrls = reqUpdateHavrutaBoardDto.getImageUrls();
     }
 
     public UpdateBoardDto(Long userId, Long boardId) {

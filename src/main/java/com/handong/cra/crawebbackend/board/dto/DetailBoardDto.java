@@ -2,6 +2,7 @@ package com.handong.cra.crawebbackend.board.dto;
 
 import com.handong.cra.crawebbackend.board.domain.Board;
 import com.handong.cra.crawebbackend.board.domain.Category;
+import com.handong.cra.crawebbackend.havruta.dto.HavrutaDto;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -21,6 +22,9 @@ public class DetailBoardDto {
     private Long view;
     private List<String> imageUrls;
     private List<String> fileUrls;
+    //havruta
+    private HavrutaDto havrutaDto;
+
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -34,6 +38,11 @@ public class DetailBoardDto {
         this.view = board.getView();
         this.imageUrls = board.getImageUrls();
         this.fileUrls = board.getFileUrls();
+        if (board.getHavruta() != null) {
+            this.getHavrutaDto().setId(board.getHavruta().getId());
+            this.getHavrutaDto().setClassname(board.getHavruta().getClassname());
+            this.getHavrutaDto().setProfessor(board.getHavruta().getProfessor());
+        }
         this.createdAt = board.getCreatedAt();
         this.updatedAt = board.getUpdatedAt();
     }

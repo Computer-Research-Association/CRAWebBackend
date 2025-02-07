@@ -2,6 +2,7 @@ package com.handong.cra.crawebbackend.board.dto;
 
 import com.handong.cra.crawebbackend.board.domain.Board;
 import com.handong.cra.crawebbackend.board.domain.Category;
+import com.handong.cra.crawebbackend.havruta.dto.HavrutaDto;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -20,8 +21,12 @@ public class ListBoardDto {
     private Boolean deleted;
     private Long likeCount;
     private Long view;
+
+    private HavrutaDto havrutaDto;
+
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
 
     public ListBoardDto(Board board) {
         this.id = board.getId();
@@ -31,6 +36,12 @@ public class ListBoardDto {
         this.category = board.getCategory();
         this.likeCount = (long) board.getLikedUsers().size();
         this.view = board.getView();
+        if (board.getHavruta() != null){
+            this.havrutaDto.setId(board.getHavruta().getId());
+            this.havrutaDto.setProfessor(board.getHavruta().getProfessor());
+            this.havrutaDto.setClassname(board.getHavruta().getClassname());
+        }
+
         this.createdAt = board.getCreatedAt();
         this.updatedAt = board.getUpdatedAt();
     }

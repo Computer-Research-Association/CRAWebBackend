@@ -12,13 +12,13 @@ import java.util.List;
 @AllArgsConstructor
 @Schema(description = "Board 수정 데이터 전달 DTO")
 public class ReqUpdateBoardDto {
-    @Schema(description = "글 삭제 여부")
-    private Boolean deleted;
     @Schema(description = "글 제목")
     private String title;
     @Schema(description = "글 내용")
     private String content;
     @Schema(description = "사진 주소 목록")
     private List<String> imageUrls;
+
+    private Boolean deleted;
 
 }
