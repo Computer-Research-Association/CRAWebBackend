@@ -47,9 +47,12 @@ public class WebSecurityConfig {
 //                        .requestMatchers(HttpMethod.DELETE, "/api/**").authenticated()
                         // 테스트용
                         .requestMatchers(HttpMethod.POST, "/api/**").hasAnyRole("USER", "ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/api/**").permitAll()
-                        .requestMatchers(HttpMethod.PUT, "/api/**").permitAll()
-                        .requestMatchers(HttpMethod.DELETE, "/api/**").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/api/**").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/**").hasAnyRole("USER", "ADMIN")
+
+
+                        .requestMatchers(HttpMethod.POST, "/api/account/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/account/admin**").hasRole("ADMIN")
 
 //                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
 
