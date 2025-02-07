@@ -10,7 +10,7 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class UpdateUserDto {
-    private Long userId;
+    private Long id;
     private String imgUrl;
     //TODO : 수정할 데이터 추가
 

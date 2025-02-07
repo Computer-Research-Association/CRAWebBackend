@@ -3,11 +3,13 @@ package com.handong.cra.crawebbackend.user.service;
 import com.handong.cra.crawebbackend.account.domain.ManageTokenCategory;
 import com.handong.cra.crawebbackend.account.service.AccountService;
 import com.handong.cra.crawebbackend.auth.dto.SignupDto;
+import com.handong.cra.crawebbackend.exception.auth.AuthForbiddenActionException;
 import com.handong.cra.crawebbackend.exception.user.UserInvalidPasswordException;
 import com.handong.cra.crawebbackend.file.domain.S3ImageCategory;
 import com.handong.cra.crawebbackend.file.service.S3ImageService;
 import com.handong.cra.crawebbackend.exception.user.UserNotFoundException;
 import com.handong.cra.crawebbackend.user.domain.User;
+import com.handong.cra.crawebbackend.user.domain.UserRoleEnum;
 import com.handong.cra.crawebbackend.user.dto.LoginUserDto;
 import com.handong.cra.crawebbackend.user.dto.UpdateUserDto;
 import com.handong.cra.crawebbackend.user.dto.UpdateUserPasswordDto;
@@ -26,6 +28,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -44,7 +47,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public LoginUserDto getUserIfRegistered(String username, String password) {
-        log.info("pass: {}", password);
         User user = userRepository.findByUsername(username);
 
         if (user == null) throw new UserNotFoundException();
@@ -63,11 +65,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public String updateUserProfileImage(Long userid, String imgUrl) {
+    public String updateUserProfileImage(Long userId, String imgUrl) {
+
+        if (userId == null) throw new AuthForbiddenActionException();
+
         if (imgUrl == null || !imgUrl.contains("temp/")) return null;
 
-        User user = userRepository.getUserById(userid);
-        if (user == null) throw new UserNotFoundException();
+        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
 
         // 기존 이미지 삭제
         if (user.getImgUrl() != null) s3ImageService.transferImage(user.getImgUrl(), S3ImageCategory.DELETED);
@@ -79,7 +83,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public UpdateUserDto updateUserInfo(UpdateUserDto updateUserDto) {
         User user = userRepository.findById(updateUserDto.getUserId()).orElseThrow(UserNotFoundException::new);
+
+        // 권한 없음
+        if (!Objects.equals(user.getId(), updateUserDto.getUserId())) throw new AuthForbiddenActionException();
+
         user = user.update(updateUserDto);
+
 
         return UpdateUserDto.from(user);
     }
@@ -107,5 +116,15 @@ public class UserServiceImpl implements UserService {
 
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         user.setPassword(passwordEncoder.encode(newPassword));
+    }
+
+
+    @Override
+    public Boolean deleteUser(UpdateUserDto updateUserDto) {
+        User user = userRepository.findById(updateUserDto.getId()).orElseThrow(UserNotFoundException::new);
+
+
+        user.delete();
+        return null;
     }
 }

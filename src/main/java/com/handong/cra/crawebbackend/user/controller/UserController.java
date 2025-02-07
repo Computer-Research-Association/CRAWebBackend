@@ -8,7 +8,6 @@ import com.handong.cra.crawebbackend.user.dto.request.ReqUpdateUserDto;
 import com.handong.cra.crawebbackend.user.dto.request.ReqUpdateUserPasswordDto;
 import com.handong.cra.crawebbackend.user.dto.response.ResUpdateUserDto;
 import com.handong.cra.crawebbackend.user.service.UserService;
-import com.handong.cra.crawebbackend.util.AESUtill;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -37,11 +36,6 @@ public class UserController {
 
     @PutMapping("/password-change")
     public ResponseEntity<Void> updatePassword(@RequestBody ReqUpdateUserPasswordDto reqUpdateUserPasswordDto) {
-//        try {
-//            log.info("{}", AESUtill.AESDecrypt(reqUpdateUserPasswordDto.getPassword()));
-//        } catch (Exception e) {
-//            System.out.println(e.getMessage());
-//        }
         userService.updateUserPassword(UpdateUserPasswordDto.from(reqUpdateUserPasswordDto));
         return ResponseEntity.ok().build();
 
