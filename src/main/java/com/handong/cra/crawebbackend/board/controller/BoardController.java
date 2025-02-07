@@ -172,6 +172,7 @@ public class BoardController {
             @RequestPart(value = "files", required = false) List<MultipartFile> files) {
 
         log.info("access test userid = {}, {}", customUserDetails.getUserId(), customUserDetails.getUser().getUsername());
+        log.info("user role = {}", customUserDetails.getAuthorities());
 
         return ResponseEntity.status(HttpStatus.CREATED).body(ResCreateBoardDto.from(boardService
                 .createBoard(CreateBoardDto.of(customUserDetails.getUserId(), reqCreateBoardDto, files))));

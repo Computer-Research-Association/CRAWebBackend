@@ -1,6 +1,8 @@
 package com.handong.cra.crawebbackend.util;
 
+import com.handong.cra.crawebbackend.auth.domain.CustomUserDetails;
 import com.handong.cra.crawebbackend.auth.dto.response.ResTokenDto;
+import com.handong.cra.crawebbackend.auth.service.CustomUserDetailsService;
 import com.handong.cra.crawebbackend.user.domain.User;
 import com.handong.cra.crawebbackend.user.domain.UserRoleEnum;
 import com.handong.cra.crawebbackend.user.repository.UserRepository;
@@ -31,7 +33,8 @@ import java.util.List;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtTokenProvider jwtTokenProvider;
 
-    private final UserDetailsService userDetailsService;
+//    private final UserDetailsService userDetailsService;
+    private final CustomUserDetailsService userDetailsService;
     private final UserRepository userRepository;
 
 
@@ -50,6 +53,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String username = userRepository.getUserById(userId).getUsername();
             log.info(username);
             log.info("username: {}", username);
+            log.info("role: {}", userRepository.getUserById(userId).getRoles().getAuthorities());
             setAuthentication(username);
         }
         filterChain.doFilter(request, response);
@@ -57,7 +61,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private void setAuthentication(String username) {
         SecurityContext context = SecurityContextHolder.createEmptyContext();
-        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        CustomUserDetails userDetails = userDetailsService.loadUserByUsername(username);
+
+        log.info("=========================================================");
+        log.info("=========================================================");
+        log.info("=========================================================");
+        log.info("=========================================================");
+        log.info("username: {}", userDetails.getUser().getUsername());
+        log.info("id: {}", userDetails.getUser().getId());
+        log.info("role: {}", userDetails.getAuthorities());
+        log.info("=========================================================");
+        log.info("=========================================================");
+        log.info("=========================================================");
+        log.info("=========================================================");
+
+
         context.setAuthentication(new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities()));
         log.info("context: {}", context);
         SecurityContextHolder.setContext(context);
