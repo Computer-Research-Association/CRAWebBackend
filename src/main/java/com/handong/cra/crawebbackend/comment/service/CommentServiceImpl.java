@@ -7,11 +7,13 @@ import com.handong.cra.crawebbackend.comment.dto.CreateCommentDto;
 import com.handong.cra.crawebbackend.comment.dto.ListCommentDto;
 import com.handong.cra.crawebbackend.comment.dto.UpdateCommentDto;
 import com.handong.cra.crawebbackend.comment.repository.CommentRepository;
+import com.handong.cra.crawebbackend.exception.auth.AuthForbiddenActionException;
 import com.handong.cra.crawebbackend.exception.board.BoardNotFoundException;
 import com.handong.cra.crawebbackend.exception.comment.CommentNestedReplyNotAllowedException;
 import com.handong.cra.crawebbackend.exception.comment.CommentNotFoundException;
 import com.handong.cra.crawebbackend.exception.user.UserNotFoundException;
 import com.handong.cra.crawebbackend.user.domain.User;
+import com.handong.cra.crawebbackend.user.domain.UserRoleEnum;
 import com.handong.cra.crawebbackend.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -67,14 +69,26 @@ public class CommentServiceImpl implements CommentService {
     @Transactional
     public UpdateCommentDto updateComment(UpdateCommentDto updateCommentDto) {
         Comment comment = commentRepository.findById(updateCommentDto.getId()).orElseThrow(CommentNotFoundException::new);
+        User user = userRepository.findById(updateCommentDto.getUserId()).orElseThrow(UserNotFoundException::new);
+
+        // 권한 없음
+        if (!user.getId().equals(comment.getUser().getId()) || !user.getRoles().hasRole(UserRoleEnum.ADMIN))
+            throw new AuthForbiddenActionException();
+
         comment = comment.update(updateCommentDto);
         return UpdateCommentDto.from(comment);
     }
 
     @Override
     @Transactional
-    public Boolean deleteCommentById(Long id) {
-        Comment comment = commentRepository.findById(id).orElseThrow(CommentNotFoundException::new);
+    public Boolean deleteCommentById(Long userId, Long commentId) {
+        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+        Comment comment = commentRepository.findById(commentId).orElseThrow(CommentNotFoundException::new);
+
+        // 권한 없음
+        if (!user.getId().equals(comment.getUser().getId()) || !user.getRoles().hasRole(UserRoleEnum.ADMIN))
+            throw new AuthForbiddenActionException();
+
         comment.delete();
 
         List<Comment> comments = comment.getCommentList();

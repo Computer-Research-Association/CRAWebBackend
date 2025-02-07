@@ -20,7 +20,7 @@ public class ListHavrutaDto {
 
     public ListHavrutaDto(Board board) {
         this.id = board.getId();
-        this.className = board.getHavruta().getClassName();
+        this.className = board.getHavruta().getClassname();
         this.professor = board.getHavruta().getProfessor();
         this.createdAt = board.getCreatedAt();
         this.updatedAt = board.getUpdatedAt();
@@ -28,7 +28,7 @@ public class ListHavrutaDto {
 
     public ListHavrutaDto(Havruta havruta) {
         this.id = havruta.getId();
-        this.className = havruta.getClassName();
+        this.className = havruta.getClassname();
         this.professor = havruta.getProfessor();
         this.createdAt = havruta.getCreatedAt();
         this.updatedAt = havruta.getUpdatedAt();

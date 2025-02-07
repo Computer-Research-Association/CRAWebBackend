@@ -12,26 +12,37 @@ import lombok.*;
 public class UpdateHavrutaDto {
 
     private Long id;
+    private Long userId;
     private String className;
     private String professor;
     private Boolean deleted;
 
-    public UpdateHavrutaDto(Long id, ReqUpdateHavrutaDto reqUpdateHavrutaDto) {
-        this.id = id;
+    public UpdateHavrutaDto(Long havrutaId, Long userId, ReqUpdateHavrutaDto reqUpdateHavrutaDto) {
+        this.id = havrutaId;
+        this.userId = userId;
         this.className = reqUpdateHavrutaDto.getClassName();
         this.professor = reqUpdateHavrutaDto.getProfessor();
-        this.deleted = reqUpdateHavrutaDto.getDeleted();
     }
 
     public UpdateHavrutaDto(Havruta havruta) {
         this.id = havruta.getId();
-        this.className = havruta.getClassName();
+        this.className = havruta.getClassname();
         this.professor = havruta.getProfessor();
         this.deleted = havruta.getDeleted();
     }
 
-    public static UpdateHavrutaDto of(Long id, ReqUpdateHavrutaDto reqUpdateHavrutaDto) {
-        return new UpdateHavrutaDto(id, reqUpdateHavrutaDto);
+    public UpdateHavrutaDto(Long havrutaId, Long userId, Boolean deleted) {
+        this.id = havrutaId;
+        this.userId = userId;
+        this.deleted = deleted;
+    }
+
+    public static UpdateHavrutaDto of(Long havrutaId, Long userId, ReqUpdateHavrutaDto reqUpdateHavrutaDto) {
+        return new UpdateHavrutaDto(havrutaId, userId, reqUpdateHavrutaDto);
+    }
+
+    public static UpdateHavrutaDto of(Long havrutaId, Long userId, Boolean deleted) {
+        return new UpdateHavrutaDto(havrutaId, userId, deleted);
     }
 
     public static UpdateHavrutaDto from(Havruta havruta) {

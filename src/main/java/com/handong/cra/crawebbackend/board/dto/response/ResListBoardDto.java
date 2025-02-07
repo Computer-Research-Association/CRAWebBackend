@@ -2,6 +2,7 @@ package com.handong.cra.crawebbackend.board.dto.response;
 
 import com.handong.cra.crawebbackend.board.domain.Category;
 import com.handong.cra.crawebbackend.board.dto.ListBoardDto;
+import com.handong.cra.crawebbackend.havruta.dto.HavrutaDto;
 import com.handong.cra.crawebbackend.util.BoardMDParser;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
@@ -42,6 +43,8 @@ public class ResListBoardDto {
     @Schema(description = "글 수정 시간")
     private LocalDateTime updatedAt;
 
+    private HavrutaDto havrutaDto;
+
     public ResListBoardDto(ListBoardDto listBoardDto) {
         this.id = listBoardDto.getId();
         this.userId = listBoardDto.getId();
@@ -57,6 +60,12 @@ public class ResListBoardDto {
         this.view = listBoardDto.getView();
         this.createdAt = listBoardDto.getCreatedAt();
         this.updatedAt = listBoardDto.getUpdatedAt();
+
+        if (listBoardDto.getHavrutaDto() != null) {
+            this.havrutaDto.setId(listBoardDto.getHavrutaDto().getId());
+            this.havrutaDto.setClassname(listBoardDto.getHavrutaDto().getClassname());
+            this.havrutaDto.setProfessor(listBoardDto.getHavrutaDto().getProfessor());
+        }
     }
 
     public static ResListBoardDto from(ListBoardDto listBoardDto) {

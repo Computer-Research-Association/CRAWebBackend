@@ -1,7 +1,9 @@
 package com.handong.cra.crawebbackend.project.service;
 
 
+import com.handong.cra.crawebbackend.exception.auth.AuthForbiddenActionException;
 import com.handong.cra.crawebbackend.exception.project.ProjectSemesterParseException;
+import com.handong.cra.crawebbackend.exception.user.UserNotFoundException;
 import com.handong.cra.crawebbackend.file.domain.S3ImageCategory;
 import com.handong.cra.crawebbackend.file.service.S3ImageService;
 import com.handong.cra.crawebbackend.exception.project.ProjectNotFoundException;
@@ -12,6 +14,9 @@ import com.handong.cra.crawebbackend.project.dto.DetailProjectDto;
 import com.handong.cra.crawebbackend.project.dto.ListProjectDto;
 import com.handong.cra.crawebbackend.project.dto.UpdateProjectDto;
 import com.handong.cra.crawebbackend.project.repository.ProjectRepository;
+import com.handong.cra.crawebbackend.user.domain.User;
+import com.handong.cra.crawebbackend.user.domain.UserRoleEnum;
+import com.handong.cra.crawebbackend.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,10 +37,16 @@ public class ProjectServiceImpl implements ProjectService {
 
     private final ProjectRepository projectRepository;
     private final S3ImageService s3ImageService;
+    private final UserRepository userRepository;
 
     @Override
     @Transactional
     public CreateProjectDto createProject(CreateProjectDto createProjectDto) {
+
+        User user = userRepository.findById(createProjectDto.getUserId()).orElseThrow(UserNotFoundException::new);
+
+        // 권한 없음
+        if (user.getRoles().hasRole(UserRoleEnum.ADMIN)) throw new AuthForbiddenActionException();
 
         if (createProjectDto.getSemester().length() > 4 || !createProjectDto.getSemester().contains("-")){
             throw new ProjectSemesterParseException();
@@ -49,19 +60,21 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     @Transactional
-    public UpdateProjectDto updateProject(UpdateProjectDto updateProjectDto) { // TODO exception 처리 필요
+    public UpdateProjectDto updateProject(UpdateProjectDto updateProjectDto) {
 
         Project project = projectRepository.findById(updateProjectDto.getId()).orElseThrow(ProjectNotFoundException::new);
+        User user = userRepository.findById(updateProjectDto.getUserId()).orElseThrow(UserNotFoundException::new);
+
+        // 권한 없음
+        if (user.getRoles().hasRole(UserRoleEnum.ADMIN)) throw new AuthForbiddenActionException();
+
         String newImgUrl= "";
 
         // 수정됨
         if (updateProjectDto.getImageUrl().contains("temp/")){
-            log.info("Project img 수정 로직 진행");
             s3ImageService.transferImage(project.getImageUrl(),S3ImageCategory.DELETED);
             newImgUrl = s3ImageService.transferImage(updateProjectDto.getImageUrl(),S3ImageCategory.PROJECT);
-//            project.setImageUrl(newImgUrl);
             updateProjectDto.setImageUrl(newImgUrl);
-            log.info("Project img 수정 완료");
         }
 
         project = project.update(updateProjectDto);
@@ -71,8 +84,13 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     @Transactional
-    public Boolean deleteProjectById(Long id) { // TODO exception 처리 필요
-        Project project = projectRepository.findById(id).orElseThrow(ProjectNotFoundException::new);
+    public Boolean deleteProjectById(UpdateProjectDto updateProjectDto) { // TODO exception 처리 필요
+        Project project = projectRepository.findById(updateProjectDto.getId()).orElseThrow(ProjectNotFoundException::new);
+        User user = userRepository.findById(updateProjectDto.getUserId()).orElseThrow(UserNotFoundException::new);
+
+        // 권한 없음
+        if (user.getRoles().hasRole(UserRoleEnum.ADMIN)) throw new AuthForbiddenActionException();
+
         project.delete();
         s3ImageService.transferImage(project.getImageUrl(), S3ImageCategory.DELETED);
         return true;

@@ -1,5 +1,6 @@
 package com.handong.cra.crawebbackend.havruta.controller;
 
+import com.handong.cra.crawebbackend.auth.domain.CustomUserDetails;
 import com.handong.cra.crawebbackend.havruta.dto.CreateHavrutaDto;
 import com.handong.cra.crawebbackend.havruta.dto.UpdateHavrutaDto;
 import com.handong.cra.crawebbackend.havruta.dto.request.ReqCreateHavrutaDto;
@@ -23,39 +24,36 @@ import java.util.List;
 public class HavrutaAdminController {
     private final HavrutaService havrutaService;
 
-    @GetMapping
-    public ResponseEntity<List<ResListHavrutaDto>> getHavrutas() {
-        return ResponseEntity.ok().body(havrutaService.getAllHavrutas().stream().map(ResListHavrutaDto::from).toList());
-    }
 
-    @GetMapping("/view/{id}")
-    public ResponseEntity<ResDetailHavrutaDto> getHavrutaById(@PathVariable Long id) {
-        ResDetailHavrutaDto resDetailHavrutaDto = ResDetailHavrutaDto.from(havrutaService.getHavrutaById(id));
+    @GetMapping("/view/{havrutaId}")
+    public ResponseEntity<ResDetailHavrutaDto> getHavrutaById(@PathVariable Long havrutaId) {
+        ResDetailHavrutaDto resDetailHavrutaDto = ResDetailHavrutaDto.from(havrutaService.getHavrutaById(havrutaId));
 
-        if(resDetailHavrutaDto == null) return ResponseEntity.notFound().build();
+        if (resDetailHavrutaDto == null) return ResponseEntity.notFound().build();
 
         else return ResponseEntity.ok().body(resDetailHavrutaDto);
     }
 
     @PostMapping("")
-    public ResponseEntity<ResCreateHavrutaDto> createHavruta(@RequestBody ReqCreateHavrutaDto reqCreateHavrutaDto) {
-        CreateHavrutaDto createHavrutaDto = CreateHavrutaDto.from(reqCreateHavrutaDto);
+    public ResponseEntity<ResCreateHavrutaDto> createHavruta(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody ReqCreateHavrutaDto reqCreateHavrutaDto) {
+        CreateHavrutaDto createHavrutaDto = CreateHavrutaDto.of(customUserDetails.getUserId(), reqCreateHavrutaDto);
 
         ResCreateHavrutaDto response = ResCreateHavrutaDto.from(havrutaService.createHavruta(createHavrutaDto));
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ResUpdateHavrutaDto> updateHavruta(@PathVariable Long id, @RequestBody ReqUpdateHavrutaDto reqUpdateHavrutaDto) {
-        ResUpdateHavrutaDto resUpdateHavrutaDto = ResUpdateHavrutaDto.from(havrutaService.updateHavruta(UpdateHavrutaDto.of(id, reqUpdateHavrutaDto)));;
+    @PutMapping("/{havrutaId}")
+    public ResponseEntity<ResUpdateHavrutaDto> updateHavruta(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Long havrutaId, @RequestBody ReqUpdateHavrutaDto reqUpdateHavrutaDto) {
+        ResUpdateHavrutaDto resUpdateHavrutaDto = ResUpdateHavrutaDto.from(havrutaService.updateHavruta(UpdateHavrutaDto.of(havrutaId, customUserDetails.getUserId(), reqUpdateHavrutaDto)));
+        ;
 
         return ResponseEntity.ok().body(resUpdateHavrutaDto);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteHavruta(@PathVariable Long id) {
-        if (havrutaService.deleteHavruta(id)) {
+    @DeleteMapping("/{havrutaId}")
+    public ResponseEntity<Void> deleteHavruta(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Long havrutaId) {
+        if (havrutaService.deleteHavruta(UpdateHavrutaDto.of(havrutaId, customUserDetails.getUserId(), true))) {
             return ResponseEntity.ok().build();
         }
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();

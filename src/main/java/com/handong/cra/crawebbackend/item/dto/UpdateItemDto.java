@@ -14,16 +14,19 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UpdateItemDto {
     private Long id;
+    private Long userId;
     private String name;
     private String description;
     private ItemCategory itemCategory;
     private String imageUrl;
     private Boolean isBorrowed;
+    private Boolean deleted;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public UpdateItemDto(ReqUpdateItemDto reqUpdateItemDto) {
+    public UpdateItemDto(Long userId, ReqUpdateItemDto reqUpdateItemDto) {
         this.name = reqUpdateItemDto.getName();
+        this.userId = userId;
         this.description = reqUpdateItemDto.getDescription();
         this.itemCategory = ItemCategory.values()[reqUpdateItemDto.getItemCategory()];
         this.imageUrl = reqUpdateItemDto.getImageUrl();
@@ -41,10 +44,27 @@ public class UpdateItemDto {
         this.updatedAt = item.getUpdatedAt();
     }
 
-
-    public static UpdateItemDto from(ReqUpdateItemDto reqUpdateItemDto) {
-        return new UpdateItemDto(reqUpdateItemDto);
+    public UpdateItemDto(Long itemId, Long userId, Boolean deleted) {
+        this.id = itemId;
+        this.userId = userId;
+        this.deleted = deleted;
     }
+
+
+    public static UpdateItemDto of(Long userId, ReqUpdateItemDto reqUpdateItemDto) {
+        return new UpdateItemDto(userId, reqUpdateItemDto);
+    }
+
+    // 삭제용
+    public static UpdateItemDto of(Long itemId, Long userId) {
+        return new UpdateItemDto(itemId, userId, null);
+    }
+
+    // 대여용
+    public static UpdateItemDto of(Long itemId, Long userId, Boolean isBorrowed) {
+        return new UpdateItemDto(itemId, userId, isBorrowed);
+    }
+
     public static UpdateItemDto from(Item item) {
         return new UpdateItemDto(item);
     }

@@ -14,4 +14,5 @@ public interface UserService {
     public UpdateUserDto updateUserInfo(UpdateUserDto updateUserDto);
     public UserDetailDto getUserDetailByUsername(String username);
     public void updateUserPassword(UpdateUserPasswordDto updateUserPasswordDto);
+    public Boolean deleteUser(UpdateUserDto updateUserDto);
 }

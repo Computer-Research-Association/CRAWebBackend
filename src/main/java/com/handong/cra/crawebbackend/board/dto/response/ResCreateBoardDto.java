@@ -2,6 +2,7 @@ package com.handong.cra.crawebbackend.board.dto.response;
 
 import com.handong.cra.crawebbackend.board.domain.Category;
 import com.handong.cra.crawebbackend.board.dto.CreateBoardDto;
+import com.handong.cra.crawebbackend.havruta.dto.HavrutaDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
@@ -36,6 +37,8 @@ public class ResCreateBoardDto {
     private LocalDateTime createdAt;
 
 
+    private HavrutaDto havrutaDto;
+
     public ResCreateBoardDto(CreateBoardDto createBoardDto) {
 
         this.id = createBoardDto.getId();
@@ -45,6 +48,12 @@ public class ResCreateBoardDto {
         this.category = createBoardDto.getCategory();
         this.imageUrls = createBoardDto.getImageUrls();
         this.createdAt = createBoardDto.getCreatedAt();
+
+        if (createBoardDto.getHavrutaDto() != null) {
+            this.havrutaDto.setId(createBoardDto.getHavrutaDto().getId());
+            this.havrutaDto.setClassname(createBoardDto.getHavrutaDto().getClassname());
+            this.havrutaDto.setProfessor(createBoardDto.getHavrutaDto().getProfessor());
+        }
     }
 
     public static ResCreateBoardDto from(CreateBoardDto createBoardDto) {

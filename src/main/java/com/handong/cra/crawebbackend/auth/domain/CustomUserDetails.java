@@ -41,11 +41,15 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return !user.getDeleted();
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return user.getRoles().getAuthorities();
+    }
+
+    public Long getUserId(){
+        return user.getId();
     }
 }

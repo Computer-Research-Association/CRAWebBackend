@@ -1,5 +1,6 @@
 package com.handong.cra.crawebbackend.comment.controller;
 
+import com.handong.cra.crawebbackend.auth.domain.CustomUserDetails;
 import com.handong.cra.crawebbackend.comment.dto.CreateCommentDto;
 import com.handong.cra.crawebbackend.comment.dto.UpdateCommentDto;
 import com.handong.cra.crawebbackend.comment.dto.request.ReqCreateCommentDto;
@@ -11,6 +12,7 @@ import com.handong.cra.crawebbackend.comment.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,27 +30,27 @@ public class CommentController {
     }
 
     @GetMapping("/count/{boardId}")
-    public ResponseEntity<Long> getCommentCount(@PathVariable Long boardId){
+    public ResponseEntity<Long> getCommentCount(@PathVariable Long boardId) {
 
         return ResponseEntity.ok(commentService.getCommentCount(boardId));
     }
 
     @PostMapping("/{boardId}")
-    public ResponseEntity<ResCreateCommentDto> createComment(@PathVariable Long boardId, @RequestBody ReqCreateCommentDto reqCreateCommentDto) {
+    public ResponseEntity<ResCreateCommentDto> createComment(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Long boardId, @RequestBody ReqCreateCommentDto reqCreateCommentDto) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new ResCreateCommentDto(
-                        commentService.createComment(CreateCommentDto.of(boardId, reqCreateCommentDto.getUserId(), reqCreateCommentDto))));
+                        commentService.createComment(CreateCommentDto.of(boardId, customUserDetails.getUserId(), reqCreateCommentDto))));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ResUpdateCommentDto> updateComment(@PathVariable Long id, @RequestBody ReqUpdateCommentDto reqUpdateCommentDto) {
-        return ResponseEntity.ok().body(new ResUpdateCommentDto(commentService.updateComment(new UpdateCommentDto(reqUpdateCommentDto, id))));
+    @PutMapping("/{commentId}")
+    public ResponseEntity<ResUpdateCommentDto> updateComment(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Long commentId, @RequestBody ReqUpdateCommentDto reqUpdateCommentDto) {
+        return ResponseEntity.ok().body(new ResUpdateCommentDto(commentService.updateComment(UpdateCommentDto.of(commentId, customUserDetails.getUserId(), reqUpdateCommentDto))));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteComment(@PathVariable Long id) {
+    @DeleteMapping("/{commentId}")
+    public ResponseEntity<Void> deleteComment(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Long commentId) {
         // success
-        if (commentService.deleteCommentById(id))
+        if (commentService.deleteCommentById(customUserDetails.getUserId(), commentId))
             return ResponseEntity.ok().build();
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();

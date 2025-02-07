@@ -13,6 +13,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CreateProjectDto {
+    private Long id;
+    private Long userId;
     private String semester;
     private String teamName;
     private String serviceName;
@@ -21,12 +23,10 @@ public class CreateProjectDto {
     private String serviceUrl;
     private List<String> members = new ArrayList<>();
     private String imageUrl;
+    private LocalDateTime createdAt;
 
-    //res 전달용
-    private Long id = null;
-    private LocalDateTime createdAt = null;
-
-    public CreateProjectDto(ReqCreateProjectDto reqCreateProjectDto) {
+    public CreateProjectDto(Long userId, ReqCreateProjectDto reqCreateProjectDto) {
+        this.userId = userId;
         this.semester = reqCreateProjectDto.getSemester();
         this.teamName = reqCreateProjectDto.getTeamName();
         this.serviceName = reqCreateProjectDto.getServiceName();
@@ -47,11 +47,13 @@ public class CreateProjectDto {
         this.imageUrl = project.getImageUrl();
     }
 
-    public static CreateProjectDto from(ReqCreateProjectDto reqCreateProjectDto) {
-        return new CreateProjectDto(reqCreateProjectDto);
+    public static CreateProjectDto of(Long userId, ReqCreateProjectDto reqCreateProjectDto) {
+        return new CreateProjectDto(userId, reqCreateProjectDto);
     }
 
     public static CreateProjectDto from(Project project) {
         return new CreateProjectDto(project);
     }
+
+
 }

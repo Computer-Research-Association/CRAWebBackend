@@ -17,7 +17,7 @@ public interface ProjectService {
 
     public UpdateProjectDto updateProject(UpdateProjectDto updateProjectDto);
 
-    public Boolean deleteProjectById(Long id);
+    public Boolean deleteProjectById(UpdateProjectDto updateProjectDto);
 
     // users
     public DetailProjectDto getDetailProjectById(Long id);

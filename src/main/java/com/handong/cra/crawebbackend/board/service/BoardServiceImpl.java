@@ -6,13 +6,18 @@ import com.handong.cra.crawebbackend.board.domain.Category;
 import com.handong.cra.crawebbackend.board.domain.BoardOrderBy;
 import com.handong.cra.crawebbackend.board.dto.*;
 import com.handong.cra.crawebbackend.board.repository.BoardRepository;
+import com.handong.cra.crawebbackend.exception.auth.AuthForbiddenActionException;
+import com.handong.cra.crawebbackend.exception.havruta.HavrutaNotFoundException;
 import com.handong.cra.crawebbackend.file.domain.S3ImageCategory;
 import com.handong.cra.crawebbackend.file.service.S3FileService;
 import com.handong.cra.crawebbackend.file.service.S3ImageService;
 import com.handong.cra.crawebbackend.exception.board.BoardLikeBadRequestException;
 import com.handong.cra.crawebbackend.exception.board.BoardNotFoundException;
 import com.handong.cra.crawebbackend.exception.user.UserNotFoundException;
+import com.handong.cra.crawebbackend.havruta.domain.Havruta;
+import com.handong.cra.crawebbackend.havruta.repository.HavrutaRepository;
 import com.handong.cra.crawebbackend.user.domain.User;
+import com.handong.cra.crawebbackend.user.domain.UserRoleEnum;
 import com.handong.cra.crawebbackend.user.repository.UserRepository;
 import com.handong.cra.crawebbackend.util.BoardMDParser;
 import jakarta.transaction.Transactional;
@@ -33,12 +38,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
-
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class BoardServiceImpl implements BoardService {
     private final BoardRepository boardRepository;
+    private final HavrutaRepository havrutaRepository;
     private final UserRepository userRepository;
     private final S3ImageService s3ImageService;
     private final S3FileService s3FileService;
@@ -58,18 +63,10 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public List<ListBoardDto> getPaginationBoard(Category category, Long page, Integer perPage, BoardOrderBy boardOrderBy, Boolean isASC) {
+    public List<ListBoardDto> getPaginationBoard(PageBoardDto pageBoardDto) {
 
-        HashMap<BoardOrderBy, String> map = new HashMap<>();
-        map.put(BoardOrderBy.DATE, "createdAt");
-        map.put(BoardOrderBy.LIKECOUNT, "likeCount");
-
-        Sort sort = Sort.by(map.get(boardOrderBy));
-
-        sort = (isASC) ? sort.ascending() : sort.descending();
-
-        Pageable pageable = PageRequest.of(Math.toIntExact(page), perPage, sort);
-        Page<Board> boards = boardRepository.findAllByCategoryAndDeletedFalse(category, pageable);
+        Pageable pageable = getPageable(pageBoardDto);
+        Page<Board> boards = boardRepository.findAllByCategoryAndDeletedFalse(pageBoardDto.getCategory(), pageable);
 
         return boards.stream().map(ListBoardDto::from).toList();
     }
@@ -78,16 +75,24 @@ public class BoardServiceImpl implements BoardService {
     @Override
     @Transactional
     public CreateBoardDto createBoard(CreateBoardDto createBoardDto) {
+
         User user = userRepository.findById(createBoardDto.getUserId()).orElseThrow(UserNotFoundException::new);
+
         BoardMDParser parser = new BoardMDParser(amazonS3, bucket);
         if (createBoardDto.getFiles() != null) {
             List<String> fileUrls = s3FileService.uploadFiles(createBoardDto.getFiles(), S3ImageCategory.BOARD);
             createBoardDto.setFileUrls(fileUrls);
         }
+        Board board;
 
-        Board board = Board.of(user, createBoardDto);
-        log.info("test here {}", !board.getImageUrls().isEmpty());
-        log.info("Count =  {}", board.getImageUrls().size());
+        // havruta
+        if (createBoardDto.getHavrutaDto() != null) {
+            Havruta havruta = havrutaRepository.findById(createBoardDto.getHavrutaDto().getId()).orElseThrow(HavrutaNotFoundException::new);
+            board = Board.of(user, havruta, createBoardDto);
+        } else {
+            board = Board.of(user, createBoardDto);
+        }
+
         if (!board.getImageUrls().isEmpty()) {
             board.setImageUrls(s3ImageService.transferImage(board.getImageUrls(), S3ImageCategory.BOARD));
             board.setContent(parser.updateImageUrls(board.getContent(), board.getImageUrls()));
@@ -100,8 +105,21 @@ public class BoardServiceImpl implements BoardService {
     @Override
     @Transactional
     public UpdateBoardDto updateBoard(UpdateBoardDto updateBoardDto) {
-        BoardMDParser parser = new BoardMDParser(amazonS3, bucket);
+        // 삭제처리? -> 잘못된 요첨
+        if (updateBoardDto.getDeleted()) {
+            throw new RuntimeException("wrong req");
+        }
+
         Board board = boardRepository.findById(updateBoardDto.getId()).orElseThrow(BoardNotFoundException::new);
+        User user = userRepository.findById(updateBoardDto.getUserId()).orElseThrow(UserNotFoundException::new);
+
+        // 권한 없음.
+        if (!updateBoardDto.getUserId().equals(board.getUser().getId()) || !user.getRoles().hasRole(UserRoleEnum.ADMIN)) {
+            throw new AuthForbiddenActionException();
+        }
+
+
+        BoardMDParser parser = new BoardMDParser(amazonS3, bucket);
 
         if (updateBoardDto.getFiles() != null) {
             List<String> fileUrls = s3FileService.uploadFiles(updateBoardDto.getFiles(), S3ImageCategory.BOARD);
@@ -134,10 +152,15 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     @Transactional
-    public Boolean deleteBoardById(Long id) {
-        Board board = boardRepository.findById(id).orElseThrow(UserNotFoundException::new);
-        board.delete();
+    public Boolean deleteBoardById(UpdateBoardDto updateBoardDto) {
+        Board board = boardRepository.findById(updateBoardDto.getId()).orElseThrow(BoardNotFoundException::new);
+        User user = userRepository.findById(updateBoardDto.getUserId()).orElseThrow(UserNotFoundException::new);
 
+        // 권한 없음
+        if (!Objects.equals(user.getId(), updateBoardDto.getUserId()) || !user.getRoles().hasRole(UserRoleEnum.ADMIN))
+            throw new AuthForbiddenActionException();
+
+        board.delete();
         if (!board.getImageUrls().isEmpty())
             s3ImageService.transferImage(board.getImageUrls(), S3ImageCategory.DELETED);
 
@@ -156,7 +179,7 @@ public class BoardServiceImpl implements BoardService {
     @Override
     @Transactional
     public void ascendingBoardView(Long id) {
-        Board board = boardRepository.findById(id).orElseThrow(() -> new RuntimeException("no data"));
+        Board board = boardRepository.findById(id).orElseThrow(BoardNotFoundException::new);
         board.increaseView();
     }
 
@@ -166,18 +189,70 @@ public class BoardServiceImpl implements BoardService {
         Board board = boardRepository.findById(boardId).orElseThrow(BoardNotFoundException::new);
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         if (isLiked && !board.getLikedUsers().contains(user)) {
-            log.info("Add Listing");
             board.like(user);
             user.likeBoard(board);
         } else if (!isLiked && board.getLikedUsers().contains(user)) {
-            log.info("Remove Listing");
             board.unlike(user);
             user.unlikeBoard(board);
         } else {
             // exception
             throw new BoardLikeBadRequestException();
         }
-
-        log.info("user list size = {}, board list size = {}", user.getLikedBoards().size(), board.getLikedUsers().size());
     }
+
+
+    private Pageable getPageable(PageBoardDto pageBoardDto) {
+        HashMap<BoardOrderBy, String> map = new HashMap<>();
+        map.put(BoardOrderBy.DATE, "createdAt");
+        map.put(BoardOrderBy.LIKECOUNT, "likeCount");
+
+        Sort sort = Sort.by(map.get(pageBoardDto.getOrderBy()));
+        sort = (pageBoardDto.getIsASC()) ? sort.ascending() : sort.descending();
+        return PageRequest.of(Math.toIntExact(pageBoardDto.getPage()), pageBoardDto.getPerPage(), sort);
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // havruta board
+
+
+    @Override
+    public List<ListBoardDto> getHavrutaBoards() {
+
+        List<Board> boards = boardRepository.findByCategory(Category.HAVRUTA);
+
+        return boards.stream()
+                .map(ListBoardDto::from).filter(Objects::nonNull).toList();
+    }
+
+    @Override
+    public List<ListBoardDto> getHavrutaBoardsByHavrutaId(Long havrutaId) {
+        Havruta havruta = havrutaRepository.findById(havrutaId).orElseThrow(HavrutaNotFoundException::new);
+        List<Board> havrutas = havruta.getBoards();
+
+        return havrutas.stream()
+                .map(ListBoardDto::from).filter(Objects::nonNull).filter((board) -> !board.getDeleted()).toList();
+    }
+
+    @Override
+    public List<ListBoardDto> getPaginationAllHavrutaBoard(PageBoardDto pageBoardDto) {
+
+        Pageable pageable = getPageable(pageBoardDto);
+
+        Page<Board> boards = boardRepository.findByCategoryAndDeletedFalse(Category.HAVRUTA, pageable);
+
+        return boards.stream().map(ListBoardDto::from).toList();
+    }
+
+    @Override
+    public List<ListBoardDto> getPaginationHavrutaBoard(Long havrutaId, PageBoardDto pageBoardDto) {
+
+        Pageable pageable = getPageable(pageBoardDto);
+
+        Havruta havruta = havrutaRepository.findById(havrutaId).orElseThrow();
+        Page<Board> boards = boardRepository.findAllByHavrutaAndDeletedFalse(havruta, pageable);
+
+        return boards.stream().map(ListBoardDto::from).toList();
+    }
+
+
 }

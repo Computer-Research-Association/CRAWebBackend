@@ -2,7 +2,6 @@ package com.handong.cra.crawebbackend.board.dto;
 
 import com.handong.cra.crawebbackend.board.domain.Board;
 import com.handong.cra.crawebbackend.board.dto.request.ReqUpdateBoardDto;
-import com.handong.cra.crawebbackend.havruta.dto.havrutaboard.request.ReqUpdateHavrutaBoardDto;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -14,7 +13,6 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class UpdateBoardDto {
-
     private Long id;
     private Long userId;
     private Boolean deleted;
@@ -26,14 +24,9 @@ public class UpdateBoardDto {
     private List<MultipartFile> files;
     private List<String> fileUrls;
 
-
-    // TODO: add havrutaid
-
-
-    public UpdateBoardDto(Long id, ReqUpdateBoardDto reqUpdateBoardDto, List<MultipartFile> files) {
-        // TODO : User Logic
-        this.userId = reqUpdateBoardDto.getUserId();
-        this.id = id;
+    public UpdateBoardDto(Long userId, Long boardId, ReqUpdateBoardDto reqUpdateBoardDto, List<MultipartFile> files) {
+        this.id = boardId;
+        this.userId = userId;
         this.deleted = reqUpdateBoardDto.getDeleted();
         this.title = reqUpdateBoardDto.getTitle();
         this.content = reqUpdateBoardDto.getContent();
@@ -52,17 +45,18 @@ public class UpdateBoardDto {
         this.updatedAt = board.getUpdatedAt();
     }
 
-    public UpdateBoardDto(ReqUpdateHavrutaBoardDto reqUpdateHavrutaBoardDto) {
-        this.userId = reqUpdateHavrutaBoardDto.getUserId();
-        this.title = reqUpdateHavrutaBoardDto.getTitle();
-        this.content = reqUpdateHavrutaBoardDto.getContent();
-        this.imageUrls = reqUpdateHavrutaBoardDto.getImageUrls();
+    public UpdateBoardDto(Long userId, Long boardId) {
+        this.userId = userId;
+        this.id = boardId;
     }
 
-    public static UpdateBoardDto of(Long id, ReqUpdateBoardDto reqUpdateBoardDto, List<MultipartFile> files) {
-        return new UpdateBoardDto(id, reqUpdateBoardDto, files);
+    public static UpdateBoardDto of(Long userId, Long boardId, ReqUpdateBoardDto reqUpdateBoardDto, List<MultipartFile> files) {
+        return new UpdateBoardDto(userId, boardId, reqUpdateBoardDto, files);
     }
 
+    public static UpdateBoardDto of (Long userId, Long boardId){
+        return new UpdateBoardDto(userId, boardId);
+    }
 
     public static UpdateBoardDto from(Board board) {
         return new UpdateBoardDto(board);

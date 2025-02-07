@@ -2,6 +2,7 @@ package com.handong.cra.crawebbackend.board.dto.response;
 
 import com.handong.cra.crawebbackend.board.domain.Category;
 import com.handong.cra.crawebbackend.board.dto.DetailBoardDto;
+import com.handong.cra.crawebbackend.havruta.dto.HavrutaDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
@@ -47,6 +48,8 @@ public class ResDetailBoardDto {
     @Schema(description = "글 수정 시간")
     private LocalDateTime updatedAt;
 
+    private HavrutaDto havrutaDto;
+
     public ResDetailBoardDto(DetailBoardDto detailBoardDto) {
         this.id = detailBoardDto.getId();
         this.userId = detailBoardDto.getUserId();
@@ -59,6 +62,12 @@ public class ResDetailBoardDto {
         this.fileUrls = detailBoardDto.getFileUrls();
         this.createdAt = detailBoardDto.getCreatedAt();
         this.updatedAt = detailBoardDto.getUpdatedAt();
+
+        if (detailBoardDto.getHavrutaDto() != null) {
+            this.havrutaDto.setId(detailBoardDto.getHavrutaDto().getId());
+            this.havrutaDto.setClassname(detailBoardDto.getHavrutaDto().getClassname());
+            this.havrutaDto.setProfessor(detailBoardDto.getHavrutaDto().getProfessor());
+        }
     }
 
 

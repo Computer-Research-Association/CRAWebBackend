@@ -13,7 +13,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class CreateItemDto {
-    private Long id = null;
+    private Long id;
+    private Long userId;
     private String name;
     private String description;
     private ItemCategory itemCategory;
@@ -21,8 +22,9 @@ public class CreateItemDto {
     private LocalDateTime createdAt = null;
 
 
-    public CreateItemDto(ReqCreateItemDto reqCreateItemDto) {
+    public CreateItemDto(Long userId, ReqCreateItemDto reqCreateItemDto) {
         this.name = reqCreateItemDto.getName();
+        this.userId = userId;
         this.description = reqCreateItemDto.getDescription();
         this.itemCategory = ItemCategory.values()[reqCreateItemDto.getItemCategory()];
         this.imageUrl = reqCreateItemDto.getImageUrl();
@@ -37,9 +39,10 @@ public class CreateItemDto {
         this.createdAt = item.getCreatedAt();
     }
 
-    public static CreateItemDto from(ReqCreateItemDto reqCreateItemDto) {
-        return new CreateItemDto(reqCreateItemDto);
+    public static CreateItemDto of(Long userId, ReqCreateItemDto reqCreateItemDto) {
+        return new CreateItemDto(userId, reqCreateItemDto);
     }
+
     public static CreateItemDto from(Item item) {
         return new CreateItemDto(item);
     }

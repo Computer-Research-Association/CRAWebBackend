@@ -13,9 +13,9 @@ public interface ItemService {
 
     public UpdateItemDto updateItem(Long id, UpdateItemDto updateItemDto);
 
-    public Boolean deleteItemById(Long id);
+    public Boolean deleteItemById(UpdateItemDto updateItemDto);
 
-    public Boolean changeValidatingById(Long id, Boolean valid); // 대여
+    public Boolean changeValidatingById(UpdateItemDto updateItemDto); // 대여
 
     public List<ListItemDto> getPaginationItem(Long page, Integer perPage, Boolean isASC, ItemCategory itemCategory);
 
