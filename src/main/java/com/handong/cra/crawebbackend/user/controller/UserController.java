@@ -30,7 +30,7 @@ public class UserController {
 
     @PutMapping("/info")
     public ResponseEntity<ResUpdateUserDto> updateUserInfo(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody ReqUpdateUserDto reqUpdateUserDto) {
-        return ResponseEntity.ok(ResUpdateUserDto.from((userService.updateUserInfo(UpdateUserDto.from(customUserDetails.getUserId(), reqUpdateUserDto)))));
+        return ResponseEntity.ok(ResUpdateUserDto.from((userService.updateUserInfo(UpdateUserDto.of(customUserDetails.getUserId(), reqUpdateUserDto)))));
     }
 
 
@@ -38,7 +38,12 @@ public class UserController {
     public ResponseEntity<Void> updatePassword(@RequestBody ReqUpdateUserPasswordDto reqUpdateUserPasswordDto) {
         userService.updateUserPassword(UpdateUserPasswordDto.from(reqUpdateUserPasswordDto));
         return ResponseEntity.ok().build();
+    }
 
+    @DeleteMapping("")
+    public ResponseEntity<Void> deleteUser (@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        userService.deleteUser(UpdateUserDto.of(customUserDetails.getUserId(), true));
+        return ResponseEntity.ok().build();
     }
 
 }

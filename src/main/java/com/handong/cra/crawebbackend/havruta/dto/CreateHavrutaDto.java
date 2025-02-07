@@ -31,7 +31,7 @@ public class CreateHavrutaDto {
         this.createdAt = havruta.getCreatedAt();
     }
 
-    public static CreateHavrutaDto from(Long userId, ReqCreateHavrutaDto reqCreateHavrutaDto) {
+    public static CreateHavrutaDto of(Long userId, ReqCreateHavrutaDto reqCreateHavrutaDto) {
         return new CreateHavrutaDto(userId, reqCreateHavrutaDto);
     }
 

@@ -90,7 +90,11 @@ public class User extends BaseEntity{
 
 
     public User update(UpdateUserDto updateUserDto){
-        this.imgUrl = updateUserDto.getImgUrl();
+        this.name = updateUserDto.getName();
+        this.studentId = updateUserDto.getStudentId();
+        this.term = updateUserDto.getTerm();
+        this.email = updateUserDto.getEmail();
+        this.githubId = updateUserDto.getGithubId();
         return this;
     }
 }

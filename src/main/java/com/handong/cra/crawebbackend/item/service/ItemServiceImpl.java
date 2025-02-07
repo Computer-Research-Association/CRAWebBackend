@@ -76,7 +76,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     @Transactional
     public Boolean changeValidatingById(UpdateItemDto updateItemDto) {
-        Item item = itemRepository.findById(updateItemDto.getId()).orElseThrow(ItemNotFoundException::new)
+        Item item = itemRepository.findById(updateItemDto.getId()).orElseThrow(ItemNotFoundException::new);
         User user = userRepository.findById(updateItemDto.getUserId()).orElseThrow(UserNotFoundException::new);
 
         if (!user.getRoles().hasRole(UserRoleEnum.ADMIN)) throw new AuthForbiddenActionException();

@@ -35,8 +35,8 @@ public class HavrutaAdminController {
     }
 
     @PostMapping("")
-    public ResponseEntity<ResCreateHavrutaDto> createHavruta(@RequestBody ReqCreateHavrutaDto reqCreateHavrutaDto) {
-        CreateHavrutaDto createHavrutaDto = CreateHavrutaDto.from(reqCreateHavrutaDto);
+    public ResponseEntity<ResCreateHavrutaDto> createHavruta(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody ReqCreateHavrutaDto reqCreateHavrutaDto) {
+        CreateHavrutaDto createHavrutaDto = CreateHavrutaDto.of(customUserDetails.getUserId(), reqCreateHavrutaDto);
 
         ResCreateHavrutaDto response = ResCreateHavrutaDto.from(havrutaService.createHavruta(createHavrutaDto));
 

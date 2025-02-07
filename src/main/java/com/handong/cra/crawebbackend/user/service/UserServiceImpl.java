@@ -82,14 +82,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UpdateUserDto updateUserInfo(UpdateUserDto updateUserDto) {
-        User user = userRepository.findById(updateUserDto.getUserId()).orElseThrow(UserNotFoundException::new);
 
-        // 권한 없음
-        if (!Objects.equals(user.getId(), updateUserDto.getUserId())) throw new AuthForbiddenActionException();
+        if (updateUserDto.getId() == null) throw new AuthForbiddenActionException();
+
+        User user = userRepository.findById(updateUserDto.getId()).orElseThrow(UserNotFoundException::new);
 
         user = user.update(updateUserDto);
-
-
         return UpdateUserDto.from(user);
     }
 
@@ -121,6 +119,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Boolean deleteUser(UpdateUserDto updateUserDto) {
+
+        if (updateUserDto.getId() == null) throw new AuthForbiddenActionException();
+
         User user = userRepository.findById(updateUserDto.getId()).orElseThrow(UserNotFoundException::new);
 
 
