@@ -163,7 +163,7 @@ public class BoardServiceImpl implements BoardService {
         log.info("*********************************************");
 
         if (!Objects.equals(writer.getId(), updateBoardDto.getUserId()) || !reqUser.getRoles().hasRole(UserRoleEnum.ADMIN)) {
-            log.info("userId = {} update user id = {}", writer.getId(), updateBoardDto);
+            log.info("userId = {} update user id = {}", writer.getId(), updateBoardDto.getUserId());
             throw new AuthForbiddenActionException();
         }
         board.delete();
