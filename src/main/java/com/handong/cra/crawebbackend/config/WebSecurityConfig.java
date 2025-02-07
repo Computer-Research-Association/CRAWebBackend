@@ -1,5 +1,6 @@
 package com.handong.cra.crawebbackend.config;
 
+import com.handong.cra.crawebbackend.user.domain.UserRoleEnum;
 import com.handong.cra.crawebbackend.user.repository.UserRepository;
 import com.handong.cra.crawebbackend.user.service.UserService;
 import com.handong.cra.crawebbackend.util.JwtAuthenticationFilter;
@@ -45,6 +46,7 @@ public class WebSecurityConfig {
 //                        .requestMatchers(HttpMethod.PUT, "/api/**").authenticated()
 //                        .requestMatchers(HttpMethod.DELETE, "/api/**").authenticated()
                         // 테스트용
+                        .requestMatchers(HttpMethod.POST, "/api/**").hasAnyRole("USER", "ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/**").permitAll()
                         .requestMatchers(HttpMethod.PUT, "/api/**").permitAll()
                         .requestMatchers(HttpMethod.DELETE, "/api/**").permitAll()

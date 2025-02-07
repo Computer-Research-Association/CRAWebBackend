@@ -57,6 +57,7 @@ public class BoardController {
             @ApiResponse(responseCode = "403", description = "권한 없음"),
             @ApiResponse(responseCode = "404", description = "Board 정보 없음")
     })
+
     @DeleteMapping("/{boardId}")
     public ResponseEntity<Void> deleteBoard(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Long boardId) {
         boardService.deleteBoardById(UpdateBoardDto.of(customUserDetails.getUserId(), boardId));
