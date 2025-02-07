@@ -1,5 +1,6 @@
 package com.handong.cra.crawebbackend.config;
 
+import com.handong.cra.crawebbackend.auth.service.CustomUserDetailsService;
 import com.handong.cra.crawebbackend.user.domain.UserRoleEnum;
 import com.handong.cra.crawebbackend.user.repository.UserRepository;
 import com.handong.cra.crawebbackend.user.service.UserService;
@@ -29,7 +30,7 @@ import java.util.List;
 @EnableWebSecurity
 public class WebSecurityConfig {
     private final JwtTokenProvider jwtTokenProvider;
-    private final UserDetailsService userDetailsService;
+    private final CustomUserDetailsService userDetailsService;
     private final UserRepository userRepository;
 
     @Bean
