@@ -59,7 +59,7 @@ public class CommentServiceImpl implements CommentService {
     @Transactional
     public List<ListCommentDto> getCommentsByBoardId(Long boardId) {
         Board board = boardRepository.findById(boardId).orElseThrow(BoardNotFoundException::new);
-//        List<Comment> comments = commentRepository.findAllByBoardAndDeletedFalse(board);
+
         List<Comment> comments = commentRepository.findAllByBoardAndDeletedFalseAndParentCommentIsNull(board);
 
         return comments.stream().map(ListCommentDto::from).toList();
@@ -69,11 +69,9 @@ public class CommentServiceImpl implements CommentService {
     @Transactional
     public UpdateCommentDto updateComment(UpdateCommentDto updateCommentDto) {
         Comment comment = commentRepository.findById(updateCommentDto.getId()).orElseThrow(CommentNotFoundException::new);
-        User user = userRepository.findById(updateCommentDto.getUserId()).orElseThrow(UserNotFoundException::new);
 
-        // 권한 없음
-        if (!user.getId().equals(comment.getUser().getId()) || !user.getRoles().hasRole(UserRoleEnum.ADMIN))
-            throw new AuthForbiddenActionException();
+        // 권한 검사
+        commentAuthCheck(comment.getUser().getId(), updateCommentDto.getUserId());
 
         comment = comment.update(updateCommentDto);
         return UpdateCommentDto.from(comment);
@@ -81,13 +79,11 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    public Boolean deleteCommentById(Long userId, Long commentId) {
-        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
-        Comment comment = commentRepository.findById(commentId).orElseThrow(CommentNotFoundException::new);
+    public Boolean deleteCommentById(UpdateCommentDto updateCommentDto) {
+        Comment comment = commentRepository.findById(updateCommentDto.getId()).orElseThrow(CommentNotFoundException::new);
 
-        // 권한 없음
-        if (!user.getId().equals(comment.getUser().getId()) || !user.getRoles().hasRole(UserRoleEnum.ADMIN))
-            throw new AuthForbiddenActionException();
+        // 권한 검사
+        commentAuthCheck(comment.getUser().getId(), updateCommentDto.getUserId());
 
         comment.delete();
 
@@ -102,5 +98,11 @@ public class CommentServiceImpl implements CommentService {
     public Long getCommentCount(Long boardId) {
         boardRepository.findById(boardId).orElseThrow(BoardNotFoundException::new);
         return (long) commentRepository.findAllByBoardIdAndDeletedFalse(boardId).size();
+    }
+
+    private void commentAuthCheck(Long writerId, Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+        if (!writerId.equals(userId) && user.getRoles().hasRole(UserRoleEnum.ADMIN))
+            throw new AuthForbiddenActionException();
     }
 }

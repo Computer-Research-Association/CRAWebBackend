@@ -50,7 +50,8 @@ public class CommentController {
     @DeleteMapping("/{commentId}")
     public ResponseEntity<Void> deleteComment(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Long commentId) {
         // success
-        if (commentService.deleteCommentById(customUserDetails.getUserId(), commentId))
+
+        if (commentService.deleteCommentById(UpdateCommentDto.of(commentId, customUserDetails.getUserId())))
             return ResponseEntity.ok().build();
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
