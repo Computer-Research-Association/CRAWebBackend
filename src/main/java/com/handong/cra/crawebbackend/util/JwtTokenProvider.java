@@ -5,6 +5,8 @@ import com.handong.cra.crawebbackend.auth.dto.ReissueTokenDto;
 import com.handong.cra.crawebbackend.auth.dto.TokenDto;
 import com.handong.cra.crawebbackend.auth.dto.response.ResTokenDto;
 import com.handong.cra.crawebbackend.auth.repository.RefreshTokenRepository;
+import com.handong.cra.crawebbackend.exception.auth.AuthInvalidTokenException;
+import com.handong.cra.crawebbackend.exception.auth.AuthTokenExpiredException;
 import com.handong.cra.crawebbackend.user.repository.UserRepository;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
@@ -63,9 +65,9 @@ public class JwtTokenProvider {
         RefreshToken savedToken = refreshTokenRepository.getRefreshTokenByUserId(reissueTokenDto.getUserId());
         Long userId = savedToken.getUserId();
 
+        // 잘못된 토큰
         if (!savedToken.getRefreshToken().equals(reissueTokenDto.getRefreshToken())) {
-            // TODO: exception 하쇼 토큰 구라핑한거
-            return null;
+            throw new AuthInvalidTokenException();
         }
 
         // 만료되었는지 검사
@@ -84,9 +86,9 @@ public class JwtTokenProvider {
             return true;
         } catch (ExpiredJwtException e) {
             refreshTokenRepository.deleteAllByRefreshToken(token);
-            throw new BadCredentialsException("Token has expired", e);
+            throw new AuthTokenExpiredException();
         } catch (JwtException | IllegalArgumentException e) {
-            throw new BadCredentialsException("Invalid token", e);
+            throw new AuthInvalidTokenException();
         }
     }
 
