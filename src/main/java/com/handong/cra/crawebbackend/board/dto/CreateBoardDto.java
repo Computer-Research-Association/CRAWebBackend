@@ -34,7 +34,8 @@ public class CreateBoardDto {
         this.content = reqCreateBoardDto.getContent();
         this.category = Category.values()[reqCreateBoardDto.getCategory()];
         this.imageUrls = reqCreateBoardDto.getImageUrls();
-        this.havrutaDto = reqCreateBoardDto.getHavrutaDto();
+        if (reqCreateBoardDto.getHavrutaDto() != null)
+            this.havrutaDto = reqCreateBoardDto.getHavrutaDto();
         this.files = files;
     }
 
@@ -47,10 +48,14 @@ public class CreateBoardDto {
         this.imageUrls = board.getImageUrls();
         this.createdAt = board.getCreatedAt();
         this.fileUrls = board.getFileUrls();
-        this.havrutaDto.setId(board.getHavruta().getId());
-        this.havrutaDto.setProfessor(board.getHavruta().getProfessor());
-        this.havrutaDto.setClassname(board.getHavruta().getClassname());
+        if (board.getHavruta() != null) {
+            this.havrutaDto = new HavrutaDto();
+            this.havrutaDto.setId(board.getHavruta().getId());
+            this.havrutaDto.setProfessor(board.getHavruta().getProfessor());
+            this.havrutaDto.setClassname(board.getHavruta().getClassname());
+        }
     }
+
     // TODO : user logic
     public static CreateBoardDto of(Long userId, ReqCreateBoardDto reqCreateBoardDto, List<MultipartFile> files) {
         return new CreateBoardDto(userId, reqCreateBoardDto, files);
