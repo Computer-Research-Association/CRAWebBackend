@@ -62,6 +62,7 @@ public class ResListBoardDto {
         this.updatedAt = listBoardDto.getUpdatedAt();
 
         if (listBoardDto.getHavrutaDto() != null) {
+            this.havrutaDto = new HavrutaDto();
             this.havrutaDto.setId(listBoardDto.getHavrutaDto().getId());
             this.havrutaDto.setClassname(listBoardDto.getHavrutaDto().getClassname());
             this.havrutaDto.setProfessor(listBoardDto.getHavrutaDto().getProfessor());

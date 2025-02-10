@@ -37,6 +37,7 @@ public class ListBoardDto {
         this.likeCount = (long) board.getLikedUsers().size();
         this.view = board.getView();
         if (board.getHavruta() != null){
+            this.havrutaDto = new HavrutaDto();
             this.havrutaDto.setId(board.getHavruta().getId());
             this.havrutaDto.setProfessor(board.getHavruta().getProfessor());
             this.havrutaDto.setClassname(board.getHavruta().getClassname());

@@ -2,7 +2,6 @@ package com.handong.cra.crawebbackend.board.dto.response;
 
 
 import com.handong.cra.crawebbackend.board.dto.UpdateBoardDto;
-import com.handong.cra.crawebbackend.havruta.dto.HavrutaDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 

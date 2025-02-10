@@ -64,6 +64,7 @@ public class ResDetailBoardDto {
         this.updatedAt = detailBoardDto.getUpdatedAt();
 
         if (detailBoardDto.getHavrutaDto() != null) {
+            this.havrutaDto = new HavrutaDto();
             this.havrutaDto.setId(detailBoardDto.getHavrutaDto().getId());
             this.havrutaDto.setClassname(detailBoardDto.getHavrutaDto().getClassname());
             this.havrutaDto.setProfessor(detailBoardDto.getHavrutaDto().getProfessor());
