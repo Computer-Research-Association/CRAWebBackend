@@ -5,7 +5,7 @@ import lombok.*;
 @Setter
 @Getter
 @AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 public class HavrutaDto {
     private Long id;
     private String classname;

@@ -50,6 +50,7 @@ public class ResCreateBoardDto {
         this.createdAt = createBoardDto.getCreatedAt();
 
         if (createBoardDto.getHavrutaDto() != null) {
+            this.havrutaDto = new HavrutaDto();
             this.havrutaDto.setId(createBoardDto.getHavrutaDto().getId());
             this.havrutaDto.setClassname(createBoardDto.getHavrutaDto().getClassname());
             this.havrutaDto.setProfessor(createBoardDto.getHavrutaDto().getProfessor());
