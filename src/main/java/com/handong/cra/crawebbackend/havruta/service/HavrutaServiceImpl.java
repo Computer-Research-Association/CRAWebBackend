@@ -49,11 +49,9 @@ public class HavrutaServiceImpl implements HavrutaService {
     @Transactional
     public CreateHavrutaDto createHavruta(CreateHavrutaDto createHavrutaDto) {
         Havruta havruta = Havruta.from(createHavrutaDto);
-        User user = userRepository.findById(createHavrutaDto.getUserId()).orElseThrow(UserNotFoundException::new);
 
-        // 권한 없음
-        if (!user.getRoles().hasRole(UserRoleEnum.ADMIN)) throw new AuthForbiddenActionException();
-
+        // 권한 검사
+        havrutaAuthCheck(createHavrutaDto.getUserId());
 
 
         havruta = havrutaRepository.save(havruta);
@@ -65,10 +63,9 @@ public class HavrutaServiceImpl implements HavrutaService {
     @Transactional
     public UpdateHavrutaDto updateHavruta(UpdateHavrutaDto updateHavrutaDto) {
         Havruta havruta = havrutaRepository.findById(updateHavrutaDto.getId()).orElseThrow(HavrutaNotFoundException::new);
-        User user = userRepository.findById(updateHavrutaDto.getUserId()).orElseThrow(UserNotFoundException::new);
 
-        // 권한 없음
-        if (!user.getRoles().hasRole(UserRoleEnum.ADMIN)) throw new AuthForbiddenActionException();
+        // 권한 검사
+        havrutaAuthCheck(updateHavrutaDto.getUserId());
 
         havruta = havruta.update(updateHavrutaDto);
 
@@ -80,10 +77,9 @@ public class HavrutaServiceImpl implements HavrutaService {
     public Boolean deleteHavruta(UpdateHavrutaDto updateHavrutaDto) {
         // delete managing obj
         Havruta havruta = havrutaRepository.findById(updateHavrutaDto.getId()).orElseThrow(HavrutaNotFoundException::new);
-        User user = userRepository.findById(updateHavrutaDto.getUserId()).orElseThrow(UserNotFoundException::new);
 
-        // 권한 없음
-        if (!user.getRoles().hasRole(UserRoleEnum.ADMIN)) throw new AuthForbiddenActionException();
+        // 권한 검사
+        havrutaAuthCheck(updateHavrutaDto.getUserId());
 
         // delete boards
         List<Board> boards = havruta.getBoards();
@@ -92,5 +88,11 @@ public class HavrutaServiceImpl implements HavrutaService {
         havruta.delete();
 
         return true;
+    }
+
+    private void havrutaAuthCheck(Long userId){
+        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+        if (!user.getRoles().hasRole(UserRoleEnum.ADMIN)) throw new AuthForbiddenActionException();
+
     }
 }

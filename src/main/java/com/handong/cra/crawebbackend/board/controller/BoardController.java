@@ -27,6 +27,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,6 +41,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/board")
 @RequiredArgsConstructor
+@Slf4j
 @Tag(name = "Board API", description = "Board 관련 컨트롤러.")
 public class BoardController {
     private final BoardService boardService;
@@ -57,6 +59,7 @@ public class BoardController {
             @ApiResponse(responseCode = "403", description = "권한 없음"),
             @ApiResponse(responseCode = "404", description = "Board 정보 없음")
     })
+
     @DeleteMapping("/{boardId}")
     public ResponseEntity<Void> deleteBoard(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Long boardId) {
         boardService.deleteBoardById(UpdateBoardDto.of(customUserDetails.getUserId(), boardId));
@@ -167,6 +170,9 @@ public class BoardController {
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
             @Valid @RequestPart("board") ReqCreateBoardDto reqCreateBoardDto,
             @RequestPart(value = "files", required = false) List<MultipartFile> files) {
+
+        log.info("access test userid = {}, {}", customUserDetails.getUserId(), customUserDetails.getUser().getUsername());
+        log.info("user role = {}", customUserDetails.getAuthorities());
 
         return ResponseEntity.status(HttpStatus.CREATED).body(ResCreateBoardDto.from(boardService
                 .createBoard(CreateBoardDto.of(customUserDetails.getUserId(), reqCreateBoardDto, files))));

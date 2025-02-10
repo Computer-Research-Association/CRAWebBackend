@@ -43,10 +43,7 @@ public class ProjectServiceImpl implements ProjectService {
     @Transactional
     public CreateProjectDto createProject(CreateProjectDto createProjectDto) {
 
-        User user = userRepository.findById(createProjectDto.getUserId()).orElseThrow(UserNotFoundException::new);
-
-        // 권한 없음
-        if (user.getRoles().hasRole(UserRoleEnum.ADMIN)) throw new AuthForbiddenActionException();
+        projectAuthCheck(createProjectDto.getUserId());
 
         if (createProjectDto.getSemester().length() > 4 || !createProjectDto.getSemester().contains("-")){
             throw new ProjectSemesterParseException();
@@ -62,11 +59,11 @@ public class ProjectServiceImpl implements ProjectService {
     @Transactional
     public UpdateProjectDto updateProject(UpdateProjectDto updateProjectDto) {
 
+        projectAuthCheck(updateProjectDto.getUserId());
+
         Project project = projectRepository.findById(updateProjectDto.getId()).orElseThrow(ProjectNotFoundException::new);
         User user = userRepository.findById(updateProjectDto.getUserId()).orElseThrow(UserNotFoundException::new);
 
-        // 권한 없음
-        if (user.getRoles().hasRole(UserRoleEnum.ADMIN)) throw new AuthForbiddenActionException();
 
         String newImgUrl= "";
 
@@ -84,15 +81,14 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     @Transactional
-    public Boolean deleteProjectById(UpdateProjectDto updateProjectDto) { // TODO exception 처리 필요
-        Project project = projectRepository.findById(updateProjectDto.getId()).orElseThrow(ProjectNotFoundException::new);
-        User user = userRepository.findById(updateProjectDto.getUserId()).orElseThrow(UserNotFoundException::new);
+    public Boolean deleteProjectById(UpdateProjectDto updateProjectDto) {
 
-        // 권한 없음
-        if (user.getRoles().hasRole(UserRoleEnum.ADMIN)) throw new AuthForbiddenActionException();
+        projectAuthCheck(updateProjectDto.getUserId());
+
+        Project project = projectRepository.findById(updateProjectDto.getId()).orElseThrow(ProjectNotFoundException::new);
+        s3ImageService.transferImage(project.getImageUrl(), S3ImageCategory.DELETED);
 
         project.delete();
-        s3ImageService.transferImage(project.getImageUrl(), S3ImageCategory.DELETED);
         return true;
     }
 
@@ -120,5 +116,11 @@ public class ProjectServiceImpl implements ProjectService {
         Page<Project> projects = projectRepository.findAllByDeletedIsFalse(pageable);
 
         return projects.stream().map(ListProjectDto::from).toList();
+    }
+
+    private void projectAuthCheck(Long userId){
+        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+
+        if (!user.getRoles().hasRole(UserRoleEnum.ADMIN)) throw new AuthForbiddenActionException();
     }
 }

@@ -30,8 +30,9 @@ public class AdminItemController {
 
     @PutMapping("/{id}")
     public ResponseEntity<ResUpdateItemDto> updateItem(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Long id, @RequestBody ReqUpdateItemDto reqUpdateItemDto) {
+
         return ResponseEntity
-                .ok(ResUpdateItemDto.from(itemService.updateItem(id, UpdateItemDto.of(customUserDetails.getUserId(), reqUpdateItemDto))));
+                .ok(ResUpdateItemDto.from(itemService.updateItem(UpdateItemDto.of(customUserDetails.getUserId(), id, reqUpdateItemDto))));
     }
 
     @DeleteMapping("/{itemId}")
