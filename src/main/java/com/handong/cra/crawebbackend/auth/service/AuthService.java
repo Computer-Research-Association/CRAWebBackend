@@ -11,4 +11,5 @@ public interface AuthService {
 
     public LoginDto login(LoginDto loginDto);
     public TokenDto reissueToken(ReissueTokenDto reissueTokenDto);
+    public void logout(Long userId);
 }

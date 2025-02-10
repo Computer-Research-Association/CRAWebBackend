@@ -62,10 +62,15 @@ public class JwtTokenProvider {
     public TokenDto reissueToken(ReissueTokenDto reissueTokenDto) {
         RefreshToken savedToken = refreshTokenRepository.getRefreshTokenByUserId(reissueTokenDto.getUserId());
         Long userId = savedToken.getUserId();
+
         if (!savedToken.getRefreshToken().equals(reissueTokenDto.getRefreshToken())) {
             // TODO: exception 하쇼 토큰 구라핑한거
             return null;
         }
+
+        // 만료되었는지 검사
+        validateToken(reissueTokenDto.getRefreshToken());
+
         String accessToken = generateToken(reissueTokenDto.getUserId(), accessExpiration);
         return TokenDto.of(userId, accessToken, null);
     }
@@ -78,6 +83,7 @@ public class JwtTokenProvider {
             Jwts.parser().verifyWith(jwtSecretKey).build().parseSignedClaims(token);
             return true;
         } catch (ExpiredJwtException e) {
+            refreshTokenRepository.deleteAllByRefreshToken(token);
             throw new BadCredentialsException("Token has expired", e);
         } catch (JwtException | IllegalArgumentException e) {
             throw new BadCredentialsException("Invalid token", e);

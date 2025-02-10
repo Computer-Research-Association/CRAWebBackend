@@ -8,6 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserDetailDto {
+    private Long id;
     private String name;
     private String email;
     private Long studentId;
@@ -16,6 +17,7 @@ public class UserDetailDto {
     private String imgUrl;
 
     public UserDetailDto(User user) {
+        this.id = user.getId();
         this.name = user.getName();
         this.email = user.getEmail();
         this.studentId = user.getStudentId();
