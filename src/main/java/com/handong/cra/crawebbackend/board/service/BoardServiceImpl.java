@@ -221,7 +221,7 @@ public class BoardServiceImpl implements BoardService {
         List<Board> havrutas = havruta.getBoards();
 
         return havrutas.stream()
-                .map(ListBoardDto::from).filter(Objects::nonNull).filter((board) -> !board.getDeleted()).toList();
+                .map(ListBoardDto::from).filter(Objects::nonNull).toList();
     }
 
     @Override
