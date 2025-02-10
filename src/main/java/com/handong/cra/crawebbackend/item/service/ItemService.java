@@ -11,7 +11,7 @@ import java.util.List;
 public interface ItemService {
     public CreateItemDto createItem(CreateItemDto createItemDto);
 
-    public UpdateItemDto updateItem(Long id, UpdateItemDto updateItemDto);
+    public UpdateItemDto updateItem(UpdateItemDto updateItemDto);
 
     public Boolean deleteItemById(UpdateItemDto updateItemDto);
 

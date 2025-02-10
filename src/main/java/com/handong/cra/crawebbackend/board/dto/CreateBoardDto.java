@@ -34,6 +34,7 @@ public class CreateBoardDto {
         this.content = reqCreateBoardDto.getContent();
         this.category = Category.values()[reqCreateBoardDto.getCategory()];
         this.imageUrls = reqCreateBoardDto.getImageUrls();
+
         if (reqCreateBoardDto.getHavrutaDto() != null)
             this.havrutaDto = reqCreateBoardDto.getHavrutaDto();
         this.files = files;
@@ -56,7 +57,6 @@ public class CreateBoardDto {
         }
     }
 
-    // TODO : user logic
     public static CreateBoardDto of(Long userId, ReqCreateBoardDto reqCreateBoardDto, List<MultipartFile> files) {
         return new CreateBoardDto(userId, reqCreateBoardDto, files);
     }

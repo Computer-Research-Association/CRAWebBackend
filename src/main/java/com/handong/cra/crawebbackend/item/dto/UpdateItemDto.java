@@ -24,7 +24,8 @@ public class UpdateItemDto {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public UpdateItemDto(Long userId, ReqUpdateItemDto reqUpdateItemDto) {
+    public UpdateItemDto(Long userId, Long itemId, ReqUpdateItemDto reqUpdateItemDto) {
+        this.id = itemId;
         this.name = reqUpdateItemDto.getName();
         this.userId = userId;
         this.description = reqUpdateItemDto.getDescription();
@@ -50,14 +51,19 @@ public class UpdateItemDto {
         this.deleted = deleted;
     }
 
+    public UpdateItemDto(Long itemId, Long userId) {
+        this.id = itemId;
+        this.userId = userId;
+    }
 
-    public static UpdateItemDto of(Long userId, ReqUpdateItemDto reqUpdateItemDto) {
-        return new UpdateItemDto(userId, reqUpdateItemDto);
+
+    public static UpdateItemDto of(Long userId, Long itemId, ReqUpdateItemDto reqUpdateItemDto) {
+        return new UpdateItemDto(userId, itemId, reqUpdateItemDto);
     }
 
     // 삭제용
     public static UpdateItemDto of(Long itemId, Long userId) {
-        return new UpdateItemDto(itemId, userId, null);
+        return new UpdateItemDto(itemId, userId);
     }
 
     // 대여용

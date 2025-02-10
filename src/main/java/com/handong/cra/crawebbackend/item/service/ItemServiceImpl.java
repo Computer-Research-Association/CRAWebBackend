@@ -35,6 +35,9 @@ public class ItemServiceImpl implements ItemService {
     @Override
     @Transactional
     public CreateItemDto createItem(CreateItemDto createItemDto) {
+        // 권한 검사
+        itemAuthCheck(createItemDto.getUserId());
+
         if (createItemDto.getImageUrl() != null)
             createItemDto.setImageUrl(s3ImageService.transferImage(createItemDto.getImageUrl(), S3ImageCategory.ITEM));
 
@@ -45,8 +48,11 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional
-    public UpdateItemDto updateItem(Long id, UpdateItemDto updateItemDto) {
-        Item item = itemRepository.findById(id).orElseThrow(ItemNotFoundException::new);
+    public UpdateItemDto updateItem(UpdateItemDto updateItemDto) {
+        // 권한 검사
+        itemAuthCheck(updateItemDto.getUserId());
+
+        Item item = itemRepository.findById(updateItemDto.getId()).orElseThrow(ItemNotFoundException::new);
 
         if (updateItemDto.getImageUrl().contains("temp")) { // 변경됨
             s3ImageService.transferImage(item.getImageUrl(), S3ImageCategory.DELETED);
@@ -60,10 +66,10 @@ public class ItemServiceImpl implements ItemService {
     @Override
     @Transactional
     public Boolean deleteItemById(UpdateItemDto updateItemDto) {
-        Item item = itemRepository.findById(updateItemDto.getId()).orElseThrow(ItemNotFoundException::new);
-        User user = userRepository.findById(updateItemDto.getUserId()).orElseThrow(UserNotFoundException::new);
+        // 권한 검사
+        itemAuthCheck(updateItemDto.getUserId());
 
-        if (!user.getRoles().hasRole(UserRoleEnum.ADMIN)) throw new AuthForbiddenActionException();
+        Item item = itemRepository.findById(updateItemDto.getId()).orElseThrow(ItemNotFoundException::new);
 
         item.delete();
 
@@ -76,11 +82,10 @@ public class ItemServiceImpl implements ItemService {
     @Override
     @Transactional
     public Boolean changeValidatingById(UpdateItemDto updateItemDto) {
+        // 권한 검사
+        itemAuthCheck(updateItemDto.getUserId());
+
         Item item = itemRepository.findById(updateItemDto.getId()).orElseThrow(ItemNotFoundException::new);
-        User user = userRepository.findById(updateItemDto.getUserId()).orElseThrow(UserNotFoundException::new);
-
-        if (!user.getRoles().hasRole(UserRoleEnum.ADMIN)) throw new AuthForbiddenActionException();
-
         item.setIsBorrowed(updateItemDto.getIsBorrowed());
         return true;
     }
@@ -110,6 +115,13 @@ public class ItemServiceImpl implements ItemService {
         Item item = itemRepository.findById(id).orElseThrow(ItemNotFoundException::new);
         if (item.getDeleted()) return null;
         else return DetailItemDto.from(item);
+    }
+
+    private void itemAuthCheck(Long userId){
+        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+
+        if (!user.getRoles().hasRole(UserRoleEnum.ADMIN)) throw new AuthForbiddenActionException();
+
     }
 
 }

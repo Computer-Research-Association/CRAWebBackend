@@ -105,19 +105,10 @@ public class BoardServiceImpl implements BoardService {
     @Override
     @Transactional
     public UpdateBoardDto updateBoard(UpdateBoardDto updateBoardDto) {
-        // 삭제처리? -> 잘못된 요첨
-        if (updateBoardDto.getDeleted()) {
-            throw new RuntimeException("wrong req");
-        }
-
         Board board = boardRepository.findById(updateBoardDto.getId()).orElseThrow(BoardNotFoundException::new);
-        User user = userRepository.findById(updateBoardDto.getUserId()).orElseThrow(UserNotFoundException::new);
 
-        // 권한 없음.
-        if (!updateBoardDto.getUserId().equals(board.getUser().getId()) || !user.getRoles().hasRole(UserRoleEnum.ADMIN)) {
-            throw new AuthForbiddenActionException();
-        }
-
+        // 권한 검사.
+        boardAuthCheck(board.getUser().getId(), updateBoardDto.getUserId());
 
         BoardMDParser parser = new BoardMDParser(amazonS3, bucket);
 
@@ -154,13 +145,12 @@ public class BoardServiceImpl implements BoardService {
     @Transactional
     public Boolean deleteBoardById(UpdateBoardDto updateBoardDto) {
         Board board = boardRepository.findById(updateBoardDto.getId()).orElseThrow(BoardNotFoundException::new);
-        User user = userRepository.findById(updateBoardDto.getUserId()).orElseThrow(UserNotFoundException::new);
 
-        // 권한 없음
-        if (!Objects.equals(user.getId(), updateBoardDto.getUserId()) || !user.getRoles().hasRole(UserRoleEnum.ADMIN))
-            throw new AuthForbiddenActionException();
-
+        // 권한 검사
+        boardAuthCheck(board.getUser().getId(), updateBoardDto.getUserId());
         board.delete();
+
+        // 사진 삭제
         if (!board.getImageUrls().isEmpty())
             s3ImageService.transferImage(board.getImageUrls(), S3ImageCategory.DELETED);
 
@@ -188,6 +178,7 @@ public class BoardServiceImpl implements BoardService {
     public void boardLike(Long boardId, Long userId, Boolean isLiked) {
         Board board = boardRepository.findById(boardId).orElseThrow(BoardNotFoundException::new);
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+
         if (isLiked && !board.getLikedUsers().contains(user)) {
             board.like(user);
             user.likeBoard(board);
@@ -254,5 +245,10 @@ public class BoardServiceImpl implements BoardService {
         return boards.stream().map(ListBoardDto::from).toList();
     }
 
+    private void boardAuthCheck(Long writerId, Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+        if (!writerId.equals(userId) && !user.getRoles().hasRole(UserRoleEnum.ADMIN))
+            throw new AuthForbiddenActionException();
+    }
 
 }

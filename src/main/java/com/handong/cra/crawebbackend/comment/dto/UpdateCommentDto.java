@@ -17,8 +17,7 @@ public class UpdateCommentDto {
 
 
     public UpdateCommentDto(Long userId, ReqUpdateCommentDto reqUpdateCommentDto, Long commentId) {
-        this.id = commentId;
-        this.userId = userId;
+        this(userId, commentId);
         this.content = reqUpdateCommentDto.getContent();
         this.deleted = reqUpdateCommentDto.getDeleted();
     }
@@ -29,8 +28,16 @@ public class UpdateCommentDto {
         this.deleted = comment.getDeleted();
     }
 
+    public UpdateCommentDto(Long userId, Long commentId) {
+        this.userId = userId;
+        this.id = commentId;
+    }
+
     public static UpdateCommentDto of(Long commentId, Long userId, ReqUpdateCommentDto reqUpdateCommentDto) {
         return new UpdateCommentDto(userId, reqUpdateCommentDto, commentId);
+    }
+    public static UpdateCommentDto of(Long commentId, Long userId) {
+        return new UpdateCommentDto(userId, commentId);
     }
 
     public static UpdateCommentDto from(Comment comment) {
