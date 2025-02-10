@@ -40,6 +40,7 @@ public class DetailBoardDto {
         this.fileUrls = board.getFileUrls();
 
         if (board.getHavruta() != null) {
+            this.havrutaDto = new HavrutaDto();
             this.getHavrutaDto().setId(board.getHavruta().getId());
             this.getHavrutaDto().setClassname(board.getHavruta().getClassname());
             this.getHavrutaDto().setProfessor(board.getHavruta().getProfessor());

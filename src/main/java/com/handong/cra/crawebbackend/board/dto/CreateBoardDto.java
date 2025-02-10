@@ -34,9 +34,9 @@ public class CreateBoardDto {
         this.content = reqCreateBoardDto.getContent();
         this.category = Category.values()[reqCreateBoardDto.getCategory()];
         this.imageUrls = reqCreateBoardDto.getImageUrls();
-        if (reqCreateBoardDto.getHavrutaDto() != null) {
+
+        if (reqCreateBoardDto.getHavrutaDto() != null)
             this.havrutaDto = reqCreateBoardDto.getHavrutaDto();
-        }
         this.files = files;
     }
 
@@ -50,6 +50,7 @@ public class CreateBoardDto {
         this.createdAt = board.getCreatedAt();
         this.fileUrls = board.getFileUrls();
         if (board.getHavruta() != null) {
+            this.havrutaDto = new HavrutaDto();
             this.havrutaDto.setId(board.getHavruta().getId());
             this.havrutaDto.setProfessor(board.getHavruta().getProfessor());
             this.havrutaDto.setClassname(board.getHavruta().getClassname());
