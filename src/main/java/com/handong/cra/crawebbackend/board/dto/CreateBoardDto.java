@@ -49,7 +49,7 @@ public class CreateBoardDto {
         this.category = board.getCategory();
         this.imageUrls = board.getImageUrls();
         this.createdAt = board.getCreatedAt();
-        this.fileUrls = board.getFileUrls();
+        this.fileUrl = board.getFileUrl();
         if (board.getHavruta() != null)
             this.havrutaDto = HavrutaDto.from(board.getHavruta());
         this.userDetailDto = UserDetailDto.from(board.getUser());
