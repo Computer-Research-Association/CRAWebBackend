@@ -43,19 +43,14 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests((authorize) -> authorize
                         .requestMatchers("/api/auth/**").permitAll()
 
-//                        .requestMatchers(HttpMethod.POST, "/api/**").authenticated()
-//                        .requestMatchers(HttpMethod.PUT, "/api/**").authenticated()
-//                        .requestMatchers(HttpMethod.DELETE, "/api/**").authenticated()
-                        // 테스트용
+                        // ADMIN 접근
+                        .requestMatchers(HttpMethod.POST, "/api/account/admin/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/account/**").permitAll()
+
+                        // 기본 권한
                         .requestMatchers(HttpMethod.POST, "/api/**").hasAnyRole("USER", "ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/**").hasAnyRole("USER", "ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/**").hasAnyRole("USER", "ADMIN")
-
-
-                        .requestMatchers(HttpMethod.POST, "/api/account/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/account/admin/**").hasRole("ADMIN")
-
-//                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
 
                         .anyRequest().permitAll())
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, userDetailsService, userRepository), UsernamePasswordAuthenticationFilter.class)

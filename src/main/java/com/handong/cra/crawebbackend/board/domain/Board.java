@@ -28,11 +28,9 @@ public class Board extends BaseEntity {
     @Setter
     private String content;
 
-    @ElementCollection
-    @CollectionTable(name = "board_files", joinColumns = @JoinColumn(name = "board_id"))
     @Column(name = "file_url")
     @Setter
-    private List<String> fileUrls = new ArrayList<>();
+    private String fileUrl;
 
     @ElementCollection
     @CollectionTable(name = "board_images", joinColumns = @JoinColumn(name = "board_id"))
@@ -65,7 +63,7 @@ public class Board extends BaseEntity {
         this.category = createBoardDto.getCategory();
         this.content = createBoardDto.getContent();
         this.imageUrls = createBoardDto.getImageUrls();
-        this.fileUrls = createBoardDto.getFileUrls();
+        this.fileUrl = createBoardDto.getFileUrl();
         view = 0L;
     }
 
@@ -93,7 +91,7 @@ public class Board extends BaseEntity {
     public Board update(UpdateBoardDto updateBoardDto) {
         this.title = updateBoardDto.getTitle();
         this.content = updateBoardDto.getContent();
-        this.fileUrls = updateBoardDto.getFileUrls();
+        this.fileUrl = updateBoardDto.getFileUrl();
         return this;
     }
 

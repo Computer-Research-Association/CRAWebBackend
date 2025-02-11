@@ -23,17 +23,19 @@ public class UpdateBoardDto {
     private List<String> imageUrls;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private List<MultipartFile> files;
-    private List<String> fileUrls;
+    private MultipartFile file;
+    private String fileUrl;
+    private Boolean isChangedFile;
 
-    public UpdateBoardDto(Long userId, Long boardId, ReqUpdateBoardDto reqUpdateBoardDto, List<MultipartFile> files) {
+    public UpdateBoardDto(Long userId, Long boardId, ReqUpdateBoardDto reqUpdateBoardDto, MultipartFile file) {
         this.id = boardId;
         this.userId = userId;
         this.deleted = reqUpdateBoardDto.getDeleted();
         this.title = reqUpdateBoardDto.getTitle();
         this.content = reqUpdateBoardDto.getContent();
         this.imageUrls = reqUpdateBoardDto.getImageUrls();
-        this.files = files;
+        this.file = file;
+        this.isChangedFile = reqUpdateBoardDto.getIsChangedFile();
     }
 
     public UpdateBoardDto(Board board) {
@@ -53,8 +55,8 @@ public class UpdateBoardDto {
         this.id = boardId;
     }
 
-    public static UpdateBoardDto of(Long userId, Long boardId, ReqUpdateBoardDto reqUpdateBoardDto, List<MultipartFile> files) {
-        return new UpdateBoardDto(userId, boardId, reqUpdateBoardDto, files);
+    public static UpdateBoardDto of(Long userId, Long boardId, ReqUpdateBoardDto reqUpdateBoardDto, MultipartFile file) {
+        return new UpdateBoardDto(userId, boardId, reqUpdateBoardDto, file);
     }
 
     public static UpdateBoardDto of (Long userId, Long boardId){
