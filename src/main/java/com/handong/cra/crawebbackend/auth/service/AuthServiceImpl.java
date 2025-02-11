@@ -14,6 +14,7 @@ import com.handong.cra.crawebbackend.user.repository.UserRepository;
 import com.handong.cra.crawebbackend.user.service.UserService;
 import com.handong.cra.crawebbackend.util.AESUtill;
 import com.handong.cra.crawebbackend.util.JwtTokenProvider;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -91,6 +92,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    @Transactional
     public void logout(Long userId) {
         refreshTokenRepository.deleteAllByUserId(userId);
     }
