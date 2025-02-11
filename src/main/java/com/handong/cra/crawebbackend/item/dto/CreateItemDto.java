@@ -39,7 +39,7 @@ public class CreateItemDto {
         this.createdAt = item.getCreatedAt();
     }
 
-    public static CreateItemDto of(Long userId, ReqCreateItemDto reqCreateItemDto) {
+    public static CreateItemDto  of(Long userId, ReqCreateItemDto reqCreateItemDto) {
         return new CreateItemDto(userId, reqCreateItemDto);
     }
 
