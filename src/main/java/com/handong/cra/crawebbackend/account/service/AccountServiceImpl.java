@@ -6,6 +6,7 @@ import com.handong.cra.crawebbackend.account.dto.CodeDto;
 import com.handong.cra.crawebbackend.account.repository.ManageTokenRepository;
 import com.handong.cra.crawebbackend.exception.account.AccountCodeExpiredException;
 import com.handong.cra.crawebbackend.exception.account.AccountCodeNotFoundException;
+import com.handong.cra.crawebbackend.exception.account.AccountEmailAlreadyExistsException;
 import com.handong.cra.crawebbackend.exception.user.UserNotFoundException;
 import com.handong.cra.crawebbackend.mail.domain.MailCategory;
 import com.handong.cra.crawebbackend.mail.domain.MailSendDto;
@@ -116,10 +117,8 @@ public class AccountServiceImpl implements AccountService {
     public void emailValidCheck(String email) {
 
         User user = userRepository.findByEmail(email);
-        if (user != null) {
-            log.info("이미 존재하는 이메일 ");
-            return;
-        }
+        if (user != null) throw new AccountEmailAlreadyExistsException();
+
 
         log.info(ManageTokenCategory.EMAIL_VALID.toString());
         CodeDto codeDto =  generateToken(ManageTokenCategory.EMAIL_VALID);

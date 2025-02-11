@@ -38,7 +38,8 @@ public enum ErrorCode {
 
     AUTH_FORBIDDEN_ACTION (HttpStatus.FORBIDDEN,  "AU1","권한이 없습니다."),
     AUTH_TOKEN_EXPIRED (HttpStatus.UNAUTHORIZED, "AU2", "토큰이 만료 되었습니다."),
-    AUTH_INVALID_TOKEN (HttpStatus.UNAUTHORIZED, "AU3", "유효하지 않은 토큰입니다.");
+    AUTH_INVALID_TOKEN (HttpStatus.UNAUTHORIZED, "AU3", "유효하지 않은 토큰입니다."),
+    AUTH_EMAIL_ALREADY_EXIST(HttpStatus.CONFLICT, "AU4", "이미 사용중인 이메일 입니다.");
     private final HttpStatus status;
     private final String code;
     private final String message;
