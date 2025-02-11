@@ -2,6 +2,7 @@ package com.handong.cra.crawebbackend.board.dto;
 
 import com.handong.cra.crawebbackend.board.domain.Board;
 import com.handong.cra.crawebbackend.board.dto.request.ReqUpdateBoardDto;
+import com.handong.cra.crawebbackend.user.dto.UserDetailDto;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -18,6 +19,7 @@ public class UpdateBoardDto {
     private Boolean deleted;
     private String title;
     private String content;
+    private UserDetailDto userDetailDto;
     private List<String> imageUrls;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -43,6 +45,7 @@ public class UpdateBoardDto {
         this.imageUrls = board.getImageUrls();
         this.createdAt = board.getCreatedAt();
         this.updatedAt = board.getUpdatedAt();
+        this.userDetailDto = UserDetailDto.from(board.getUser());
     }
 
     public UpdateBoardDto(Long userId, Long boardId) {

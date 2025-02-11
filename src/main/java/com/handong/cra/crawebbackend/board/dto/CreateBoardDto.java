@@ -4,6 +4,7 @@ import com.handong.cra.crawebbackend.board.domain.Board;
 import com.handong.cra.crawebbackend.board.domain.Category;
 import com.handong.cra.crawebbackend.board.dto.request.ReqCreateBoardDto;
 import com.handong.cra.crawebbackend.havruta.dto.HavrutaDto;
+import com.handong.cra.crawebbackend.user.dto.UserDetailDto;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,7 +26,7 @@ public class CreateBoardDto {
     private List<MultipartFile> files;
     private List<String> fileUrls;
     private LocalDateTime createdAt;
-
+    private UserDetailDto userDetailDto;
     private HavrutaDto havrutaDto;
 
     public CreateBoardDto(Long userId, ReqCreateBoardDto reqCreateBoardDto, List<MultipartFile> files) {
@@ -49,12 +50,9 @@ public class CreateBoardDto {
         this.imageUrls = board.getImageUrls();
         this.createdAt = board.getCreatedAt();
         this.fileUrls = board.getFileUrls();
-        if (board.getHavruta() != null) {
-            this.havrutaDto = new HavrutaDto();
-            this.havrutaDto.setId(board.getHavruta().getId());
-            this.havrutaDto.setProfessor(board.getHavruta().getProfessor());
-            this.havrutaDto.setClassname(board.getHavruta().getClassname());
-        }
+        if (board.getHavruta() != null)
+            this.havrutaDto = HavrutaDto.from(board.getHavruta());
+        this.userDetailDto = UserDetailDto.from(board.getUser());
     }
 
     public static CreateBoardDto of(Long userId, ReqCreateBoardDto reqCreateBoardDto, List<MultipartFile> files) {

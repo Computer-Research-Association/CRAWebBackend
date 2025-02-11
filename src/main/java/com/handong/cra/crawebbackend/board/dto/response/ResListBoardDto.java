@@ -3,6 +3,7 @@ package com.handong.cra.crawebbackend.board.dto.response;
 import com.handong.cra.crawebbackend.board.domain.Category;
 import com.handong.cra.crawebbackend.board.dto.ListBoardDto;
 import com.handong.cra.crawebbackend.havruta.dto.HavrutaDto;
+import com.handong.cra.crawebbackend.user.dto.response.ResUserDetailDto;
 import com.handong.cra.crawebbackend.util.BoardMDParser;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
@@ -45,6 +46,8 @@ public class ResListBoardDto {
 
     private HavrutaDto havrutaDto;
 
+    private ResUserDetailDto resUserDetailDto = new ResUserDetailDto();
+
     public ResListBoardDto(ListBoardDto listBoardDto) {
         this.id = listBoardDto.getId();
         this.userId = listBoardDto.getId();
@@ -61,12 +64,12 @@ public class ResListBoardDto {
         this.createdAt = listBoardDto.getCreatedAt();
         this.updatedAt = listBoardDto.getUpdatedAt();
 
-        if (listBoardDto.getHavrutaDto() != null) {
-            this.havrutaDto = new HavrutaDto();
-            this.havrutaDto.setId(listBoardDto.getHavrutaDto().getId());
-            this.havrutaDto.setClassname(listBoardDto.getHavrutaDto().getClassname());
-            this.havrutaDto.setProfessor(listBoardDto.getHavrutaDto().getProfessor());
-        }
+        if (listBoardDto.getHavrutaDto() != null)
+            this.havrutaDto = listBoardDto.getHavrutaDto();
+
+
+        this.resUserDetailDto = this.getResUserDetailDto();
+
     }
 
     public static ResListBoardDto from(ListBoardDto listBoardDto) {

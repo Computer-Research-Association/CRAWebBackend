@@ -2,6 +2,7 @@ package com.handong.cra.crawebbackend.board.dto.response;
 
 
 import com.handong.cra.crawebbackend.board.dto.UpdateBoardDto;
+import com.handong.cra.crawebbackend.user.dto.response.ResUserDetailDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
@@ -39,14 +40,17 @@ public class ResUpdateBoardDto {
     @Schema(description = "글 수정 시간")
     private LocalDateTime updatedAt;
 
+    private ResUserDetailDto resUserDetailDto;
+
     public ResUpdateBoardDto(UpdateBoardDto updateBoardDto) {
         this.id = updateBoardDto.getId();
         this.userId = updateBoardDto.getUserId();
         this.deleted = updateBoardDto.getDeleted();
         this.title = updateBoardDto.getTitle();
         this.content = updateBoardDto.getContent();
+        this.resUserDetailDto = ResUserDetailDto.from(updateBoardDto.getUserDetailDto());
         this.imageUrls = updateBoardDto.getImageUrls();
-        this.createdAt =  updateBoardDto.getCreatedAt();
+        this.createdAt = updateBoardDto.getCreatedAt();
         this.updatedAt = updateBoardDto.getUpdatedAt();
 
     }
@@ -54,6 +58,4 @@ public class ResUpdateBoardDto {
     public static ResUpdateBoardDto from(UpdateBoardDto updateBoardDto) {
         return new ResUpdateBoardDto(updateBoardDto);
     }
-
-    // TODO: add havrutaid
 }
