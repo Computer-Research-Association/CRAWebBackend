@@ -28,6 +28,12 @@ public class AdminItemController {
                 .body(ResCreateItemDto.from(itemService.createItem(CreateItemDto.of(customUserDetails.getUserId(), reqCreateItemDto))));
     }
 
+    @GetMapping("")
+    public ResponseEntity<ResCreateItemDto> getItems(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody ReqCreateItemDto reqCreateItemDto) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ResCreateItemDto.from(itemService.createItem(CreateItemDto.of(customUserDetails.getUserId(), reqCreateItemDto))));
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<ResUpdateItemDto> updateItem(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Long id, @RequestBody ReqUpdateItemDto reqUpdateItemDto) {
 
