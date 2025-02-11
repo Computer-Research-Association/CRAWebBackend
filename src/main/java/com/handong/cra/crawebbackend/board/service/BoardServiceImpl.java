@@ -79,9 +79,9 @@ public class BoardServiceImpl implements BoardService {
         User user = userRepository.findById(createBoardDto.getUserId()).orElseThrow(UserNotFoundException::new);
 
         BoardMDParser parser = new BoardMDParser(amazonS3, bucket);
-        if (createBoardDto.getFiles() != null) {
-            List<String> fileUrls = s3FileService.uploadFiles(createBoardDto.getFiles(), S3ImageCategory.BOARD);
-            createBoardDto.setFileUrls(fileUrls);
+        if (createBoardDto.getFile() != null) {
+            String fileUrl = s3FileService.uploadFile(createBoardDto.getFile(), S3ImageCategory.BOARD);
+            createBoardDto.setFileUrl(fileUrl);
         }
         Board board;
 
@@ -112,9 +112,17 @@ public class BoardServiceImpl implements BoardService {
 
         BoardMDParser parser = new BoardMDParser(amazonS3, bucket);
 
-        if (updateBoardDto.getFiles() != null) {
-            List<String> fileUrls = s3FileService.uploadFiles(updateBoardDto.getFiles(), S3ImageCategory.BOARD);
-            updateBoardDto.setFileUrls(fileUrls);
+        if (updateBoardDto.getIsChangedFile()) {
+            String fileUrl = null;
+            if (updateBoardDto.getFile() != null) {
+
+                fileUrl = s3FileService.uploadFile(updateBoardDto.getFile(), S3ImageCategory.BOARD);
+            }
+            log.info(fileUrl);
+            updateBoardDto.setFileUrl(fileUrl);
+        }
+        else {
+            updateBoardDto.setFileUrl(board.getFileUrl());
         }
 
         if (!updateBoardDto.getImageUrls().isEmpty()) {

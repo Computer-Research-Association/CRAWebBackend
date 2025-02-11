@@ -21,7 +21,7 @@ public class DetailBoardDto {
     private Long likeCount;
     private Long view;
     private List<String> imageUrls;
-    private List<String> fileUrls;
+    private String fileUrl;
     //havruta
     private HavrutaDto havrutaDto;
 
@@ -37,7 +37,7 @@ public class DetailBoardDto {
         this.likeCount =  (long) board.getLikedUsers().size();
         this.view = board.getView();
         this.imageUrls = board.getImageUrls();
-        this.fileUrls = board.getFileUrls();
+        this.fileUrl = board.getFileUrl();
 
         if (board.getHavruta() != null) {
             this.havrutaDto = new HavrutaDto();
