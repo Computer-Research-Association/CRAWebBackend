@@ -2,6 +2,7 @@ package com.handong.cra.crawebbackend.comment.dto;
 
 import com.handong.cra.crawebbackend.comment.domain.Comment;
 import com.handong.cra.crawebbackend.comment.dto.request.ReqCreateCommentDto;
+import com.handong.cra.crawebbackend.user.dto.UserDetailDto;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -14,6 +15,7 @@ public class CreateCommentDto {
 
     private Long userId;
     private Long boardId;
+    private UserDetailDto userDetailDto;
     private String content;
     private Long parentCommentId;
 
@@ -36,6 +38,7 @@ public class CreateCommentDto {
         this.content = comment.getContent();
         this.boardId = comment.getBoard().getId();
         if (comment.getParentComment() != null) this.parentCommentId = comment.getParentComment().getId();
+        this.userDetailDto = UserDetailDto.from(comment.getUser());
     }
 
     public static CreateCommentDto of(Long boardId, Long userId, ReqCreateCommentDto reqCreateBoardDto) {

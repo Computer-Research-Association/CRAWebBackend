@@ -1,6 +1,7 @@
 package com.handong.cra.crawebbackend.comment.dto.response;
 
 import com.handong.cra.crawebbackend.comment.dto.ListCommentDto;
+import com.handong.cra.crawebbackend.user.dto.response.ResUserDetailDto;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -15,6 +16,7 @@ public class ResListCommentDto {
     private Long id;
     private Long userId;
     private Long boardId;
+    private ResUserDetailDto resUserDetailDto;
     private List<ResListCommentDto> commentList;
     private String content;
     private Long likeCount;
@@ -25,6 +27,7 @@ public class ResListCommentDto {
         this.id = listCommentDto.getId();
         this.userId = listCommentDto.getUserId();
         this.boardId = listCommentDto.getBoardId();
+        this.resUserDetailDto = ResUserDetailDto.from(listCommentDto.getUserDetailDto());
         this.commentList = listCommentDto.getCommentDtoList().stream().map(ResListCommentDto::from).toList();
         this.content = listCommentDto.getContent();
         this.likeCount = listCommentDto.getLikeCount();

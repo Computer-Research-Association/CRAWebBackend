@@ -3,6 +3,7 @@ package com.handong.cra.crawebbackend.board.dto;
 import com.handong.cra.crawebbackend.board.domain.Board;
 import com.handong.cra.crawebbackend.board.domain.Category;
 import com.handong.cra.crawebbackend.havruta.dto.HavrutaDto;
+import com.handong.cra.crawebbackend.user.dto.UserDetailDto;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -15,6 +16,7 @@ import java.util.List;
 public class DetailBoardDto {
     private Long id;
     private Long userId;
+    private UserDetailDto userDetailDto;
     private String title;
     private String content;
     private Category category;
@@ -39,12 +41,9 @@ public class DetailBoardDto {
         this.imageUrls = board.getImageUrls();
         this.fileUrl = board.getFileUrl();
 
-        if (board.getHavruta() != null) {
-            this.havrutaDto = new HavrutaDto();
-            this.getHavrutaDto().setId(board.getHavruta().getId());
-            this.getHavrutaDto().setClassname(board.getHavruta().getClassname());
-            this.getHavrutaDto().setProfessor(board.getHavruta().getProfessor());
-        }
+        if (board.getHavruta() != null)
+            this.havrutaDto = HavrutaDto.from(board.getHavruta());
+        this.userDetailDto = UserDetailDto.from(board.getUser());
 
         this.createdAt = board.getCreatedAt();
         this.updatedAt = board.getUpdatedAt();

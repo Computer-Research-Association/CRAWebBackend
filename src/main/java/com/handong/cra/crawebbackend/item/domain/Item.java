@@ -3,8 +3,11 @@ package com.handong.cra.crawebbackend.item.domain;
 import com.handong.cra.crawebbackend.common.domain.BaseEntity;
 import com.handong.cra.crawebbackend.item.dto.CreateItemDto;
 import com.handong.cra.crawebbackend.item.dto.UpdateItemDto;
+import com.handong.cra.crawebbackend.user.domain.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,6 +33,12 @@ public class Item extends BaseEntity {
 
     @Column(nullable = false)
     private ItemCategory itemCategory; // 0 = book 1 = item
+
+    // 대여자
+    @ManyToOne
+    @Setter
+    @JoinColumn(name = "user")
+    private User borrowerUser;
 
     public Item(CreateItemDto createItemDto) {
         this.name = createItemDto.getName();

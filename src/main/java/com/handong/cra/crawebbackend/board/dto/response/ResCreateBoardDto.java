@@ -2,7 +2,9 @@ package com.handong.cra.crawebbackend.board.dto.response;
 
 import com.handong.cra.crawebbackend.board.domain.Category;
 import com.handong.cra.crawebbackend.board.dto.CreateBoardDto;
+import com.handong.cra.crawebbackend.board.dto.UpdateBoardDto;
 import com.handong.cra.crawebbackend.havruta.dto.HavrutaDto;
+import com.handong.cra.crawebbackend.user.dto.response.ResUserDetailDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
@@ -36,8 +38,9 @@ public class ResCreateBoardDto {
     @Schema(description = "생성 시간")
     private LocalDateTime createdAt;
 
-
     private HavrutaDto havrutaDto;
+
+    private ResUserDetailDto resUserDetailDto;
 
     public ResCreateBoardDto(CreateBoardDto createBoardDto) {
 
@@ -49,12 +52,9 @@ public class ResCreateBoardDto {
         this.imageUrls = createBoardDto.getImageUrls();
         this.createdAt = createBoardDto.getCreatedAt();
 
-        if (createBoardDto.getHavrutaDto() != null) {
-            this.havrutaDto = new HavrutaDto();
-            this.havrutaDto.setId(createBoardDto.getHavrutaDto().getId());
-            this.havrutaDto.setClassname(createBoardDto.getHavrutaDto().getClassname());
-            this.havrutaDto.setProfessor(createBoardDto.getHavrutaDto().getProfessor());
-        }
+        if (createBoardDto.getHavrutaDto() != null)
+            this.havrutaDto = createBoardDto.getHavrutaDto();
+        this.resUserDetailDto = ResUserDetailDto.from(createBoardDto.getUserDetailDto());
     }
 
     public static ResCreateBoardDto from(CreateBoardDto createBoardDto) {

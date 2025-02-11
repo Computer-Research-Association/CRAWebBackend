@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 public class UpdateItemDto {
     private Long id;
     private Long userId;
+    private String borrowerUsername; // 대여자
     private String name;
     private String description;
     private ItemCategory itemCategory;
@@ -45,10 +46,10 @@ public class UpdateItemDto {
         this.updatedAt = item.getUpdatedAt();
     }
 
-    public UpdateItemDto(Long itemId, Long userId, Boolean deleted) {
+    public UpdateItemDto(Long itemId, Long userId, Boolean isBorrowed) {
         this.id = itemId;
         this.userId = userId;
-        this.deleted = deleted;
+        this.isBorrowed = isBorrowed;
     }
 
     public UpdateItemDto(Long itemId, Long userId) {
@@ -67,7 +68,7 @@ public class UpdateItemDto {
     }
 
     // 대여용
-    public static UpdateItemDto of(Long itemId, Long userId, Boolean isBorrowed) {
+    public static UpdateItemDto of(Long itemId, Long userId, Boolean isBorrowed, String username) {
         return new UpdateItemDto(itemId, userId, isBorrowed);
     }
 

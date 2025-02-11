@@ -2,6 +2,7 @@ package com.handong.cra.crawebbackend.comment.dto;
 
 import com.handong.cra.crawebbackend.comment.domain.Comment;
 import com.handong.cra.crawebbackend.comment.dto.request.ReqUpdateCommentDto;
+import com.handong.cra.crawebbackend.user.dto.UserDetailDto;
 import lombok.*;
 
 @Getter
@@ -12,6 +13,7 @@ import lombok.*;
 public class UpdateCommentDto {
     private Long id;
     private Long userId;
+    private UserDetailDto userDetailDto;
     private String content;
     private Boolean deleted;
 
@@ -24,6 +26,7 @@ public class UpdateCommentDto {
 
     public UpdateCommentDto(Comment comment) {
         this.id = comment.getId();
+        this.userDetailDto = UserDetailDto.from(comment.getUser());
         this.content = comment.getContent();
         this.deleted = comment.getDeleted();
     }
