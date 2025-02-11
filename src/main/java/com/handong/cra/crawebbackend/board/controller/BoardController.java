@@ -169,13 +169,13 @@ public class BoardController {
     public ResponseEntity<ResCreateBoardDto> createBoard(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
             @Valid @RequestPart("board") ReqCreateBoardDto reqCreateBoardDto,
-            @RequestPart(value = "files", required = false) List<MultipartFile> files) {
+            @RequestPart(value = "file", required = false) MultipartFile file) {
 
         log.info("access test userid = {}, {}", customUserDetails.getUserId(), customUserDetails.getUser().getUsername());
         log.info("user role = {}", customUserDetails.getAuthorities());
 
         return ResponseEntity.status(HttpStatus.CREATED).body(ResCreateBoardDto.from(boardService
-                .createBoard(CreateBoardDto.of(customUserDetails.getUserId(), reqCreateBoardDto, files))));
+                .createBoard(CreateBoardDto.of(customUserDetails.getUserId(), reqCreateBoardDto, file))));
     }
 
 
@@ -193,9 +193,9 @@ public class BoardController {
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
             @PathVariable Long boardId,
             @RequestPart("board") ReqUpdateBoardDto reqUpdateBoardDto,
-            @RequestPart(value = "files", required = false) List<MultipartFile> files) {
+            @RequestPart(value = "file", required = false) MultipartFile file) {
         ResUpdateBoardDto resUpdateBoardDto;
-        resUpdateBoardDto = ResUpdateBoardDto.from(boardService.updateBoard(UpdateBoardDto.of(customUserDetails.getUserId(), boardId, reqUpdateBoardDto, files)));
+        resUpdateBoardDto = ResUpdateBoardDto.from(boardService.updateBoard(UpdateBoardDto.of(customUserDetails.getUserId(), boardId, reqUpdateBoardDto, file)));
         return ResponseEntity.ok().body(resUpdateBoardDto);
     }
 

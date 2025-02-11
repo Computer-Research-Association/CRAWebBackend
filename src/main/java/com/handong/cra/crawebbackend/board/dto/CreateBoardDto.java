@@ -22,13 +22,13 @@ public class CreateBoardDto {
     private String content;
     private Category category;
     private List<String> imageUrls;
-    private List<MultipartFile> files;
-    private List<String> fileUrls;
+    private MultipartFile file;
+    private String fileUrl;
     private LocalDateTime createdAt;
 
     private HavrutaDto havrutaDto;
 
-    public CreateBoardDto(Long userId, ReqCreateBoardDto reqCreateBoardDto, List<MultipartFile> files) {
+    public CreateBoardDto(Long userId, ReqCreateBoardDto reqCreateBoardDto, MultipartFile file) {
         this.userId = userId;
         this.title = reqCreateBoardDto.getTitle();
         this.content = reqCreateBoardDto.getContent();
@@ -37,7 +37,7 @@ public class CreateBoardDto {
 
         if (reqCreateBoardDto.getHavrutaDto() != null)
             this.havrutaDto = reqCreateBoardDto.getHavrutaDto();
-        this.files = files;
+        this.file = file;
     }
 
     public CreateBoardDto(Board board) {
@@ -48,7 +48,7 @@ public class CreateBoardDto {
         this.category = board.getCategory();
         this.imageUrls = board.getImageUrls();
         this.createdAt = board.getCreatedAt();
-        this.fileUrls = board.getFileUrls();
+        this.fileUrl = board.getFileUrl();
         if (board.getHavruta() != null) {
             this.havrutaDto = new HavrutaDto();
             this.havrutaDto.setId(board.getHavruta().getId());
@@ -57,8 +57,8 @@ public class CreateBoardDto {
         }
     }
 
-    public static CreateBoardDto of(Long userId, ReqCreateBoardDto reqCreateBoardDto, List<MultipartFile> files) {
-        return new CreateBoardDto(userId, reqCreateBoardDto, files);
+    public static CreateBoardDto of(Long userId, ReqCreateBoardDto reqCreateBoardDto, MultipartFile file) {
+        return new CreateBoardDto(userId, reqCreateBoardDto, file);
     }
 
     public static CreateBoardDto from(Board board) {
