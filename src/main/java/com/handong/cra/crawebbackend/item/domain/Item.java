@@ -36,6 +36,7 @@ public class Item extends BaseEntity {
 
     // 대여자
     @ManyToOne
+    @Setter
     @JoinColumn(name = "user")
     private User borrowerUser;
 

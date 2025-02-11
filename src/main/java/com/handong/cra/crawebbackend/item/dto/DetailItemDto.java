@@ -2,6 +2,7 @@ package com.handong.cra.crawebbackend.item.dto;
 
 import com.handong.cra.crawebbackend.item.domain.Item;
 import com.handong.cra.crawebbackend.item.domain.ItemCategory;
+import com.handong.cra.crawebbackend.user.dto.UserDetailDto;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -9,7 +10,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @AllArgsConstructor
-@NoArgsConstructor (access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class DetailItemDto {
     private Long id;
     private String name;
@@ -17,6 +18,7 @@ public class DetailItemDto {
     private ItemCategory itemCategory;
     private String imageUrl;
     private Boolean isBorrowed;
+    private UserDetailDto userDetailDto;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -27,6 +29,8 @@ public class DetailItemDto {
         this.itemCategory = item.getItemCategory();
         this.imageUrl = item.getImageUrl();
         this.isBorrowed = item.getIsBorrowed();
+        if (item.getBorrowerUser() !=null)
+            this.userDetailDto = UserDetailDto.from(item.getBorrowerUser());
         this.createdAt = item.getCreatedAt();
         this.updatedAt = item.getUpdatedAt();
     }

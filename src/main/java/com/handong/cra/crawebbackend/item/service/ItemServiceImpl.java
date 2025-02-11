@@ -85,7 +85,14 @@ public class ItemServiceImpl implements ItemService {
         // 권한 검사
         itemAuthCheck(updateItemDto.getUserId());
 
+
+        User user = userRepository.findByUsername(updateItemDto.getBorrowerUsername());
+        if (user == null) throw new UserNotFoundException();
+
         Item item = itemRepository.findById(updateItemDto.getId()).orElseThrow(ItemNotFoundException::new);
+
+        item.setBorrowerUser(user);
+
         item.setIsBorrowed(updateItemDto.getIsBorrowed());
         return true;
     }
