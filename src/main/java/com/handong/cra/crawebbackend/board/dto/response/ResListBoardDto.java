@@ -66,9 +66,7 @@ public class ResListBoardDto {
 
         if (listBoardDto.getHavrutaDto() != null)
             this.havrutaDto = listBoardDto.getHavrutaDto();
-
-
-        this.resUserDetailDto = this.getResUserDetailDto();
+        this.resUserDetailDto = ResUserDetailDto.from(listBoardDto.getUserDetailDto());
 
     }
 
