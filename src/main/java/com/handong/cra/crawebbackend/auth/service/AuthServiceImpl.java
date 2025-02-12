@@ -54,6 +54,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    @Transactional
     public LoginDto login(LoginDto loginDto) {
         String password = "";
         try {
@@ -78,7 +79,7 @@ public class AuthServiceImpl implements AuthService {
         UserDetailDto userDetailDto = userService.getUserDetailByUsername(loginUserDto.getUsername());
 
         // 이미 존재하면 삭제
-        refreshTokenRepository.getRefreshTokenByUserId(userDetailDto.getId());
+        refreshTokenRepository.deleteAllByUserId(userDetailDto.getId());
 
         // 새로 생성
         TokenDto tokenDto = jwtTokenProvider.generateTokenByLogin(loginUserDto.getUsername());
