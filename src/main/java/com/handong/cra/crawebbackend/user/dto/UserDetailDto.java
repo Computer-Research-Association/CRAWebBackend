@@ -15,6 +15,7 @@ public class UserDetailDto {
     private String term;
     private String githubId;
     private String imgUrl;
+    private Boolean deleted;
 
     public UserDetailDto(User user) {
         this.id = user.getId();
@@ -24,6 +25,7 @@ public class UserDetailDto {
         this.term = user.getTerm();
         this.githubId = user.getGithubId();
         this.imgUrl = user.getImgUrl();
+        this.deleted = user.getDeleted();
     }
 
 
