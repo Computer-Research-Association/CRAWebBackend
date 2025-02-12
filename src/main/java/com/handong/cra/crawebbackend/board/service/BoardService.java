@@ -14,7 +14,7 @@ public interface BoardService {
     public Boolean deleteBoardById(UpdateBoardDto updateBoardDto);
     public DetailBoardDto getDetailBoardById(Long id);
     public void ascendingBoardView(Long id);
-    public void boardLike(Long boardId, Long userId, Boolean isLiked);
+    public Integer boardLike(Long boardId, Long userId, Boolean isLiked);
 //    public Pageable getPageable (PageBoardDto pageBoardDto);
 
     public List<ListBoardDto> getHavrutaBoards();

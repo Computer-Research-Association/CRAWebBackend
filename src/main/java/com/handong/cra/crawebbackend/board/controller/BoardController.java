@@ -9,10 +9,7 @@ import com.handong.cra.crawebbackend.board.dto.PageBoardDto;
 import com.handong.cra.crawebbackend.board.dto.UpdateBoardDto;
 import com.handong.cra.crawebbackend.board.dto.request.ReqCreateBoardDto;
 import com.handong.cra.crawebbackend.board.dto.request.ReqUpdateBoardDto;
-import com.handong.cra.crawebbackend.board.dto.response.ResCreateBoardDto;
-import com.handong.cra.crawebbackend.board.dto.response.ResDetailBoardDto;
-import com.handong.cra.crawebbackend.board.dto.response.ResListBoardDto;
-import com.handong.cra.crawebbackend.board.dto.response.ResUpdateBoardDto;
+import com.handong.cra.crawebbackend.board.dto.response.*;
 import com.handong.cra.crawebbackend.board.service.BoardService;
 import com.handong.cra.crawebbackend.exception.ErrorResponse;
 import com.handong.cra.crawebbackend.exception.board.BoardIllegalCategoryException;
@@ -211,12 +208,14 @@ public class BoardController {
             @ApiResponse(responseCode = "404", description = "Board 정보 없음", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PostMapping("/like/{id}")
-    public ResponseEntity<Void> BoardLike(
+    public ResponseEntity<ResLikedBoardDto> BoardLike(
             @PathVariable Long id,
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
             @RequestParam(defaultValue = "true") Boolean isLike) {
-        boardService.boardLike(id, customUserDetails.getUserId(), isLike);
-        return ResponseEntity.ok().build();
+        Integer likes  = boardService.boardLike(id, customUserDetails.getUserId(), isLike);
+
+
+        return ResponseEntity.ok(ResLikedBoardDto.of(isLike, likes));
     }
 
 

@@ -183,7 +183,7 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     @Transactional
-    public void boardLike(Long boardId, Long userId, Boolean isLiked) {
+    public Integer boardLike(Long boardId, Long userId, Boolean isLiked) {
         Board board = boardRepository.findById(boardId).orElseThrow(BoardNotFoundException::new);
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
 
@@ -197,6 +197,7 @@ public class BoardServiceImpl implements BoardService {
             // exception
             throw new BoardLikeBadRequestException();
         }
+        return board.getLikedUsers().size();
     }
 
 
