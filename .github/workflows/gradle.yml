@@ -63,7 +63,7 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
-          source: "./docker-compose.yml"
+          source: "docker-compose.yml,src/main/resources/config/.env"
           target: '/home/ubuntu/craweb'
 
       - name: SSH to EC2 and Deploy
