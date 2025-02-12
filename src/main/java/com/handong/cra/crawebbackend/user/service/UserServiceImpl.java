@@ -81,12 +81,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public UpdateUserDto updateUserInfo(UpdateUserDto updateUserDto) {
 
         if (updateUserDto.getId() == null) throw new AuthForbiddenActionException();
 
         User user = userRepository.findById(updateUserDto.getId()).orElseThrow(UserNotFoundException::new);
-
         user = user.update(updateUserDto);
         return UpdateUserDto.from(user);
     }
