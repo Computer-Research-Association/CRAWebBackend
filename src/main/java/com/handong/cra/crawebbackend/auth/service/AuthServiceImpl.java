@@ -54,6 +54,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    @Transactional
     public LoginDto login(LoginDto loginDto) {
         String password = "";
         try {
