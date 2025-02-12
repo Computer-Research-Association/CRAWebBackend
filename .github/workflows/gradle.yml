@@ -57,13 +57,18 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+      - name: Check if files exist
+        run: |
+          ls -lah ./src/main/resources/config/
+          
       - name: copy file via ssh password
         uses: appleboy/scp-action@v0.1.7
         with:
+          debug: true
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
-          source: "docker-compose.yml,src/main/resources/config/.env"
+          source: "./docker-compose.yml,./src/main/resources/config/.env"
           target: '/home/ubuntu/craweb'
 
       - name: SSH to EC2 and Deploy
