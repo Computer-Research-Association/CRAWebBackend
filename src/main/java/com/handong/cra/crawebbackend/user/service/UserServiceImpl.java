@@ -25,6 +25,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -127,5 +128,12 @@ public class UserServiceImpl implements UserService {
 
         user.delete();
         return null;
+    }
+
+    @Override
+    @Transactional
+    public void setLoginTimeById(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+        user.setLastLoginAt(LocalDateTime.now());
     }
 }

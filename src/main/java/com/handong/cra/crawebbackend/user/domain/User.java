@@ -7,6 +7,7 @@ import com.handong.cra.crawebbackend.user.dto.UpdateUserDto;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,6 +53,10 @@ public class User extends BaseEntity{
             inverseJoinColumns = @JoinColumn(name = "board_id")
     )
     private List<Board> likedBoards = new ArrayList<>();
+
+    @Setter
+    private LocalDateTime lastLoginAt;
+
 
 
     public User(String username, String name, String password, String githubId, String email, UserRoleSet role, Long studentId, String term) {
