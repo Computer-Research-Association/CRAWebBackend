@@ -65,6 +65,9 @@ jobs:
       - name: Check if files exist
         run: |
           ls -lah ./src/main/resources/config/
+
+      - name: copy env file to root
+        run: cp ./src/main/resources/config/.env .
           
       - name: copy file via ssh password
         uses: appleboy/scp-action@v0.1.7
@@ -73,7 +76,7 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
-          source: "./docker-compose.yml,./src/main/resources/config/.env"
+          source: "./docker-compose.yml,./.env"
           target: '/home/ubuntu/craweb'
 
       - name: SSH to EC2 and Deploy
