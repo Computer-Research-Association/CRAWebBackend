@@ -1,14 +1,17 @@
 services:
-#  craweb:
-#    image: lkyoung/craweb
-#    platform: linux/amd64
-#    ports:
-#      - "8080:8080"
-#    restart: always
-#    environment:
-#      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
-#      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
-#      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+  craweb:
+    image: lkyoung/craweb
+    container_name: craweb
+    platform: linux/amd64
+    ports:
+      - "8080:8080"
+    restart: always
+    environment:
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+    networks:
+      - craweb-network
 
   prometheus:
     image: prom/prometheus:latest
@@ -20,7 +23,7 @@ services:
     ports:
       - "9090:9090"
     networks:
-      - monitoring-network
+      - craweb-network
 
   grafana:
     image: grafana/grafana:latest
@@ -28,8 +31,8 @@ services:
     ports:
       - "3000:3000"
     networks:
-      - monitoring-network
+      - craweb-network
 
 networks:
-  monitoring-network:
+  craweb-network:
     driver: bridge
