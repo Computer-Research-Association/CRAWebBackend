@@ -82,14 +82,19 @@ public class CommentServiceImpl implements CommentService {
     public Boolean deleteCommentById(UpdateCommentDto updateCommentDto) {
         Comment comment = commentRepository.findById(updateCommentDto.getId()).orElseThrow(CommentNotFoundException::new);
 
+        if (comment.getDeleted()) // 이미 삭제됨
+            throw new CommentNotFoundException();
+
         // 권한 검사
         commentAuthCheck(comment.getUser().getId(), updateCommentDto.getUserId());
 
         comment.delete();
-
-        List<Comment> comments = comment.getCommentList();
-        // 하위 댓글 삭제 처리
-        for (Comment child : comments) child.delete();
+        // 상위 댓글인 경우
+        if (comment.getParentComment() != null) {
+            List<Comment> comments = comment.getCommentList();
+            // 하위 댓글 삭제 처리
+            for (Comment child : comments) child.delete();
+        }
 
         return true;
     }
