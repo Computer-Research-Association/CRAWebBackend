@@ -120,13 +120,14 @@ public class BoardServiceImpl implements BoardService {
             }
             log.info(fileUrl);
             updateBoardDto.setFileUrl(fileUrl);
-        }
-        else {
+        } else {
             updateBoardDto.setFileUrl(board.getFileUrl());
         }
 
         if (!updateBoardDto.getImageUrls().isEmpty()) {
             //img update logic
+
+            // 기존에 있는 이미지와 비교하여 삭제된 이미지 삭제, 새로운 이미지 등록
             List<String> removeImgs = board.getImageUrls();
             List<String> newImgs = updateBoardDto.getImageUrls();
 
@@ -166,12 +167,27 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public DetailBoardDto getDetailBoardById(Long id) {
+    public DetailBoardDto getDetailBoardById(Long id, Long userId) {
+        // 확인하는 유저가 좋아요 누른 글인지 확인
+        User user = null;
+        boolean viewerLiked;
+
+        if (userId != null) user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+
         Board board = boardRepository.findBoardByIdAndDeletedFalse(id);
-        if (board == null) {
-            throw new BoardNotFoundException();
+
+        // 글이 없으면 404
+        if (board == null) throw new BoardNotFoundException();
+
+        // 로그인 되어있다면
+        if (user != null) {
+            viewerLiked = user.getLikedBoards().contains(board);
+            return DetailBoardDto.from(board, viewerLiked);
         }
-        return DetailBoardDto.from(board);
+
+        // 로그인 x
+        else return DetailBoardDto.from(board);
+
     }
 
     @Override

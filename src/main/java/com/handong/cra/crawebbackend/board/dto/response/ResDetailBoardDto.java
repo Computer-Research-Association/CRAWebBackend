@@ -54,6 +54,8 @@ public class ResDetailBoardDto {
 
     private HavrutaDto havrutaDto;
 
+    private Boolean viewerLiked;
+
     public ResDetailBoardDto(DetailBoardDto detailBoardDto) {
         this.id = detailBoardDto.getId();
         this.userId = detailBoardDto.getUserId();
@@ -71,6 +73,9 @@ public class ResDetailBoardDto {
             this.havrutaDto = detailBoardDto.getHavrutaDto();
         }
         this.resUserDetailDto = ResUserDetailDto.from(detailBoardDto.getUserDetailDto());
+
+        // nullable
+        this.viewerLiked = detailBoardDto.getViewerLiked();
     }
 
 

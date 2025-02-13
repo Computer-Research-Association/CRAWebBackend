@@ -30,13 +30,15 @@ public class DetailBoardDto {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
+    private Boolean viewerLiked;
+
     public DetailBoardDto(Board board) {
         this.id = board.getId();
         this.userId = board.getUser().getId();
         this.title = board.getTitle();
         this.content = board.getContent();
         this.category = board.getCategory();
-        this.likeCount =  (long) board.getLikedUsers().size();
+        this.likeCount = (long) board.getLikedUsers().size();
         this.view = board.getView();
         this.imageUrls = board.getImageUrls();
         this.fileUrl = board.getFileUrl();
@@ -49,8 +51,17 @@ public class DetailBoardDto {
         this.updatedAt = board.getUpdatedAt();
     }
 
+    public DetailBoardDto(Board board, Boolean viewerLiked) {
+        this(board);
+        this.viewerLiked = viewerLiked;
+    }
+
     public static DetailBoardDto from(Board board) {
         return new DetailBoardDto(board);
+    }
+
+    public static DetailBoardDto from(Board board, Boolean viewerLiked) {
+        return new DetailBoardDto(board, viewerLiked);
     }
 
 }
