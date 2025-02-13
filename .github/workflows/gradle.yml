@@ -48,7 +48,6 @@ jobs:
 
     - name: Build and push test image
       run: |
-        cd docker
         docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/craweb .
         docker push ${{ secrets.DOCKERHUB_USERNAME }}/craweb
 
@@ -69,11 +68,6 @@ jobs:
 
       - name: copy env file to root
         run: cp ./src/main/resources/config/.env .
-
-      - name: copy docker files to root
-        run: |
-          cp ./docker/prometheus.yml .
-          cp ./docker/docker-compose.yml .
           
       - name: copy file via ssh password
         uses: appleboy/scp-action@v0.1.7
