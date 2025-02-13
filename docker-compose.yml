@@ -34,6 +34,21 @@ services:
       - "3000:3000"
     networks:
       - craweb-network
+    volumes:
+      - grafana_data:/var/lib/grafana  # Grafana 데이터 영속화
+      - ./grafana/provisioning:/etc/grafana/provisioning  # 설정 파일 유지
+
+  loki:
+    image: grafana/loki:latest
+    container_name: loki
+    volumes:
+      - ./loki.yml:/etc/loki/loki.yml
+    command:
+      - '--config.file=/etc/loki/loki.yml'
+    ports:
+      - "3100:3100"
+    networks:
+      - craweb-network
 
 networks:
   craweb-network:

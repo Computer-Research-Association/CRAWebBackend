@@ -6,6 +6,19 @@
     <property name="LOG_FILE_PATTERN"
               value="[%d{yyyy-MM-dd HH:mm:ss}:%-5relative] [%-5level] [%thread] [%C.%M:%L] - %msg%n"/>
 
+    <!-- 로키 -->
+    <appender name="LOKI" class="com.github.loki4j.logback.Loki4jAppender">
+        <http>
+            <url>http://loki:3100/loki/api/v1/push</url>
+        </http>
+        <format>
+            <label>
+                <pattern>app=craweb,host=${HOSTNAME}</pattern>
+            </label>
+            <message class="com.github.loki4j.logback.JsonLayout" />
+        </format>
+    </appender>
+
     <!-- 콘솔에 출력할 로그 패턴 설정 -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
@@ -82,12 +95,13 @@
     </appender>
 
     <!-- 로그 레벨 설정 -->
-    <root level="info">
+    <root level="debug">
         <appender-ref ref="CONSOLE" />
         <appender-ref ref="FILE" />
         <appender-ref ref="FILE-INFO"/>
         <appender-ref ref="FILE-ERROR"/>
         <appender-ref ref="FILE-WARN"/>
+        <appender-ref ref="LOKI" />
     </root>
 
 </configuration>
