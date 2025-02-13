@@ -119,14 +119,14 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
+    @Transactional
     public Boolean deleteUser(UpdateUserDto updateUserDto) {
 
         if (updateUserDto.getId() == null) throw new AuthForbiddenActionException();
 
         User user = userRepository.findById(updateUserDto.getId()).orElseThrow(UserNotFoundException::new);
 
-
-        user.delete();
+        userRepository.delete(user);
         return null;
     }
 
