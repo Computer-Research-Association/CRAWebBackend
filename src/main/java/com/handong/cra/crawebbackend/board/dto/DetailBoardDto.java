@@ -30,6 +30,8 @@ public class DetailBoardDto {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
+    private Boolean viewerLiked;
+
     public DetailBoardDto(Board board) {
         this.id = board.getId();
         this.userId = board.getUser().getId();

@@ -54,6 +54,8 @@ public class ResDetailBoardDto {
 
     private HavrutaDto havrutaDto;
 
+    private Boolean viewerLiked;
+
     public ResDetailBoardDto(DetailBoardDto detailBoardDto) {
         this.id = detailBoardDto.getId();
         this.userId = detailBoardDto.getUserId();
