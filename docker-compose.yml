@@ -12,6 +12,8 @@ services:
       SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
     networks:
       - craweb-network
+    volumes:
+      - ./logs:/app/log
 
   prometheus:
     image: prom/prometheus:latest
