@@ -97,7 +97,7 @@ public class BoardController {
             @ApiResponse(responseCode = "404", description = "Board 정보 없음", content = @Content()),
     })
     @GetMapping("/view/{boardId}")
-    public ResponseEntity<ResDetailBoardDto> getDetailBoard(@PathVariable Long boardId) {
+    public ResponseEntity<ResDetailBoardDto> getDetailBoard(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Long boardId) {
         ResDetailBoardDto resDetailBoardDto = ResDetailBoardDto.from(boardService.getDetailBoardById(boardId));
         return ResponseEntity.ok().body(resDetailBoardDto);
     }

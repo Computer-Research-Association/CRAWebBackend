@@ -73,6 +73,9 @@ public class ResDetailBoardDto {
             this.havrutaDto = detailBoardDto.getHavrutaDto();
         }
         this.resUserDetailDto = ResUserDetailDto.from(detailBoardDto.getUserDetailDto());
+
+        // nullable
+        this.viewerLiked = detailBoardDto.getViewerLiked();
     }
 
 

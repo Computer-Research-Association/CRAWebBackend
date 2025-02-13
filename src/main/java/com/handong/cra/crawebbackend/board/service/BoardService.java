@@ -12,7 +12,7 @@ public interface BoardService {
     public CreateBoardDto createBoard(CreateBoardDto createBoardDto);
     public UpdateBoardDto updateBoard(UpdateBoardDto updateBoardDto);
     public Boolean deleteBoardById(UpdateBoardDto updateBoardDto);
-    public DetailBoardDto getDetailBoardById(Long id);
+    public DetailBoardDto getDetailBoardById(Long id, Long userId);
     public void ascendingBoardView(Long id);
     public Integer boardLike(Long boardId, Long userId, Boolean isLiked);
 //    public Pageable getPageable (PageBoardDto pageBoardDto);
