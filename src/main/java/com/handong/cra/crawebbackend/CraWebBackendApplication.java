@@ -7,6 +7,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
 @EnableJpaAuditing
+@EnableScheduling
 public class CraWebBackendApplication {
     public static void main(String[] args) {
         SpringApplication.run(CraWebBackendApplication.class, args);

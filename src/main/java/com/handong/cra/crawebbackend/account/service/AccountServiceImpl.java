@@ -132,22 +132,4 @@ public class AccountServiceImpl implements AccountService {
         mailService.sendMimeMessage(mailSendDto);
     }
 
-    // 주기적으로 토큰 DB 정리
-    @Scheduled(cron = "0 0 12 * * *", zone = "Asia/Seoul")
-    private void deleteTokens() {
-        int count = 0;
-        log.info("===================================");
-        log.info("cron bot start");
-        List<ManageToken> manageTokens = manageTokenRepository.findAll();
-        for (ManageToken manageToken : manageTokens) {
-            if (manageToken.getExpireDate().isBefore(LocalDateTime.now())) {
-                manageTokenRepository.delete(manageToken);
-                count++;
-            }
-        }
-
-
-        log.info("cron bot end! {} token deleted!", count);
-        log.info("===================================");
-    }
 }
