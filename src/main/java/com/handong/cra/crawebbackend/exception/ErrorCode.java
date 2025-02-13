@@ -28,6 +28,7 @@ public enum ErrorCode {
 
     USER_NOT_FOUND_ERROR(HttpStatus.NOT_FOUND, "U1", "해당하는 유저가 존재하지 않습니다."),
     USER_INVALID_PASSWORD(HttpStatus.BAD_REQUEST, "U2", "변경하려는 패스워드가 잘못되었습니다."),
+    USER_DORMANT_USER_LOGIN (HttpStatus.FORBIDDEN, "U3", "휴면 계정입니다"),
 
     ACCOUNT_CODE_NOT_FOUND(HttpStatus.NOT_FOUND, "A1", "해당하는 코드가 존재하지 않습니다."),
     ACCOUNT_CODE_EXPIRED(HttpStatus.GONE, "A2", "만료된 코드입니다"),

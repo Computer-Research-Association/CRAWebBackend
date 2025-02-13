@@ -15,4 +15,5 @@ public interface UserService {
     public UserDetailDto getUserDetailByUsername(String username);
     public void updateUserPassword(UpdateUserPasswordDto updateUserPasswordDto);
     public Boolean deleteUser(UpdateUserDto updateUserDto);
+    public void setLoginTimeById(Long userId);
 }
