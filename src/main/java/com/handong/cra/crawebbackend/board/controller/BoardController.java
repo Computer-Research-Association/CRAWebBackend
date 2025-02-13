@@ -98,7 +98,11 @@ public class BoardController {
     })
     @GetMapping("/view/{boardId}")
     public ResponseEntity<ResDetailBoardDto> getDetailBoard(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Long boardId) {
-        ResDetailBoardDto resDetailBoardDto = ResDetailBoardDto.from(boardService.getDetailBoardById(boardId));
+
+
+        Long viewerId = null;
+        if (customUserDetails != null) viewerId = customUserDetails.getUserId();
+        ResDetailBoardDto resDetailBoardDto = ResDetailBoardDto.from(boardService.getDetailBoardById(boardId, viewerId));
         return ResponseEntity.ok().body(resDetailBoardDto);
     }
 
