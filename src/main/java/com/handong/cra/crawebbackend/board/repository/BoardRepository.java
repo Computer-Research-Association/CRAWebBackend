@@ -8,13 +8,14 @@ import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface BoardRepository extends JpaRepository<Board, Long> {
-    @Query("SELECT b FROM Board b LEFT JOIN FETCH b.likedUsers WHERE b.id = :id")
-    public Optional<Board> findByIdWithLikedUsers(Long boardId);
+    @Query("SELECT b FROM Board b LEFT JOIN FETCH b.likedUsers WHERE b.id = :boardId")
+    public Optional<Board> findByIdWithLikedUsers(@Param("boardId") Long boardId);
 
 //    public List<Board> findAllByCategory(Category category);
     public List<Board> findAllByCategoryAndDeletedFalse(Category category);
