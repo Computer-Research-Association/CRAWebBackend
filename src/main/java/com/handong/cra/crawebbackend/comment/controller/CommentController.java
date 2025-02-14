@@ -10,6 +10,7 @@ import com.handong.cra.crawebbackend.comment.dto.response.ResListCommentDto;
 import com.handong.cra.crawebbackend.comment.dto.response.ResUpdateCommentDto;
 import com.handong.cra.crawebbackend.comment.service.CommentService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -20,18 +21,19 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/comment")
 @RequiredArgsConstructor
+@Slf4j
 public class CommentController {
     private final CommentService commentService;
 
     @GetMapping("/{boardId}")
     public ResponseEntity<List<ResListCommentDto>> getCommentsByBoardId(@PathVariable Long boardId) {
+      log.info("request");
         return ResponseEntity.ok().body(commentService.getCommentsByBoardId(boardId)
                 .stream().map(ResListCommentDto::from).toList());
     }
 
     @GetMapping("/count/{boardId}")
     public ResponseEntity<Long> getCommentCount(@PathVariable Long boardId) {
-
         return ResponseEntity.ok(commentService.getCommentCount(boardId));
     }
 

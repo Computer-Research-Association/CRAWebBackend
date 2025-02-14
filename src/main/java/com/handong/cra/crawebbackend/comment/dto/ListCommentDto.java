@@ -22,6 +22,7 @@ public class ListCommentDto {
     private Long likeCount;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private Boolean deleted;
 
     public ListCommentDto(Comment comment) {
         this.id = comment.getId();
@@ -33,6 +34,7 @@ public class ListCommentDto {
         this.likeCount = comment.getLikeCount();
         this.createdAt = comment.getCreatedAt();
         this.updatedAt = comment.getUpdatedAt();
+        this.deleted = comment.getDeleted();
     }
 
     public static ListCommentDto from(Comment comment) {

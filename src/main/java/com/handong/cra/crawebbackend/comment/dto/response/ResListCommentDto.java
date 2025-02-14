@@ -28,7 +28,7 @@ public class ResListCommentDto {
         this.userId = listCommentDto.getUserId();
         this.boardId = listCommentDto.getBoardId();
         this.resUserDetailDto = ResUserDetailDto.from(listCommentDto.getUserDetailDto());
-        this.commentList = listCommentDto.getCommentDtoList().stream().map(ResListCommentDto::from).toList();
+        this.commentList = listCommentDto.getCommentDtoList().stream().filter(comment -> !comment.getDeleted()) .map(ResListCommentDto::from).toList();
         this.content = listCommentDto.getContent();
         this.likeCount = listCommentDto.getLikeCount();
         this.createdAt = listCommentDto.getCreatedAt();
