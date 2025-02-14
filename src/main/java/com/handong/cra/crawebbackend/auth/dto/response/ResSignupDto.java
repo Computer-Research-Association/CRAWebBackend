@@ -14,7 +14,7 @@ public class ResSignupDto {
     private String email;
     private String name;
     private String githubId;
-    private Long studentNumber;
+    private String studentId;
     private String term;
 
     public ResSignupDto(SignupDto signupDto) {
@@ -23,7 +23,7 @@ public class ResSignupDto {
         this.email = signupDto.getEmail();
         this.name = signupDto.getName();
         this.githubId = signupDto.getGithubId();
-        this.studentNumber = signupDto.getStudentId();
+        this.studentId = signupDto.getStudentId();
         this.term = signupDto.getTerm();
     }
 

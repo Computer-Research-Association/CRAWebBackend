@@ -19,6 +19,10 @@ public class UserRoleSet {
     @Enumerated(EnumType.STRING)
     private Set<UserRoleEnum> roles = new HashSet<>();
 
+    public void addRole(UserRoleEnum userRoleEnum){
+        if (!roles.contains(userRoleEnum)) this.roles.add(userRoleEnum);
+    }
+
     public UserRoleSet(final Collection<UserRoleEnum> roles) {
         this.roles.addAll(roles);
     }

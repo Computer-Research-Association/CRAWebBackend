@@ -34,7 +34,7 @@ public class User extends BaseEntity{
     private UserRoleSet roles;
 
     @Column(name = "student_id", unique = true, nullable = false)
-    private Long studentId;
+    private String studentId;
 
     @Column(nullable = false)
     private String term;
@@ -59,7 +59,7 @@ public class User extends BaseEntity{
 
 
 
-    public User(String username, String name, String password, String githubId, String email, UserRoleSet role, Long studentId, String term) {
+    public User(String username, String name, String password, String githubId, String email, UserRoleSet role, String studentId, String term) {
         this.username = username;
         this.name = name;
         this.password = password;

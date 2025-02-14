@@ -12,6 +12,8 @@ import com.handong.cra.crawebbackend.mail.domain.MailCategory;
 import com.handong.cra.crawebbackend.mail.domain.MailSendDto;
 import com.handong.cra.crawebbackend.mail.service.MailService;
 import com.handong.cra.crawebbackend.user.domain.User;
+import com.handong.cra.crawebbackend.user.domain.UserRoleEnum;
+import com.handong.cra.crawebbackend.user.dto.UserDetailDto;
 import com.handong.cra.crawebbackend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -121,7 +123,7 @@ public class AccountServiceImpl implements AccountService {
 
 
         log.info(ManageTokenCategory.EMAIL_VALID.toString());
-        CodeDto codeDto =  generateToken(ManageTokenCategory.EMAIL_VALID);
+        CodeDto codeDto = generateToken(ManageTokenCategory.EMAIL_VALID);
         String code = codeDto.getCode();
 
         MailSendDto mailSendDto = MailSendDto.builder().mailCategory(MailCategory.EMAILVALID_EMAIL)
@@ -130,6 +132,31 @@ public class AccountServiceImpl implements AccountService {
                 .build();
 
         mailService.sendMimeMessage(mailSendDto);
+    }
+
+    @Override
+    public List<UserDetailDto> getUsersByEntranceYear(String year, String term) {
+        List<UserDetailDto> userDetailDtos = new ArrayList<>();
+        // 기수로 찾기
+
+        if (year.isEmpty()) {
+            List<User> users = userRepository.findAllByTerm(term);
+            for (User user: users) userDetailDtos.add(UserDetailDto.from(user));
+        }
+        // 학번으로 찾기
+        else if (term.isEmpty()) {
+            List<User> users = userRepository.findByStudentCodeNative(year);
+            for (User user: users) userDetailDtos.add(UserDetailDto.from(user));
+        }
+        return userDetailDtos;
+    }
+
+    @Override
+    public void updateUserAuthById(Long userId, UserRoleEnum userRoleEnum) {
+        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+
+        user.getRoles().addRole(userRoleEnum);
+
     }
 
 }
