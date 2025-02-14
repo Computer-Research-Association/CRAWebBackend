@@ -200,7 +200,7 @@ public class BoardServiceImpl implements BoardService {
     @Override
     @Transactional
     public Integer boardLike(Long boardId, Long userId, Boolean isLiked) {
-        Board board = boardRepository.findById(boardId).orElseThrow(BoardNotFoundException::new);
+        Board board = boardRepository.findByIdWithLikedUsers(boardId).orElseThrow(BoardNotFoundException::new);
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
 
         if (isLiked && !board.getLikedUsers().contains(user)) {

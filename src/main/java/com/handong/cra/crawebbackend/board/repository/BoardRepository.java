@@ -12,7 +12,7 @@ import java.util.Optional;
 
 public interface BoardRepository extends JpaRepository<Board, Long> {
     @EntityGraph(attributePaths = {"likedUsers"})
-    public Optional<Board> findById(Long boardId);
+    public Optional<Board> findByIdWithLikedUsers(Long boardId);
 
 //    public List<Board> findAllByCategory(Category category);
     public List<Board> findAllByCategoryAndDeletedFalse(Category category);
