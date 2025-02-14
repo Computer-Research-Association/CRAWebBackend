@@ -16,9 +16,13 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
 
 //    public List<Board> findAllByCategory(Category category);
     public List<Board> findAllByCategoryAndDeletedFalse(Category category);
+
     public Page<Board> findAllByCategoryAndDeletedFalse(Category category,Pageable pageable);
     //public Page<Board> findByDeletedFalse(Pageable pageable);
+
     public Page<Board>  findAllByHavrutaAndDeletedFalse(Havruta havruta, Pageable pageable);
+
+    @EntityGraph(attributePaths = {"likedUsers"})
     public Board findBoardByIdAndDeletedFalse(Long id);
 
     public List<Board> findByCategory(Category category);
