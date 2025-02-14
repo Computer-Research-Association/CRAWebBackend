@@ -7,11 +7,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Query;
+
 import java.util.List;
 import java.util.Optional;
 
 public interface BoardRepository extends JpaRepository<Board, Long> {
-    @EntityGraph(attributePaths = {"likedUsers"})
+    @Query("SELECT b FROM Board b LEFT JOIN FETCH b.likedUsers WHERE b.id = :id")
     public Optional<Board> findByIdWithLikedUsers(Long boardId);
 
 //    public List<Board> findAllByCategory(Category category);
