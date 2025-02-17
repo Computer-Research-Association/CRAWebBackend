@@ -56,6 +56,12 @@ public class WebSecurityConfig {
                         // 계정 관리(아이디 찾기 등) 권한
                         .requestMatchers(HttpMethod.POST, "/api/account/**").permitAll()
 
+                        // TODO : 테스트 이후 삭제
+                        .requestMatchers(HttpMethod.GET, "/api//swagger-ui/index.html#").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api//swagger-ui/index.html#").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/api//swagger-ui/index.html#").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/api//swagger-ui/index.html#").permitAll()
+
                         // 가입, 로그인 등 권한
                         .requestMatchers("/api/auth/**").permitAll()
 

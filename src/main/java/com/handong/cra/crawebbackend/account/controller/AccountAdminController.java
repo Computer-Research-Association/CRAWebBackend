@@ -3,7 +3,6 @@ package com.handong.cra.crawebbackend.account.controller;
 
 import com.handong.cra.crawebbackend.account.dto.response.ResCodeDto;
 import com.handong.cra.crawebbackend.account.service.AccountService;
-import com.handong.cra.crawebbackend.board.dto.response.ResUpdateBoardDto;
 import com.handong.cra.crawebbackend.user.domain.UserRoleEnum;
 import com.handong.cra.crawebbackend.user.dto.response.ResUserDetailDto;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +34,13 @@ public class AccountAdminController {
     @PutMapping("/users/{userId}")
     public ResponseEntity<Void> updateUserAuthById(@PathVariable Long userId, @RequestParam Integer authOption) {
         accountService.updateUserAuthById(userId, UserRoleEnum.values()[authOption]);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/users/{userId}")
+    public ResponseEntity<Void> deleteUserById(@PathVariable Long userId){
+
+
         return ResponseEntity.ok().build();
     }
 }
