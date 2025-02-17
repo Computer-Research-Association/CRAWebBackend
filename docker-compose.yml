@@ -56,4 +56,7 @@ volumes:
 
 networks:
   craweb-network:
+    name: craweb_craweb-network
     driver: bridge
+    labels:
+      com.docker.compose.network: ""
