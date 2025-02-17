@@ -86,9 +86,9 @@ public class JwtTokenProvider {
             return true;
         } catch (ExpiredJwtException e) {
             refreshTokenRepository.deleteAllByRefreshToken(token);
-            throw new AuthTokenExpiredException();
+            return false;
         } catch (JwtException | IllegalArgumentException e) {
-            throw new AuthInvalidTokenException();
+            return  false;
         }
     }
 
