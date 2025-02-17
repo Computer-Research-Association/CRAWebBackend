@@ -32,7 +32,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String jwt = parseJwt(request);
 
         // 토큰이 없거나 만료된 경우
-        if (jwt == null || !jwtTokenProvider.validateToken(jwt)) {
+        if (!jwtTokenProvider.validateToken(jwt)) {
             log.error("access token 민료됨");
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "만료되었습니다.");
             return;
