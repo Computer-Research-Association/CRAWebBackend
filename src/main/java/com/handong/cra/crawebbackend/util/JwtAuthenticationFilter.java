@@ -31,21 +31,24 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String jwt = parseJwt(request);
 
-        // 토큰이 없거나 만료된 경우
-        if (!jwtTokenProvider.validateToken(jwt)) {
-            log.error("access token 민료됨");
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "만료되었습니다.");
-            return;
+        // null 인 경우 넘어감
+        if (jwt != null) {
+            // 토큰이 없거나 만료된 경우
+            if (!jwtTokenProvider.validateToken(jwt)) {
+                log.error("access token 민료됨");
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "만료되었습니다.");
+                return;
+            }
+
+            Long userId = Long.valueOf(jwtTokenProvider.getSubject(jwt));
+            String username = userRepository.getUserById(userId).getUsername();
+
+            log.info(username);
+            log.info("username: {}", username);
+            log.info("role: {}", userRepository.getUserById(userId).getRoles().getAuthorities());
+
+            setAuthentication(username);
         }
-
-        Long userId = Long.valueOf(jwtTokenProvider.getSubject(jwt));
-        String username = userRepository.getUserById(userId).getUsername();
-
-        log.info(username);
-        log.info("username: {}", username);
-        log.info("role: {}", userRepository.getUserById(userId).getRoles().getAuthorities());
-
-        setAuthentication(username);
         filterChain.doFilter(request, response);
     }
 
