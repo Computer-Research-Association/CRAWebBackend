@@ -107,7 +107,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public String findUsername(Long studentId, String name, String email) {
+    public String findUsername(String studentId, String name, String email) {
         User user = userRepository.findByNameAndStudentIdAndEmail(name, studentId, email);
 
         if (user == null) throw new UserNotFoundException();
