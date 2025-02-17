@@ -1,14 +1,20 @@
 package com.handong.cra.crawebbackend.user.repository;
 
+import com.handong.cra.crawebbackend.board.domain.Board;
 import com.handong.cra.crawebbackend.user.domain.User;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
+    @EntityGraph(attributePaths = {"likedBoards"})
+    public Optional<User> findById(Long userId);
+
     public User findByUsername(String username);
 
     public User findByUsernameAndPassword(String username, String password);
