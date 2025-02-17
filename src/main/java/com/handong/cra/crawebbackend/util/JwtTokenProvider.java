@@ -62,7 +62,7 @@ public class JwtTokenProvider {
 
     @Transactional
     public TokenDto reissueToken(ReissueTokenDto reissueTokenDto) {
-        RefreshToken savedToken = refreshTokenRepository.getRefreshTokenByUserId(reissueTokenDto.getUserId());
+        RefreshToken savedToken = refreshTokenRepository.findByRefreshToken(reissueTokenDto.getRefreshToken());
         Long userId = savedToken.getUserId();
 
         // 잘못된 토큰
