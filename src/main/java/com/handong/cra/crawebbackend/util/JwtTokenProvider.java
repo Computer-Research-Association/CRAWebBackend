@@ -63,7 +63,8 @@ public class JwtTokenProvider {
     @Transactional
     public TokenDto reissueToken(ReissueTokenDto reissueTokenDto) {
         RefreshToken savedToken = refreshTokenRepository.findByRefreshToken(reissueTokenDto.getRefreshToken());
-        Long userId = savedToken.getUserId();
+
+        if(savedToken == null) throw new AuthTokenExpiredException(); // 401
 
         // 잘못된 토큰
         if (!savedToken.getRefreshToken().equals(reissueTokenDto.getRefreshToken())) {
@@ -72,6 +73,8 @@ public class JwtTokenProvider {
 
         // 만료되었는지 검사
         validateToken(reissueTokenDto.getRefreshToken());
+
+        Long userId = savedToken.getUserId();
 
         String accessToken = generateToken(reissueTokenDto.getUserId(), accessExpiration);
         return TokenDto.of(userId, accessToken, null);
