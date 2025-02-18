@@ -64,15 +64,17 @@ public class JwtTokenProvider {
     public TokenDto reissueToken(ReissueTokenDto reissueTokenDto) {
         RefreshToken savedToken = refreshTokenRepository.findByRefreshToken(reissueTokenDto.getRefreshToken());
 
-        if(savedToken == null) throw new AuthTokenExpiredException(); // 401
-
-        // 잘못된 토큰
-        if (!savedToken.getRefreshToken().equals(reissueTokenDto.getRefreshToken())) {
-            throw new AuthInvalidTokenException();
-        }
+        if(savedToken == null)
+            return TokenDto.of(null, "expired", "expired");
 
         // 만료되었는지 검사
-        validateToken(reissueTokenDto.getRefreshToken());
+       if(!validateToken(reissueTokenDto.getRefreshToken()))
+           return TokenDto.of(null, "expired", "expired");
+
+        // 잘못된 토큰
+        if (!savedToken.getRefreshToken().equals(reissueTokenDto.getRefreshToken()))
+            return TokenDto.of(null, "invalid", "invalid");
+
 
         Long userId = savedToken.getUserId();
 
@@ -80,16 +82,13 @@ public class JwtTokenProvider {
         return TokenDto.of(userId, accessToken, null);
     }
 
-
+    // access token 검사
     public Boolean validateToken(String token) {
         SecretKey jwtSecretKey = Keys.hmacShaKeyFor(secret.getBytes());
 
         try {
             Jwts.parser().verifyWith(jwtSecretKey).build().parseSignedClaims(token);
             return true;
-        } catch (ExpiredJwtException e) {
-            refreshTokenRepository.deleteAllByRefreshToken(token);
-            return false;
         } catch (JwtException | IllegalArgumentException e) {
             return  false;
         }

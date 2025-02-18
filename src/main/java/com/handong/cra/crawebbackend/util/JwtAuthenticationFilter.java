@@ -47,7 +47,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             log.info("userId = {}, jwt = {}", userId, jwt);
 
-            if (user == null) response.sendError(HttpServletResponse.SC_NOT_FOUND, "유저를 찾을 수 없습니다");
+            // error
+            if (user == null) {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND, "유저를 찾을 수 없습니다");
+                return;
+            }
 
             String username = user.getUsername();
 
