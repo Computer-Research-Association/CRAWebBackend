@@ -13,7 +13,6 @@ public class UpdateUserPasswordDto {
     private String password;
 
     public UpdateUserPasswordDto(ReqUpdateUserPasswordDto reqUpdateUserPasswordDto) {
-        this.username = reqUpdateUserPasswordDto.getUsername();
         this.code = reqUpdateUserPasswordDto.getCode();;
         this.password =reqUpdateUserPasswordDto.getPassword();
     }

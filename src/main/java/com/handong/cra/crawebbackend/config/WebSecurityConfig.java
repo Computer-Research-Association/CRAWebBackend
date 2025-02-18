@@ -47,7 +47,7 @@ public class WebSecurityConfig {
                 .formLogin(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((authorize) -> authorize
 
-                        .requestMatchers(HttpMethod.POST, "/api/admin/**").permitAll()
+//                        .requestMatchers(HttpMethod.POST, "/api/admin/**").permitAll()
 //                        // ADMIN 권한
 //                        .requestMatchers(HttpMethod.POST, "/api/admin/**").hasRole("ADMIN")
 //                        .requestMatchers(HttpMethod.PUT, "/api/admin/**").hasRole("ADMIN")

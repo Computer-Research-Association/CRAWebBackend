@@ -17,8 +17,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     public User findByUsername(String username);
 
-    public User findByUsernameAndPassword(String username, String password);
-
     public User findByNameAndStudentIdAndEmail(String name, String studentId, String email);
 
     public User findByEmail(String email);
@@ -31,8 +29,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query(value = "SELECT * FROM user " + "WHERE SUBSTRING(student_id, 2, 2) = :entranceYear", nativeQuery = true)
     public List<User> findByStudentCodeNative(@Param("entranceYear") String entranceYear);
-
-    public User findAllByStudentId(String studentId);
 
     public List<User> findAllByTerm(String term);
 }
