@@ -2,6 +2,7 @@ package com.handong.cra.crawebbackend.util;
 
 import com.handong.cra.crawebbackend.auth.domain.CustomUserDetails;
 import com.handong.cra.crawebbackend.auth.service.CustomUserDetailsService;
+import com.handong.cra.crawebbackend.exception.user.UserNotFoundException;
 import com.handong.cra.crawebbackend.user.repository.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -41,7 +42,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
 
             Long userId = Long.valueOf(jwtTokenProvider.getSubject(jwt));
-            String username = userRepository.getUserById(userId).getUsername();
+            String username = userRepository.findById(userId).orElseThrow(UserNotFoundException::new).getUsername();
 
             log.info(username);
             log.info("username: {}", username);
