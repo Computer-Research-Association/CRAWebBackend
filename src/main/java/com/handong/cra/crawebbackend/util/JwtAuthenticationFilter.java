@@ -3,6 +3,7 @@ package com.handong.cra.crawebbackend.util;
 import com.handong.cra.crawebbackend.auth.domain.CustomUserDetails;
 import com.handong.cra.crawebbackend.auth.service.CustomUserDetailsService;
 import com.handong.cra.crawebbackend.exception.user.UserNotFoundException;
+import com.handong.cra.crawebbackend.user.domain.User;
 import com.handong.cra.crawebbackend.user.repository.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -36,13 +37,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (jwt != null) {
             // 토큰이 없거나 만료된 경우
             if (!jwtTokenProvider.validateToken(jwt)) {
-                log.error("access token 민료됨");
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "만료되었습니다.");
+                log.error("access token 만료됨");
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "토큰이 만료되었습니다.");
                 return;
             }
 
             Long userId = Long.valueOf(jwtTokenProvider.getSubject(jwt));
-            String username = userRepository.findById(userId).orElseThrow(UserNotFoundException::new).getUsername();
+            User user = userRepository.getUserById(userId);
+
+            log.info("userId = {}, jwt = {}", userId, jwt);
+
+            if (user == null) response.sendError(HttpServletResponse.SC_NOT_FOUND, "유저를 찾을 수 없습니다");
+
+            String username = user.getUsername();
 
             log.info(username);
             log.info("username: {}", username);
