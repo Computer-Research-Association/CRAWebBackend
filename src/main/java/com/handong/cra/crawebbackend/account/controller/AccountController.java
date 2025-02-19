@@ -15,16 +15,15 @@ public class AccountController {
 
     private final AccountService accountService;
 
-    @PostMapping("/valid/username") // 유저 있는지 확인
+    @GetMapping("/valid/username") // 유저 있는지 확인
     public ResponseEntity<Void> validUsername(@RequestParam String username) {
         if (accountService.validUsername(username))// 존재하지 않음.
             return ResponseEntity.ok().build();
         else return ResponseEntity.unprocessableEntity().build(); // 이미 존재함.
     }
 
-    @PostMapping("/find/username")
+    @GetMapping("/find/username")
     public ResponseEntity<String> findUsername(@RequestBody ReqFindUsernameDto reqFindUsernameDto){
-
         return ResponseEntity.ok(accountService.findUsername(reqFindUsernameDto.getStudentId(), reqFindUsernameDto.getName(), reqFindUsernameDto.getEmail()));
     }
 

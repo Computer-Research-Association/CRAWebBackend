@@ -46,17 +46,24 @@ public class WebSecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((authorize) -> authorize
-                        .requestMatchers("/api/auth/**").permitAll()
 
-                        // ADMIN 접근
-                        .requestMatchers(HttpMethod.POST, "/api/account/admin/**").hasRole("ADMIN")
+//                        .requestMatchers(HttpMethod.POST, "/api/admin/**").permitAll()
+//                        // ADMIN 권한
+//                        .requestMatchers(HttpMethod.POST, "/api/admin/**").hasRole("ADMIN")
+//                        .requestMatchers(HttpMethod.PUT, "/api/admin/**").hasRole("ADMIN")
+//                        .requestMatchers(HttpMethod.GET, "/api/admin/**").hasRole("ADMIN")
+//                        .requestMatchers(HttpMethod.DELETE, "/api/admin/**").hasRole("ADMIN")
+
+                        // 계정 관리(아이디 찾기 등) 권한
                         .requestMatchers(HttpMethod.POST, "/api/account/**").permitAll()
+
+                        // 가입, 로그인 등 권한
+                        .requestMatchers("/api/auth/**").permitAll()
 
                         // 기본 권한
                         .requestMatchers(HttpMethod.POST, "/api/**").hasAnyRole("USER", "ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/**").hasAnyRole("USER", "ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/**").hasAnyRole("USER", "ADMIN")
-
                         .anyRequest().permitAll())
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .sessionManagement(session -> session
@@ -69,7 +76,7 @@ public class WebSecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:5173", "http://localhost:3000"));  // React 앱 도메인 허용
+        configuration.setAllowedOrigins(List.of("http://localhost:5173"));  // React 앱 도메인 허용
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));  // 모든 헤더 허용
         configuration.setAllowCredentials(true);  // 쿠키 허용

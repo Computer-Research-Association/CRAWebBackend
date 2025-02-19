@@ -8,6 +8,8 @@ import com.handong.cra.crawebbackend.auth.dto.SignupDto;
 import com.handong.cra.crawebbackend.auth.dto.TokenDto;
 import com.handong.cra.crawebbackend.auth.dto.response.ResTokenDto;
 import com.handong.cra.crawebbackend.auth.repository.RefreshTokenRepository;
+import com.handong.cra.crawebbackend.exception.auth.AuthInvalidTokenException;
+import com.handong.cra.crawebbackend.exception.auth.AuthTokenExpiredException;
 import com.handong.cra.crawebbackend.exception.user.UserDormantUserLoginException;
 import com.handong.cra.crawebbackend.user.dto.LoginUserDto;
 import com.handong.cra.crawebbackend.user.dto.UserDetailDto;
@@ -96,7 +98,10 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public TokenDto reissueToken(ReissueTokenDto reissueTokenDto) {
-        return jwtTokenProvider.reissueToken(reissueTokenDto);
+        TokenDto tokenDto = jwtTokenProvider.reissueToken(reissueTokenDto);
+        if (tokenDto.getAccessToken().equals("invalid")) throw new AuthInvalidTokenException();
+        else if (tokenDto.getAccessToken().equals("expired")) throw new AuthTokenExpiredException();
+        else return tokenDto;
     }
 
     @Override

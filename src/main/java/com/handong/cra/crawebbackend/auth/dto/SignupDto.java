@@ -18,7 +18,7 @@ public class SignupDto {
     private String email;
     private String name;
     private String githubId;
-    private Long studentId;
+    private String studentId;
     private String term;
     private String code;
     private UserRoleSet roles;

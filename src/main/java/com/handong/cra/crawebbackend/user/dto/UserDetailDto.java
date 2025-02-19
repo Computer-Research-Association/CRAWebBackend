@@ -11,7 +11,7 @@ public class UserDetailDto {
     private Long id;
     private String name;
     private String email;
-    private Long studentId;
+    private String studentId;
     private String term;
     private String githubId;
     private String imgUrl;

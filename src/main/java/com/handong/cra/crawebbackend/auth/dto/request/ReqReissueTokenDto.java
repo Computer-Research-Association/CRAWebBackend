@@ -1,5 +1,6 @@
 package com.handong.cra.crawebbackend.auth.dto.request;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Data
@@ -9,5 +10,6 @@ import lombok.*;
 @AllArgsConstructor
 public class ReqReissueTokenDto {
     private Long userId;
+    @NotNull
     private String refreshToken;
 }

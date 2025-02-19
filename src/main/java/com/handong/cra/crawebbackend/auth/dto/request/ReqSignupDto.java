@@ -13,7 +13,7 @@ public class ReqSignupDto {
     private String email;
     private String name;
     private String githubId;
-    private Long studentId;
+    private String studentId;
     private String term;
     private String code;
 }

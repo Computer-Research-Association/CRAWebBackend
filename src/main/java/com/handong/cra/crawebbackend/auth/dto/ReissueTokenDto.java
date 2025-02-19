@@ -1,6 +1,7 @@
 package com.handong.cra.crawebbackend.auth.dto;
 
 import com.handong.cra.crawebbackend.auth.dto.request.ReqReissueTokenDto;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Data
@@ -10,6 +11,7 @@ import lombok.*;
 @AllArgsConstructor
 public class ReissueTokenDto {
     private Long userId;
+    @NotNull
     private String refreshToken;
 
     public ReissueTokenDto(ReqReissueTokenDto reqReissueTokenDto) {
