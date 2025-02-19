@@ -64,15 +64,14 @@ public class JwtTokenProvider {
     public TokenDto reissueToken(ReissueTokenDto reissueTokenDto) {
         RefreshToken savedToken = refreshTokenRepository.findByRefreshToken(reissueTokenDto.getRefreshToken());
 
+        // 만료되었는지 검사
         if(savedToken == null)
             return TokenDto.of(null, "expired", "expired");
-
-        // 만료되었는지 검사
-       if(!validateToken(reissueTokenDto.getRefreshToken()))
+        else if(!validateToken(reissueTokenDto.getRefreshToken()))
            return TokenDto.of(null, "expired", "expired");
 
         // 잘못된 토큰
-        if (!savedToken.getRefreshToken().equals(reissueTokenDto.getRefreshToken()))
+        else if (!savedToken.getRefreshToken().equals(reissueTokenDto.getRefreshToken()))
             return TokenDto.of(null, "invalid", "invalid");
 
 
