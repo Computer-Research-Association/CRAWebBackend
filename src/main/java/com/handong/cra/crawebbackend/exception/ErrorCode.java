@@ -37,6 +37,7 @@ public enum ErrorCode {
     S3IMAGE_TRANSFER(HttpStatus.INTERNAL_SERVER_ERROR, "S3I2","이미지 경로 이동중 에러가 발생했습니다."),
     S3IMAGE_URL(HttpStatus.BAD_REQUEST,  "S3I3","잘못된 이미지 url 입니다"),
 
+    AUTH_LOGIN_FAIL (HttpStatus.UNAUTHORIZED,  "AU0","로그인 실패."),
     AUTH_FORBIDDEN_ACTION (HttpStatus.FORBIDDEN,  "AU1","권한이 없습니다."),
     AUTH_TOKEN_EXPIRED (HttpStatus.UNAUTHORIZED, "AU2", "토큰이 만료 되었습니다."),
     AUTH_INVALID_TOKEN (HttpStatus.UNAUTHORIZED, "AU3", "유효하지 않은 토큰입니다."),

@@ -9,6 +9,7 @@ import com.handong.cra.crawebbackend.auth.dto.TokenDto;
 import com.handong.cra.crawebbackend.auth.dto.response.ResTokenDto;
 import com.handong.cra.crawebbackend.auth.repository.RefreshTokenRepository;
 import com.handong.cra.crawebbackend.exception.auth.AuthInvalidTokenException;
+import com.handong.cra.crawebbackend.exception.auth.AuthLoginFailException;
 import com.handong.cra.crawebbackend.exception.auth.AuthTokenExpiredException;
 import com.handong.cra.crawebbackend.exception.user.UserDormantUserLoginException;
 import com.handong.cra.crawebbackend.user.dto.LoginUserDto;
@@ -71,11 +72,11 @@ public class AuthServiceImpl implements AuthService {
 
         LoginUserDto loginUserDto = userService.getUserIfRegistered(loginDto.getUsername(), loginDto.getPassword());
         if (loginUserDto == null) {
-            throw new BadCredentialsException("Invalid username or password");
+            throw new AuthLoginFailException();
         }
 
         if (!passwordEncoder.matches(password, loginUserDto.getPassword())) {
-            throw new BadCredentialsException("Invalid username or password");
+            throw new AuthLoginFailException();
         }
 
         // 로그인시 전달할 유저의 정보
