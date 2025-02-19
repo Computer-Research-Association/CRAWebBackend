@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 public enum ErrorCode {
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "E1", "서버 에러가 발생하였습니다."),
     METHOD_NOT_ALLOWED(HttpStatus.METHOD_NOT_ALLOWED, "E2", "잘못된 HTTP Method입니다."),
+    NOT_FOUND_ERROR(HttpStatus.NOT_FOUND, "E3", "잘못된 URL 요청입니다."),
 
     BOARD_NOT_FOUND(HttpStatus.NOT_FOUND, "B1", "존재하지 않는 게시글입니다."),
     BOARD_LIKE_BAD_REQUEST(HttpStatus.BAD_REQUEST, "B2", "잘못된 게시글 좋아요 요청입니다."),
