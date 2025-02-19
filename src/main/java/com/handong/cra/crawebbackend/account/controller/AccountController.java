@@ -23,7 +23,7 @@ public class AccountController {
     }
 
     @GetMapping("/find/username")
-    public ResponseEntity<String> findUsername(@RequestBody ReqFindUsernameDto reqFindUsernameDto){
+    public ResponseEntity<String> findUsername(ReqFindUsernameDto reqFindUsernameDto){
         return ResponseEntity.ok(accountService.findUsername(reqFindUsernameDto.getStudentId(), reqFindUsernameDto.getName(), reqFindUsernameDto.getEmail()));
     }
 
