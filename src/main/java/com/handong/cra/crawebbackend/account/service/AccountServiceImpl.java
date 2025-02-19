@@ -90,7 +90,7 @@ public class AccountServiceImpl implements AccountService {
         // 토큰 발행
         CodeDto codeDto = generateToken(ManageTokenCategory.PASSWORD_CHANGE, user.getId());
 
-        String passwordChangeUrl = frontUrl + "?code=" + codeDto.getCode();
+        String passwordChangeUrl = frontUrl + "/pwsearch/reset?code=" + codeDto.getCode();
 
         // 이메일 전송
         MailSendDto mailSendDto = MailSendDto.builder()
