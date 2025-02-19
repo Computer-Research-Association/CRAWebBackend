@@ -16,6 +16,7 @@ import com.handong.cra.crawebbackend.user.domain.UserRoleEnum;
 import com.handong.cra.crawebbackend.user.dto.UserDetailDto;
 import com.handong.cra.crawebbackend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +32,9 @@ public class AccountServiceImpl implements AccountService {
     private final ManageTokenRepository manageTokenRepository;
     private final UserRepository userRepository;
     private final MailService mailService;
+
+    @Value("${site.frontend.url}")
+    private String frontUrl;
 
     @Override
     public List<CodeDto> generateSignupCodes(Short length) {
@@ -86,12 +90,12 @@ public class AccountServiceImpl implements AccountService {
         // 토큰 발행
         CodeDto codeDto = generateToken(ManageTokenCategory.PASSWORD_CHANGE, user.getId());
 
-        String passwordChangeUrl = /*TODO : url here*/ "?code=" + codeDto.getCode();
+        String passwordChangeUrl = frontUrl + "?code=" + codeDto.getCode();
 
         // 이메일 전송
         MailSendDto mailSendDto = MailSendDto.builder()
                 .sendEmail(user.getEmail())
-//                .url(passwordChangeUrl)
+                .url(passwordChangeUrl)
                 .mailCategory(MailCategory.PASSWORD_EMAIL)
                 .username(user.getUsername())
                 .build();
@@ -140,12 +144,12 @@ public class AccountServiceImpl implements AccountService {
 
         if (year.isEmpty()) {
             List<User> users = userRepository.findAllByTerm(term);
-            for (User user: users) userDetailDtos.add(UserDetailDto.from(user));
+            for (User user : users) userDetailDtos.add(UserDetailDto.from(user));
         }
         // 학번으로 찾기
         else if (term.isEmpty()) {
             List<User> users = userRepository.findByStudentCodeNative(year);
-            for (User user: users) userDetailDtos.add(UserDetailDto.from(user));
+            for (User user : users) userDetailDtos.add(UserDetailDto.from(user));
         }
         return userDetailDtos;
     }
