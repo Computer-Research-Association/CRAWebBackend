@@ -83,7 +83,6 @@ public class BoardServiceImpl implements BoardService {
             throw new AuthForbiddenActionException();
 
 
-
         BoardMDParser parser = new BoardMDParser(amazonS3, bucket);
         if (createBoardDto.getFile() != null) {
             String fileUrl = s3FileService.uploadFile(createBoardDto.getFile(), S3ImageCategory.BOARD);
@@ -189,10 +188,11 @@ public class BoardServiceImpl implements BoardService {
         if (user != null) {
             viewerLiked = user.getLikedBoards().contains(board);
             return DetailBoardDto.from(board, viewerLiked);
+        } else { // 로그인 안되어있을때
+            // 공지 이외 확인 불가
+            if (!board.getCategory().equals(Category.NOTICE)) throw new AuthForbiddenActionException();
         }
-
-        // 로그인 x
-        else return DetailBoardDto.from(board);
+        return DetailBoardDto.from(board);
 
     }
 

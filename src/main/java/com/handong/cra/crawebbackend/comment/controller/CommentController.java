@@ -27,7 +27,6 @@ public class CommentController {
 
     @GetMapping("/{boardId}")
     public ResponseEntity<List<ResListCommentDto>> getCommentsByBoardId(@PathVariable Long boardId) {
-      log.info("request");
         return ResponseEntity.ok().body(commentService.getCommentsByBoardId(boardId)
                 .stream().map(ResListCommentDto::from).toList());
     }
