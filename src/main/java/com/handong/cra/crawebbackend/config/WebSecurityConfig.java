@@ -47,15 +47,14 @@ public class WebSecurityConfig {
                 .formLogin(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((authorize) -> authorize
 
-//                        .requestMatchers(HttpMethod.POST, "/api/admin/**").permitAll()
-//                        // ADMIN 권한
-//                        .requestMatchers(HttpMethod.POST, "/api/admin/**").hasRole("ADMIN")
-//                        .requestMatchers(HttpMethod.PUT, "/api/admin/**").hasRole("ADMIN")
-//                        .requestMatchers(HttpMethod.GET, "/api/admin/**").hasRole("ADMIN")
-//                        .requestMatchers(HttpMethod.DELETE, "/api/admin/**").hasRole("ADMIN")
+                        // ADMIN 권한
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
 
                         // 계정 관리(아이디 찾기 등) 권한
                         .requestMatchers(HttpMethod.POST, "/api/account/**").permitAll()
+
+                        // 비밀번호 변경 권한
+                        .requestMatchers(HttpMethod.PUT, "/api/user/password-change").permitAll()
 
                         // 가입, 로그인 등 권한
                         .requestMatchers("/api/auth/**").permitAll()
