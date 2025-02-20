@@ -100,6 +100,7 @@ public class User extends BaseEntity{
         this.term = updateUserDto.getTerm();
         this.email = updateUserDto.getEmail();
         this.githubId = updateUserDto.getGithubId();
+        this.greetingMessage = updateUserDto.getGreetingMessage();
         return this;
     }
 }

@@ -18,6 +18,7 @@ public class UpdateUserDto {
     private String studentId;
     private String term;
     private String githubId;
+    private String greetingMessage;
     private Boolean deleted;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -30,6 +31,7 @@ public class UpdateUserDto {
         this.studentId = user.getStudentId();
         this.term = user.getTerm();
         this.githubId = user.getGithubId();
+        this.greetingMessage = user.getGreetingMessage();
         this.createdAt = user.getCreatedAt();
         this.updatedAt = user.getUpdatedAt();
     }
@@ -41,6 +43,7 @@ public class UpdateUserDto {
         this.studentId = reqUpdateUserDto.getStudentId();
         this.term = reqUpdateUserDto.getTerm();
         this.githubId = reqUpdateUserDto.getGithubId();
+        this.greetingMessage = reqUpdateUserDto.getGreetingMessage();
     }
 
     public UpdateUserDto(Long userId, Boolean deleted) {
