@@ -78,6 +78,12 @@ public class BoardServiceImpl implements BoardService {
 
         User user = userRepository.findById(createBoardDto.getUserId()).orElseThrow(UserNotFoundException::new);
 
+        // NOTICE 는  admin 이외엔 작성 불가
+        if (createBoardDto.getCategory() == Category.NOTICE && (!user.getRoles().hasRole(UserRoleEnum.ADMIN) /*|| TODO super admin 추가 */))
+            throw new AuthForbiddenActionException();
+
+
+
         BoardMDParser parser = new BoardMDParser(amazonS3, bucket);
         if (createBoardDto.getFile() != null) {
             String fileUrl = s3FileService.uploadFile(createBoardDto.getFile(), S3ImageCategory.BOARD);
