@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 @Slf4j
 @ControllerAdvice
@@ -20,6 +21,13 @@ public class CraExceptionHandler {
     public ResponseEntity<ErrorResponse> commonException(Exception e) {
         log.error("CommonException", e);
         return createErrorResponseEntity(ErrorCode.INTERNAL_SERVER_ERROR);
+    }
+
+
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<ErrorResponse> notFoundException(Exception e) {
+        log.error("NotFoundException", e);
+        return createErrorResponseEntity(ErrorCode.NOT_FOUND_ERROR);
     }
 
 

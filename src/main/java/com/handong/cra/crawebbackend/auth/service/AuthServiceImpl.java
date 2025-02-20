@@ -8,7 +8,10 @@ import com.handong.cra.crawebbackend.auth.dto.SignupDto;
 import com.handong.cra.crawebbackend.auth.dto.TokenDto;
 import com.handong.cra.crawebbackend.auth.dto.response.ResTokenDto;
 import com.handong.cra.crawebbackend.auth.repository.RefreshTokenRepository;
+import com.handong.cra.crawebbackend.exception.account.AccountUserAlreadyExistsException;
+import com.handong.cra.crawebbackend.exception.auth.AuthInvalidPasswordException;
 import com.handong.cra.crawebbackend.exception.auth.AuthInvalidTokenException;
+import com.handong.cra.crawebbackend.exception.auth.AuthLoginFailException;
 import com.handong.cra.crawebbackend.exception.auth.AuthTokenExpiredException;
 import com.handong.cra.crawebbackend.exception.user.UserDormantUserLoginException;
 import com.handong.cra.crawebbackend.user.dto.LoginUserDto;
@@ -23,6 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 @Slf4j
 @Service
@@ -36,21 +40,19 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public SignupDto signup(SignupDto signupDto) {
-        if (userService.isUserExist(signupDto.getUsername())) {
-            return null;
-        }
+        if (userService.isUserExist(signupDto.getUsername())) throw new AccountUserAlreadyExistsException();
+
         accountService.codeValidCheck(signupDto.getCode(), ManageTokenCategory.SIGNUP);
         String password = "";
         try {
             password = AESUtill.AESDecrypt(signupDto.getPassword());
         } catch (Exception e) {
-
-        }
-        if (password.isEmpty()) {
-            // 잘못된 패스워드
+            throw new AuthInvalidPasswordException();
         }
 
-        log.info("password aes decoded: {}", password);
+        // 잘못된 패스워드
+        if (password.isEmpty()) throw new AuthInvalidPasswordException();
+
         signupDto.setPassword(passwordEncoder.encode(password));
 
         return userService.save(signupDto);
@@ -63,20 +65,17 @@ public class AuthServiceImpl implements AuthService {
         try {
             password = AESUtill.AESDecrypt(loginDto.getPassword());
         } catch (Exception e) {
+            throw new AuthInvalidPasswordException();
+        }
+        if (password.isEmpty()) throw new AuthInvalidPasswordException();
 
-        }
-        if (password.isEmpty()) {
-            // 잘못된 패스워드
-        }
 
         LoginUserDto loginUserDto = userService.getUserIfRegistered(loginDto.getUsername(), loginDto.getPassword());
-        if (loginUserDto == null) {
-            throw new BadCredentialsException("Invalid username or password");
-        }
 
-        if (!passwordEncoder.matches(password, loginUserDto.getPassword())) {
-            throw new BadCredentialsException("Invalid username or password");
-        }
+        if (loginUserDto == null) throw new AuthLoginFailException();
+
+        if (!passwordEncoder.matches(password, loginUserDto.getPassword())) throw new AuthLoginFailException();
+
 
         // 로그인시 전달할 유저의 정보
         UserDetailDto userDetailDto = userService.getUserDetailByUsername(loginUserDto.getUsername());
@@ -109,6 +108,4 @@ public class AuthServiceImpl implements AuthService {
     public void logout(Long userId) {
         refreshTokenRepository.deleteAllByUserId(userId);
     }
-
-
 }

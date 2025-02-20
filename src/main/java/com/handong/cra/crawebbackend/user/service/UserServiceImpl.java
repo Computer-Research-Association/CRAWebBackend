@@ -4,6 +4,7 @@ import com.handong.cra.crawebbackend.account.domain.ManageTokenCategory;
 import com.handong.cra.crawebbackend.account.service.AccountService;
 import com.handong.cra.crawebbackend.auth.dto.SignupDto;
 import com.handong.cra.crawebbackend.exception.auth.AuthForbiddenActionException;
+import com.handong.cra.crawebbackend.exception.auth.AuthLoginFailException;
 import com.handong.cra.crawebbackend.exception.user.UserInvalidPasswordException;
 import com.handong.cra.crawebbackend.file.domain.S3ImageCategory;
 import com.handong.cra.crawebbackend.file.service.S3ImageService;
@@ -50,7 +51,7 @@ public class UserServiceImpl implements UserService {
     public LoginUserDto getUserIfRegistered(String username, String password) {
         User user = userRepository.findByUsername(username);
 
-        if (user == null) throw new UserNotFoundException();
+        if (user == null) throw new AuthLoginFailException();
 
         return LoginUserDto.from(user);
     }
