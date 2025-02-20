@@ -17,6 +17,7 @@ public class ResUpdateUserDto {
     private String term;
     private String githubId;
     private Boolean deleted;
+    private String greetingMessage;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -28,6 +29,7 @@ public class ResUpdateUserDto {
         this.studentId = updateUserDto.getStudentId();
         this.term = updateUserDto.getTerm();
         this.githubId = updateUserDto.getGithubId();
+        this.greetingMessage = updateUserDto.getGreetingMessage();
         this.createdAt = updateUserDto.getCreatedAt();
         this.updatedAt = updateUserDto.getUpdatedAt();
     }

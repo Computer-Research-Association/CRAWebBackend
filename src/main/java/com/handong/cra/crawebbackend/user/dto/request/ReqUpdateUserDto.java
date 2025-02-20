@@ -14,5 +14,6 @@ public class ReqUpdateUserDto {
     private String studentId;
     private String term;
     private String githubId;
+    private String greetingMessage;
 
 }

@@ -15,6 +15,7 @@ public class UserDetailDto {
     private String term;
     private String githubId;
     private String imgUrl;
+    private String greetingMessage;
     private Boolean deleted;
 
     public UserDetailDto(User user) {
@@ -25,9 +26,9 @@ public class UserDetailDto {
         this.term = user.getTerm();
         this.githubId = user.getGithubId();
         this.imgUrl = user.getImgUrl();
+        this.greetingMessage = user.getGreetingMessage();
         this.deleted = user.getDeleted();
     }
-
 
     public static UserDetailDto from(User user){
         return new UserDetailDto(user);

@@ -15,6 +15,7 @@ public class ResUserDetailDto {
     private String studentId;
     private String term;
     private String githubId;
+    private String greetingMessage;
     private String imgUrl;
 
 
@@ -24,6 +25,7 @@ public class ResUserDetailDto {
         this.studentId = userDetailDto.getStudentId();
         this.term = userDetailDto.getTerm();
         this.githubId = userDetailDto.getGithubId();
+        this.greetingMessage = userDetailDto.getGreetingMessage();
         this.imgUrl = userDetailDto.getImgUrl();
     }
 
