@@ -37,6 +37,9 @@ public class WebSecurityConfig {
     @Value("${site.frontend.url}")
     private String frontUrl;
 
+    @Value("${site.frontend.test-url}")
+    private String testUrl;
+
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() {
         return new JwtAuthenticationFilter(jwtTokenProvider, userDetailsService, userRepository);
@@ -80,7 +83,7 @@ public class WebSecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:5173", frontUrl));  // React 앱 도메인 허용
+        configuration.setAllowedOrigins(List.of("http://localhost:5173", frontUrl,testUrl));  // React 앱 도메인 허용
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));  // 모든 헤더 허용
         configuration.setAllowCredentials(true);  // 쿠키 허용
