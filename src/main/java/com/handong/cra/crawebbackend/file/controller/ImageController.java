@@ -18,4 +18,12 @@ public class ImageController {
     public ResponseEntity<String> uploadImage(@RequestParam MultipartFile image) {
         return ResponseEntity.ok(s3ImageService.uploadImage(image));
     }
+
+    @GetMapping("/url")
+    public ResponseEntity<String> getPresignedUrl(){
+        s3ImageService.generatePresignedURL();
+        return ResponseEntity.ok().build();
+    }
+
+
 }

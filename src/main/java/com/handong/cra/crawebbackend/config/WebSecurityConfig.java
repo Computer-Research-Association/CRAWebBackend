@@ -62,6 +62,7 @@ public class WebSecurityConfig {
 
                         // 가입, 로그인 등 권한
                         .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/image/url").permitAll()
 
                         // 기본 권한
                         .requestMatchers(HttpMethod.POST, "/api/**").hasAnyRole("USER", "ADMIN")

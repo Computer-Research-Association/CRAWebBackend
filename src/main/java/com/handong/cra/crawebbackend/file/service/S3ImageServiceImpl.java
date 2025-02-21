@@ -1,10 +1,8 @@
 package com.handong.cra.crawebbackend.file.service;
 
+import com.amazonaws.HttpMethod;
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.CopyObjectRequest;
-import com.amazonaws.services.s3.model.DeleteObjectRequest;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.*;
 import com.handong.cra.crawebbackend.exception.s3image.S3ImageTransferException;
 import com.handong.cra.crawebbackend.exception.s3image.S3ImageUploadException;
 import com.handong.cra.crawebbackend.exception.s3image.S3ImageUrlException;
@@ -17,10 +15,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -67,7 +62,7 @@ public class S3ImageServiceImpl implements S3ImageService {
         // wrong url
         if (!path.contains(getPublicUrl(""))) throw new S3ImageUrlException();
 
-        String newPath = s3ImageCategory.toString().toLowerCase()  + filename;
+        String newPath = s3ImageCategory.toString().toLowerCase() + filename;
         try {
             CopyObjectRequest copyObjectRequest =
                     new CopyObjectRequest(bucket, key, bucket, newPath);
@@ -86,5 +81,21 @@ public class S3ImageServiceImpl implements S3ImageService {
         for (String path : paths)
             urls.add(transferImage(path, s3ImageCategory));
         return urls;
+    }
+
+    @Override
+    public String generatePresignedURL() {
+        // test
+         Date expiration = new Date();
+        expiration.setTime(System.currentTimeMillis() + (1000 * 60 * 5));
+        String filename = "/temp/"+UUID.randomUUID().toString();
+
+        GeneratePresignedUrlRequest generatePresignedUrlRequest
+                = new GeneratePresignedUrlRequest(bucket, filename)
+                .withMethod(HttpMethod.PUT)
+//                .withKey("/temp" + filename)
+                .withExpiration(expiration);
+        log.info("{}", amazonS3.generatePresignedUrl(generatePresignedUrlRequest));
+        return amazonS3.generatePresignedUrl(generatePresignedUrlRequest).toString();
     }
 }
