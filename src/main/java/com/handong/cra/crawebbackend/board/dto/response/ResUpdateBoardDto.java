@@ -19,9 +19,6 @@ public class ResUpdateBoardDto {
     @Schema(description = "글 id")
     private Long id;
 
-    @Schema(description = "작성자 id")
-    private Long userId;
-
     @Schema(description = "글 삭제 여부")
     private Boolean deleted;
 

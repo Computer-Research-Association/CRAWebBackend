@@ -20,9 +20,6 @@ public class ResCreateBoardDto {
     @Schema(description = "글 제목")
     private Long id;
 
-    @Schema(description = "작성자 id")
-    private Long userId;
-
     @Schema(description = "글 제목")
     private String title;
 
@@ -45,7 +42,6 @@ public class ResCreateBoardDto {
     public ResCreateBoardDto(CreateBoardDto createBoardDto) {
 
         this.id = createBoardDto.getId();
-        this.userId = createBoardDto.getUserId();
         this.title = createBoardDto.getTitle();
         this.content = createBoardDto.getContent();
         this.category = createBoardDto.getCategory();

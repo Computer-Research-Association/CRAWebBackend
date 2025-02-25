@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class ResUpdateUserDto {
-    private Long id;
     private String name;
     private String email;
     private String studentId;
