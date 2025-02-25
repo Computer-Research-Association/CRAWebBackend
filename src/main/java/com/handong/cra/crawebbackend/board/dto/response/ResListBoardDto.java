@@ -47,7 +47,6 @@ public class ResListBoardDto {
 
     public ResListBoardDto(ListBoardDto listBoardDto) {
         this.id = listBoardDto.getId();
-        this.userId = listBoardDto.getId();
         this.title = listBoardDto.getTitle();
 
         // 길이 제한

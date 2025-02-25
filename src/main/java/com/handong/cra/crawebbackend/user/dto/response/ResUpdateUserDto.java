@@ -22,7 +22,6 @@ public class ResUpdateUserDto {
 
 
     public ResUpdateUserDto(UpdateUserDto updateUserDto) {
-        this.id = updateUserDto.getId();
         this.name = updateUserDto.getName();
         this.email = updateUserDto.getEmail();
         this.studentId = updateUserDto.getStudentId();

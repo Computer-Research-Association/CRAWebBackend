@@ -17,7 +17,6 @@ public class ResListProjectDto {
     private String semester;
     private String teamName;
     private String serviceName;
-    //    private String content; // TODO 디자인 보고 결정
     private List<String> members = new ArrayList<>();
     private String imageUrl = "";
 

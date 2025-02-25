@@ -41,7 +41,6 @@ public class ResUpdateBoardDto {
 
     public ResUpdateBoardDto(UpdateBoardDto updateBoardDto) {
         this.id = updateBoardDto.getId();
-        this.userId = updateBoardDto.getUserId();
         this.deleted = updateBoardDto.getDeleted();
         this.title = updateBoardDto.getTitle();
         this.content = updateBoardDto.getContent();
