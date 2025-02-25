@@ -17,8 +17,9 @@ import java.util.List;
 //@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Comment extends BaseEntity {
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "board_id")
+
+    @ManyToOne
+    @JoinColumn(name = "board_id")  // 외래 키 지정
     private Board board;
 
     @ManyToOne(fetch = FetchType.LAZY)

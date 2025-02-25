@@ -2,6 +2,7 @@ package com.handong.cra.crawebbackend.board.dto.response;
 
 import com.handong.cra.crawebbackend.board.domain.Category;
 import com.handong.cra.crawebbackend.board.dto.DetailBoardDto;
+import com.handong.cra.crawebbackend.comment.dto.response.ResListCommentDto;
 import com.handong.cra.crawebbackend.havruta.dto.HavrutaDto;
 import com.handong.cra.crawebbackend.user.dto.UserDetailDto;
 import com.handong.cra.crawebbackend.user.dto.response.ResUserDetailDto;
@@ -56,6 +57,9 @@ public class ResDetailBoardDto {
 
     private Boolean viewerLiked;
 
+    // 댓글
+    private List<ResListCommentDto> resListCommentDtos;
+
     public ResDetailBoardDto(DetailBoardDto detailBoardDto) {
         this.id = detailBoardDto.getId();
         this.userId = detailBoardDto.getUserId();
@@ -76,6 +80,8 @@ public class ResDetailBoardDto {
 
         // nullable
         this.viewerLiked = detailBoardDto.getViewerLiked();
+        if (detailBoardDto.getListCommentDtos() != null)
+            this.resListCommentDtos = detailBoardDto.getListCommentDtos().stream().map(ResListCommentDto::from).toList();
     }
 
 

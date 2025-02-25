@@ -192,7 +192,8 @@ public class BoardServiceImpl implements BoardService {
             // 공지 이외 확인 불가
             if (!board.getCategory().equals(Category.NOTICE)) throw new AuthForbiddenActionException();
         }
-        return DetailBoardDto.from(board);
+
+        return DetailBoardDto.from(board, board.getComments());
 
     }
 

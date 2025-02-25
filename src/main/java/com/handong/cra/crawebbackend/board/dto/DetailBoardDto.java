@@ -2,6 +2,8 @@ package com.handong.cra.crawebbackend.board.dto;
 
 import com.handong.cra.crawebbackend.board.domain.Board;
 import com.handong.cra.crawebbackend.board.domain.Category;
+import com.handong.cra.crawebbackend.comment.domain.Comment;
+import com.handong.cra.crawebbackend.comment.dto.ListCommentDto;
 import com.handong.cra.crawebbackend.havruta.dto.HavrutaDto;
 import com.handong.cra.crawebbackend.user.dto.UserDetailDto;
 import lombok.*;
@@ -32,6 +34,8 @@ public class DetailBoardDto {
 
     private Boolean viewerLiked;
 
+    private List<ListCommentDto> listCommentDtos;
+
     public DetailBoardDto(Board board) {
         this.id = board.getId();
         this.userId = board.getUser().getId();
@@ -47,8 +51,19 @@ public class DetailBoardDto {
             this.havrutaDto = HavrutaDto.from(board.getHavruta());
         this.userDetailDto = UserDetailDto.from(board.getUser());
 
+//
+        if (board.getComments() != null)
+            this.listCommentDtos = board.getComments().stream()
+                    .filter((comment) -> comment.getParentComment() == null).map(ListCommentDto::from).toList();
+
         this.createdAt = board.getCreatedAt();
         this.updatedAt = board.getUpdatedAt();
+    }
+
+    public DetailBoardDto(Board board, List<Comment> comments) {
+        this(board);
+        this.listCommentDtos = comments.stream()
+                .filter((comment) -> comment.getParentComment() == null).map(ListCommentDto::from).toList();
     }
 
     public DetailBoardDto(Board board, Boolean viewerLiked) {
@@ -58,6 +73,11 @@ public class DetailBoardDto {
 
     public static DetailBoardDto from(Board board) {
         return new DetailBoardDto(board);
+    }
+
+    public static DetailBoardDto from(Board board, List<Comment> comments) {
+        return new DetailBoardDto(board, comments);
+
     }
 
     public static DetailBoardDto from(Board board, Boolean viewerLiked) {

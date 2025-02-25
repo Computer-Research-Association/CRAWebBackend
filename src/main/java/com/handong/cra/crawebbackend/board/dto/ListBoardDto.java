@@ -22,6 +22,7 @@ public class ListBoardDto {
     private Category category;
     private Boolean deleted;
     private Long likeCount;
+    private Integer commentCount;
     private Long view;
 
     private HavrutaDto havrutaDto;
@@ -42,12 +43,15 @@ public class ListBoardDto {
             this.havrutaDto = HavrutaDto.from(board.getHavruta());
         this.userDetailDto = UserDetailDto.from(board.getUser());
 
+        if (board.getComments() != null) {
+            this.commentCount = board.getComments().size();
+        }
         this.createdAt = board.getCreatedAt();
         this.updatedAt = board.getUpdatedAt();
     }
 
     public static ListBoardDto from(Board board) {
-        if (board.getDeleted())return null;
+        if (board.getDeleted()) return null;
         return new ListBoardDto(board);
     }
 }

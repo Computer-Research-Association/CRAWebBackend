@@ -46,6 +46,8 @@ public class ResListBoardDto {
 
     private HavrutaDto havrutaDto;
 
+    private Integer commentCount;
+
     private ResUserDetailDto resUserDetailDto = new ResUserDetailDto();
 
     public ResListBoardDto(ListBoardDto listBoardDto) {
@@ -64,8 +66,11 @@ public class ResListBoardDto {
         this.createdAt = listBoardDto.getCreatedAt();
         this.updatedAt = listBoardDto.getUpdatedAt();
 
-        if (listBoardDto.getHavrutaDto() != null)
+        if (listBoardDto.getHavrutaDto() != null) {
             this.havrutaDto = listBoardDto.getHavrutaDto();
+        }
+        this.commentCount = listBoardDto.getCommentCount();
+
         this.resUserDetailDto = ResUserDetailDto.from(listBoardDto.getUserDetailDto());
 
     }

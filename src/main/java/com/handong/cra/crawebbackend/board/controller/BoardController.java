@@ -12,7 +12,6 @@ import com.handong.cra.crawebbackend.board.dto.request.ReqUpdateBoardDto;
 import com.handong.cra.crawebbackend.board.dto.response.*;
 import com.handong.cra.crawebbackend.board.service.BoardService;
 import com.handong.cra.crawebbackend.exception.ErrorResponse;
-import com.handong.cra.crawebbackend.exception.board.BoardIllegalCategoryException;
 import com.handong.cra.crawebbackend.exception.board.BoardPageSizeLimitExceededException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -28,7 +27,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -64,27 +62,27 @@ public class BoardController {
     }
 
 
-    @Parameters(value = {
-            @Parameter(name = "category", description = "0 = NOTICE, 1 = ACADEMIC, 2 = HAVRUTA"),
-    })
-    @Operation(summary = "Category 로 전체 Board List 가져오기", description = "카테고리로 데이터의 리스트를 읽어옴.많은 데이터를 가져올 수 있기 때문에, 권장되지 않음. (page 사용 권장) [추후 admin만 접근 가능하게 할 예정]")
-    @ApiResponses(value = {
-
-            @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = ResListBoardDto.class))),
-            @ApiResponse(responseCode = "403", description = "권한 없음", content = @Content()),
-            @ApiResponse(responseCode = "404", description = "category 정보 없음", content = @Content())
-    })
-
-    @PreAuthorize("denyAll()")// 접속 불가
-    @GetMapping("/{category}")
-    public ResponseEntity<List<ResListBoardDto>> getBoardsByCategory(@PathVariable Integer category) {
-        if (category < 0 || category >= Category.values().length) {
-            throw new BoardIllegalCategoryException();
-        }
-
-        return ResponseEntity.ok().body(boardService.getBoardsByCategory(Category.values()[category])
-                .stream().map(ResListBoardDto::from).toList());
-    }
+//    @Parameters(value = {
+//            @Parameter(name = "category", description = "0 = NOTICE, 1 = ACADEMIC, 2 = HAVRUTA"),
+//    })
+//    @Operation(summary = "Category 로 전체 Board List 가져오기", description = "카테고리로 데이터의 리스트를 읽어옴.많은 데이터를 가져올 수 있기 때문에, 권장되지 않음. (page 사용 권장) [추후 admin만 접근 가능하게 할 예정]")
+//    @ApiResponses(value = {
+//
+//            @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = ResListBoardDto.class))),
+//            @ApiResponse(responseCode = "403", description = "권한 없음", content = @Content()),
+//            @ApiResponse(responseCode = "404", description = "category 정보 없음", content = @Content())
+//    })
+//
+//    @PreAuthorize("denyAll()")// 접속 불가
+//    @GetMapping("/{category}")
+//    public ResponseEntity<List<ResListBoardDto>> getBoardsByCategory(@PathVariable Integer category) {
+//        if (category < 0 || category >= Category.values().length) {
+//            throw new BoardIllegalCategoryException();
+//        }
+//
+//        return ResponseEntity.ok().body(boardService.getBoardsByCategory(Category.values()[category])
+//                .stream().map(ResListBoardDto::from).toList());
+//    }
 
     // 조회수 상승 없이 데이터 읽어옴
     @Parameters(value = {
@@ -230,11 +228,11 @@ public class BoardController {
     }
 
 
-    @PreAuthorize("denyAll()")// 접속 불가
-    @GetMapping("/havruta/{havrutaId}")
-    public ResponseEntity<List<ResListBoardDto>> getHavrutaBoardsByHavrutaId(@PathVariable Long havrutaId) {
-        return ResponseEntity.ok().body(boardService.getHavrutaBoardsByHavrutaId(havrutaId).stream().map(ResListBoardDto::from).toList());
-    }
+//    @PreAuthorize("denyAll()")// 접속 불가
+//    @GetMapping("/havruta/{havrutaId}")
+//    public ResponseEntity<List<ResListBoardDto>> getHavrutaBoardsByHavrutaId(@PathVariable Long havrutaId) {
+//        return ResponseEntity.ok().body(boardService.getHavrutaBoardsByHavrutaId(havrutaId).stream().map(ResListBoardDto::from).toList());
+//    }
 
     @GetMapping("/havruta/page/{page}")
     public ResponseEntity<List<ResListBoardDto>> getPaginationAllHavrutaBoard(
