@@ -27,20 +27,20 @@ public class CommentController {
     private final CommentService commentService;
 
 
-    @PreAuthorize("denyAll()")// 접속 불가
-    @GetMapping("/{boardId}")
-    public ResponseEntity<List<ResListCommentDto>> getCommentsByBoardId(@PathVariable Long boardId) {
-        return ResponseEntity.ok().body(commentService.getCommentsByBoardId(boardId)
-                .stream().map(ResListCommentDto::from).toList());
-    }
+//    @PreAuthorize("denyAll()")// 접속 불가
+//    @GetMapping("/{boardId}")
+//    public ResponseEntity<List<ResListCommentDto>> getCommentsByBoardId(@PathVariable Long boardId) {
+//        return ResponseEntity.ok().body(commentService.getCommentsByBoardId(boardId)
+//                .stream().map(ResListCommentDto::from).toList());
+//    }
 
 
-    // 아래 방식 적용시 속도 너무 느려요..
-    @PreAuthorize("denyAll()")// 접속 불가
-    @GetMapping("/count/{boardId}")
-    public ResponseEntity<Long> getCommentCount(@PathVariable Long boardId) {
-        return ResponseEntity.ok(commentService.getCommentCount(boardId));
-    }
+//    // 아래 방식 적용시 속도 너무 느려요..
+//    @PreAuthorize("denyAll()")// 접속 불가
+//    @GetMapping("/count/{boardId}")
+//    public ResponseEntity<Long> getCommentCount(@PathVariable Long boardId) {
+//        return ResponseEntity.ok(commentService.getCommentCount(boardId));
+//    }
 
     @PostMapping("/{boardId}")
     public ResponseEntity<ResCreateCommentDto> createComment(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Long boardId, @RequestBody ReqCreateCommentDto reqCreateCommentDto) {

@@ -74,17 +74,17 @@ public class BoardController {
             @ApiResponse(responseCode = "403", description = "권한 없음", content = @Content()),
             @ApiResponse(responseCode = "404", description = "category 정보 없음", content = @Content())
     })
-
-    @PreAuthorize("denyAll()")// 접속 불가
-    @GetMapping("/{category}")
-    public ResponseEntity<List<ResListBoardDto>> getBoardsByCategory(@PathVariable Integer category) {
-        if (category < 0 || category >= Category.values().length) {
-            throw new BoardIllegalCategoryException();
-        }
-
-        return ResponseEntity.ok().body(boardService.getBoardsByCategory(Category.values()[category])
-                .stream().map(ResListBoardDto::from).toList());
-    }
+//
+//    @PreAuthorize("denyAll()")// 접속 불가
+//    @GetMapping("/{category}")
+//    public ResponseEntity<List<ResListBoardDto>> getBoardsByCategory(@PathVariable Integer category) {
+//        if (category < 0 || category >= Category.values().length) {
+//            throw new BoardIllegalCategoryException();
+//        }
+//
+//        return ResponseEntity.ok().body(boardService.getBoardsByCategory(Category.values()[category])
+//                .stream().map(ResListBoardDto::from).toList());
+//    }
 
     // 조회수 상승 없이 데이터 읽어옴
     @Parameters(value = {
@@ -230,11 +230,11 @@ public class BoardController {
     }
 
 
-    @PreAuthorize("denyAll()")// 접속 불가
-    @GetMapping("/havruta/{havrutaId}")
-    public ResponseEntity<List<ResListBoardDto>> getHavrutaBoardsByHavrutaId(@PathVariable Long havrutaId) {
-        return ResponseEntity.ok().body(boardService.getHavrutaBoardsByHavrutaId(havrutaId).stream().map(ResListBoardDto::from).toList());
-    }
+//    @PreAuthorize("denyAll()")// 접속 불가
+//    @GetMapping("/havruta/{havrutaId}")
+//    public ResponseEntity<List<ResListBoardDto>> getHavrutaBoardsByHavrutaId(@PathVariable Long havrutaId) {
+//        return ResponseEntity.ok().body(boardService.getHavrutaBoardsByHavrutaId(havrutaId).stream().map(ResListBoardDto::from).toList());
+//    }
 
     @GetMapping("/havruta/page/{page}")
     public ResponseEntity<List<ResListBoardDto>> getPaginationAllHavrutaBoard(
