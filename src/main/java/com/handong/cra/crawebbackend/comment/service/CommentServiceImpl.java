@@ -59,13 +59,8 @@ public class CommentServiceImpl implements CommentService {
     @Transactional
     public List<ListCommentDto> getCommentsByBoardId(Long boardId) {
 
-        log.info("test here 1");
         Board board = boardRepository.findById(boardId).orElseThrow(BoardNotFoundException::new);
-
-        log.info("test here 2");
         List<Comment> comments = commentRepository.findAllByBoardAndDeletedFalseAndParentCommentIsNull(board);
-        log.info("test here 3");
-
         return comments.stream().map(ListCommentDto::from).toList();
     }
 

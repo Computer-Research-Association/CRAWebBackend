@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,12 +26,17 @@ import java.util.List;
 public class CommentController {
     private final CommentService commentService;
 
+
+    @PreAuthorize("denyAll()")// 접속 불가
     @GetMapping("/{boardId}")
     public ResponseEntity<List<ResListCommentDto>> getCommentsByBoardId(@PathVariable Long boardId) {
         return ResponseEntity.ok().body(commentService.getCommentsByBoardId(boardId)
                 .stream().map(ResListCommentDto::from).toList());
     }
 
+
+    // 아래 방식 적용시 속도 너무 느려요..
+    @PreAuthorize("denyAll()")// 접속 불가
     @GetMapping("/count/{boardId}")
     public ResponseEntity<Long> getCommentCount(@PathVariable Long boardId) {
         return ResponseEntity.ok(commentService.getCommentCount(boardId));

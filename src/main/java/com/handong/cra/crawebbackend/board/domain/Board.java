@@ -2,6 +2,7 @@ package com.handong.cra.crawebbackend.board.domain;
 
 import com.handong.cra.crawebbackend.board.dto.CreateBoardDto;
 import com.handong.cra.crawebbackend.board.dto.UpdateBoardDto;
+import com.handong.cra.crawebbackend.comment.domain.Comment;
 import com.handong.cra.crawebbackend.common.domain.BaseEntity;
 import com.handong.cra.crawebbackend.havruta.domain.Havruta;
 import com.handong.cra.crawebbackend.user.domain.User;
@@ -42,6 +43,9 @@ public class Board extends BaseEntity {
     @JoinColumn(name = "havruta_id") // 외래 키 컬럼을 설정
     private Havruta havruta;
 
+
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments;
 
     @ManyToMany(mappedBy = "likedBoards")
     private List<User> likedUsers = new ArrayList<>();
