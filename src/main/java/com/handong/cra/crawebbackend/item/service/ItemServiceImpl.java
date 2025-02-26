@@ -7,10 +7,7 @@ import com.handong.cra.crawebbackend.file.service.S3ImageService;
 import com.handong.cra.crawebbackend.exception.item.ItemNotFoundException;
 import com.handong.cra.crawebbackend.item.domain.Item;
 import com.handong.cra.crawebbackend.item.domain.ItemCategory;
-import com.handong.cra.crawebbackend.item.dto.CreateItemDto;
-import com.handong.cra.crawebbackend.item.dto.DetailItemDto;
-import com.handong.cra.crawebbackend.item.dto.ListItemDto;
-import com.handong.cra.crawebbackend.item.dto.UpdateItemDto;
+import com.handong.cra.crawebbackend.item.dto.*;
 import com.handong.cra.crawebbackend.item.repository.ItemRepository;
 import com.handong.cra.crawebbackend.user.domain.User;
 import com.handong.cra.crawebbackend.user.domain.UserRoleEnum;
@@ -98,15 +95,15 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ListItemDto> getPaginationItem(Long page, Integer perPage, Boolean isASC, ItemCategory itemCategory) {
+    public PageItemDto getPaginationItem(PageItemDataDto pageItemDataDto) {
         Sort sort = Sort.by("createdAt");
 
-        sort = (isASC) ? sort.ascending() : sort.descending();
+        sort = (pageItemDataDto.getIsASC()) ? sort.ascending() : sort.descending();
 
-        Pageable pageable = PageRequest.of(Math.toIntExact(page), perPage, sort);
-        Page<Item> pages = itemRepository.findAllByItemCategoryAndDeletedFalse(itemCategory, pageable);
+        Pageable pageable = PageRequest.of(Math.toIntExact(pageItemDataDto.getPage()), pageItemDataDto.getPerPage(), sort);
+        Page<Item> pages = itemRepository.findAllByItemCategoryAndDeletedFalse(pageItemDataDto.getItemCategory(), pageable);
 
-        return pages.stream().map(ListItemDto::from).toList();
+        return PageItemDto.of(pages.stream().map(ListItemDto::from).toList(), pages.getTotalPages());
     }
 
 
@@ -124,7 +121,7 @@ public class ItemServiceImpl implements ItemService {
         else return DetailItemDto.from(item);
     }
 
-    private void itemAuthCheck(Long userId){
+    private void itemAuthCheck(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
 
         if (!user.getRoles().hasRole(UserRoleEnum.ADMIN)) throw new AuthForbiddenActionException();

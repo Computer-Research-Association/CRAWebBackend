@@ -26,6 +26,7 @@ public class ListBoardDto {
     private Long view;
 
     private HavrutaDto havrutaDto;
+    private Integer totalPages;
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

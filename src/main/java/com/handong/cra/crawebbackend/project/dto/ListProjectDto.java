@@ -1,5 +1,6 @@
 package com.handong.cra.crawebbackend.project.dto;
 
+import com.handong.cra.crawebbackend.item.domain.ItemCategory;
 import com.handong.cra.crawebbackend.project.domain.Project;
 import lombok.*;
 
@@ -37,5 +38,17 @@ public class ListProjectDto {
 
     public static ListProjectDto from(Project project){
         return new ListProjectDto(project);
+    }
+
+    @Setter
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    @Builder
+    public static class PageItemDataDto {
+        private Long page;
+        private Integer perPage;
+        private Boolean isASC;
+        private ItemCategory itemCategory;
     }
 }

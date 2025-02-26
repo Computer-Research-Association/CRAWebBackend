@@ -1,18 +1,21 @@
 package com.handong.cra.crawebbackend.board.dto;
 
-import com.handong.cra.crawebbackend.board.domain.BoardOrderBy;
-import com.handong.cra.crawebbackend.board.domain.Category;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Setter
+import java.util.List;
+
 @Getter
+@Setter
 @AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Builder
+@NoArgsConstructor
 public class PageBoardDto {
-    private Category category;
-    private Long page;
-    private Integer perPage;
-    private BoardOrderBy orderBy;
-    private Boolean isASC;
+    private List<ListBoardDto> ListBoardDtoList;
+    private Integer totalPages;
+
+
+
+
 }

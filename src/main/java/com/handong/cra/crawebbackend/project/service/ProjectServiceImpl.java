@@ -9,10 +9,7 @@ import com.handong.cra.crawebbackend.file.service.S3ImageService;
 import com.handong.cra.crawebbackend.exception.project.ProjectNotFoundException;
 import com.handong.cra.crawebbackend.project.domain.Project;
 import com.handong.cra.crawebbackend.project.domain.ProjectOrderBy;
-import com.handong.cra.crawebbackend.project.dto.CreateProjectDto;
-import com.handong.cra.crawebbackend.project.dto.DetailProjectDto;
-import com.handong.cra.crawebbackend.project.dto.ListProjectDto;
-import com.handong.cra.crawebbackend.project.dto.UpdateProjectDto;
+import com.handong.cra.crawebbackend.project.dto.*;
 import com.handong.cra.crawebbackend.project.repository.ProjectRepository;
 import com.handong.cra.crawebbackend.user.domain.User;
 import com.handong.cra.crawebbackend.user.domain.UserRoleEnum;
@@ -45,7 +42,7 @@ public class ProjectServiceImpl implements ProjectService {
 
         projectAuthCheck(createProjectDto.getUserId());
 
-        if (createProjectDto.getSemester().length() > 4 || !createProjectDto.getSemester().contains("-")){
+        if (createProjectDto.getSemester().length() > 4 || !createProjectDto.getSemester().contains("-")) {
             throw new ProjectSemesterParseException();
         }
         Project project = Project.from(createProjectDto);
@@ -65,12 +62,12 @@ public class ProjectServiceImpl implements ProjectService {
         User user = userRepository.findById(updateProjectDto.getUserId()).orElseThrow(UserNotFoundException::new);
 
 
-        String newImgUrl= "";
+        String newImgUrl = "";
 
         // 수정됨
-        if (updateProjectDto.getImageUrl().contains("temp/")){
-            s3ImageService.transferImage(project.getImageUrl(),S3ImageCategory.DELETED);
-            newImgUrl = s3ImageService.transferImage(updateProjectDto.getImageUrl(),S3ImageCategory.PROJECT);
+        if (updateProjectDto.getImageUrl().contains("temp/")) {
+            s3ImageService.transferImage(project.getImageUrl(), S3ImageCategory.DELETED);
+            newImgUrl = s3ImageService.transferImage(updateProjectDto.getImageUrl(), S3ImageCategory.PROJECT);
             updateProjectDto.setImageUrl(newImgUrl);
         }
 
@@ -105,20 +102,20 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public List<ListProjectDto> getPaginationProject(Long page, Integer perPage, ProjectOrderBy projectOrderBy, Boolean isASC) {
+    public PageProjectDto getPaginationProject(PageProjectDataDto pageProjectDataDto) {
         HashMap<ProjectOrderBy, String> map = new HashMap<>();
         map.put(ProjectOrderBy.DATE, "createdAt");
         map.put(ProjectOrderBy.SEMESTER, "semester");
-        Sort sort = Sort.by(map.get(projectOrderBy));
-        sort = (isASC) ? sort.ascending() : sort.descending();
+        Sort sort = Sort.by(map.get(pageProjectDataDto.getProjectOrderBy()));
+        sort = (pageProjectDataDto.getIsASC()) ? sort.ascending() : sort.descending();
 
-        Pageable pageable = PageRequest.of(Math.toIntExact(page), perPage, sort);
+        Pageable pageable = PageRequest.of(Math.toIntExact(pageProjectDataDto.getPage()), pageProjectDataDto.getPerPage(), sort);
         Page<Project> projects = projectRepository.findAllByDeletedIsFalse(pageable);
 
-        return projects.stream().map(ListProjectDto::from).toList();
+        return PageProjectDto.of(projects.stream().map(ListProjectDto::from).toList(), projects.getTotalPages());
     }
 
-    private void projectAuthCheck(Long userId){
+    private void projectAuthCheck(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
 
         if (!user.getRoles().hasRole(UserRoleEnum.ADMIN)) throw new AuthForbiddenActionException();

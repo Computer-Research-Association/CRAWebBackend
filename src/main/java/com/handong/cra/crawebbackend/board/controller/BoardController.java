@@ -4,8 +4,7 @@ import com.handong.cra.crawebbackend.auth.domain.CustomUserDetails;
 import com.handong.cra.crawebbackend.board.domain.Category;
 import com.handong.cra.crawebbackend.board.domain.BoardOrderBy;
 import com.handong.cra.crawebbackend.board.dto.CreateBoardDto;
-import com.handong.cra.crawebbackend.board.dto.ListBoardDto;
-import com.handong.cra.crawebbackend.board.dto.PageBoardDto;
+import com.handong.cra.crawebbackend.board.dto.PageBoardDataDto;
 import com.handong.cra.crawebbackend.board.dto.UpdateBoardDto;
 import com.handong.cra.crawebbackend.board.dto.request.ReqCreateBoardDto;
 import com.handong.cra.crawebbackend.board.dto.request.ReqUpdateBoardDto;
@@ -30,8 +29,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/board")
@@ -135,7 +132,7 @@ public class BoardController {
             @ApiResponse(responseCode = "404", description = "Board 정보 없음", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @GetMapping("/{category}/page/{page}")
-    public ResponseEntity<List<ResListBoardDto>> getPaginationBoard(
+    public ResponseEntity<ResPageBoardDto> getPaginationBoard(
             @PathVariable Integer category,
             @PathVariable Long page, // 0부터 시작
             @RequestParam(required = false, defaultValue = "0") Integer perPage,
@@ -146,7 +143,7 @@ public class BoardController {
             throw new BoardPageSizeLimitExceededException();
         }
 
-        PageBoardDto pageBoardDto = PageBoardDto.builder()
+        PageBoardDataDto pageBoardDataDto = PageBoardDataDto.builder()
                 .category(Category.values()[category])
                 .page(page)
                 .perPage(perPage)
@@ -154,8 +151,7 @@ public class BoardController {
                 .isASC(isASC)
                 .build();
 
-        List<ListBoardDto> listBoardDtos = boardService.getPaginationBoard(pageBoardDto);
-        return ResponseEntity.ok(listBoardDtos.stream().map(ResListBoardDto::from).toList());
+        return ResponseEntity.ok(ResPageBoardDto.from(boardService.getPaginationBoard(pageBoardDataDto)));
     }
 
     @Operation(summary = "Board 생성")
@@ -211,7 +207,7 @@ public class BoardController {
             @PathVariable Long id,
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
             @RequestParam(defaultValue = "true") Boolean isLike) {
-        Integer likes  = boardService.boardLike(id, customUserDetails.getUserId(), isLike);
+        Integer likes = boardService.boardLike(id, customUserDetails.getUserId(), isLike);
 
 
         return ResponseEntity.ok(ResLikedBoardDto.of(isLike, likes));
@@ -222,10 +218,10 @@ public class BoardController {
     // Havruta Board
 
 
-    @GetMapping("/havruta")
-    public ResponseEntity<List<ResListBoardDto>> getHavrutaBoards() {
-        return ResponseEntity.ok().body(boardService.getHavrutaBoards().stream().map(ResListBoardDto::from).toList());
-    }
+//    @GetMapping("/havruta")
+//    public ResponseEntity<List<ResListBoardDto>> getHavrutaBoards() {
+//        return ResponseEntity.ok().body(boardService.getHavrutaBoards().stream().map(ResListBoardDto::from).toList());
+//    }
 
 
 //    @PreAuthorize("denyAll()")// 접속 불가
@@ -235,25 +231,24 @@ public class BoardController {
 //    }
 
     @GetMapping("/havruta/page/{page}")
-    public ResponseEntity<List<ResListBoardDto>> getPaginationAllHavrutaBoard(
+    public ResponseEntity<ResPageBoardDto> getPaginationAllHavrutaBoard(
             @PathVariable Long page,
             @RequestParam(required = false, defaultValue = "0") Integer perPage,
             @RequestParam(required = false, defaultValue = "0") Integer orderBy,
             @RequestParam(required = false, defaultValue = "true") Boolean isASC
     ) {
-        PageBoardDto pageBoardDto = PageBoardDto.builder()
+        PageBoardDataDto pageBoardDataDto = PageBoardDataDto.builder()
                 .category(Category.HAVRUTA)
                 .page(page)
                 .perPage(perPage)
                 .orderBy(BoardOrderBy.values()[orderBy])
                 .isASC(isASC)
                 .build();
-        List<ListBoardDto> listHavrutaBoardDtos = boardService.getPaginationAllHavrutaBoard(pageBoardDto);
-        return ResponseEntity.ok(listHavrutaBoardDtos.stream().map(ResListBoardDto::from).toList());
+        return ResponseEntity.ok(ResPageBoardDto.from(boardService.getPaginationAllHavrutaBoard(pageBoardDataDto)));
     }
 
     @GetMapping("/havruta/{havrutaId}/page/{page}")
-    public ResponseEntity<List<ResListBoardDto>> getPaginationHavrutaBoard(
+    public ResponseEntity<ResPageBoardDto> getPaginationHavrutaBoard(
             @PathVariable Long havrutaId,
             @PathVariable Long page,
             @RequestParam(required = false, defaultValue = "0") Integer perPage,
@@ -261,7 +256,7 @@ public class BoardController {
             @RequestParam(required = false, defaultValue = "true") Boolean isASC
     ) {
 
-        PageBoardDto pageBoardDto = PageBoardDto.builder()
+        PageBoardDataDto pageBoardDataDto = PageBoardDataDto.builder()
                 .category(Category.HAVRUTA)
                 .page(page)
                 .perPage(perPage)
@@ -269,7 +264,6 @@ public class BoardController {
                 .isASC(isASC)
                 .build();
 
-        List<ListBoardDto> listHavrutaBoardDtos = boardService.getPaginationHavrutaBoard(havrutaId, pageBoardDto);
-        return ResponseEntity.ok(listHavrutaBoardDtos.stream().map(ResListBoardDto::from).toList());
+        return ResponseEntity.ok(ResPageBoardDto.from(boardService.getPaginationHavrutaBoard(havrutaId, pageBoardDataDto)));
     }
 }

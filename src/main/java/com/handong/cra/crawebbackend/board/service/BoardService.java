@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface BoardService {
     public List<ListBoardDto> getBoardsByCategory(Category category);
-    public List<ListBoardDto> getPaginationBoard(PageBoardDto pageBoardDto);
+    public PageBoardDto getPaginationBoard(PageBoardDataDto pageBoardDataDto);
 
     public CreateBoardDto createBoard(CreateBoardDto createBoardDto);
     public UpdateBoardDto updateBoard(UpdateBoardDto updateBoardDto);
@@ -19,6 +19,6 @@ public interface BoardService {
 
     public List<ListBoardDto> getHavrutaBoards();
     public List<ListBoardDto> getHavrutaBoardsByHavrutaId(Long havrutaId);
-    public List<ListBoardDto> getPaginationAllHavrutaBoard(PageBoardDto pageBoardDto);
-    public List<ListBoardDto> getPaginationHavrutaBoard(Long havrutaId, PageBoardDto pageBoardDto);
+    public PageBoardDto getPaginationAllHavrutaBoard(PageBoardDataDto pageBoardDataDto);
+    public PageBoardDto getPaginationHavrutaBoard(Long havrutaId, PageBoardDataDto pageBoardDataDto);
 }
