@@ -63,12 +63,12 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public List<ListBoardDto> getPaginationBoard(PageBoardDto pageBoardDto) {
+    public PageBoardDto getPaginationBoard(PageBoardDataDto pageBoardDataDto) {
 
-        Pageable pageable = getPageable(pageBoardDto);
-        Page<Board> boards = boardRepository.findAllByCategoryAndDeletedFalse(pageBoardDto.getCategory(), pageable);
+        Pageable pageable = getPageable(pageBoardDataDto);
+        Page<Board> boards = boardRepository.findAllByCategoryAndDeletedFalse(pageBoardDataDto.getCategory(), pageable);
 
-        return boards.stream().map(ListBoardDto::from).toList();
+        return new PageBoardDto(boards.stream().map(ListBoardDto::from).toList(), boards.getTotalPages());
     }
 
 
@@ -224,14 +224,14 @@ public class BoardServiceImpl implements BoardService {
     }
 
 
-    private Pageable getPageable(PageBoardDto pageBoardDto) {
+    private Pageable getPageable(PageBoardDataDto pageBoardDataDto) {
         HashMap<BoardOrderBy, String> map = new HashMap<>();
         map.put(BoardOrderBy.DATE, "createdAt");
         map.put(BoardOrderBy.LIKECOUNT, "likeCount");
 
-        Sort sort = Sort.by(map.get(pageBoardDto.getOrderBy()));
-        sort = (pageBoardDto.getIsASC()) ? sort.ascending() : sort.descending();
-        return PageRequest.of(Math.toIntExact(pageBoardDto.getPage()), pageBoardDto.getPerPage(), sort);
+        Sort sort = Sort.by(map.get(pageBoardDataDto.getOrderBy()));
+        sort = (pageBoardDataDto.getIsASC()) ? sort.ascending() : sort.descending();
+        return PageRequest.of(Math.toIntExact(pageBoardDataDto.getPage()), pageBoardDataDto.getPerPage(), sort);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -257,24 +257,24 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public List<ListBoardDto> getPaginationAllHavrutaBoard(PageBoardDto pageBoardDto) {
+    public PageBoardDto getPaginationAllHavrutaBoard(PageBoardDataDto pageBoardDataDto) {
 
-        Pageable pageable = getPageable(pageBoardDto);
+        Pageable pageable = getPageable(pageBoardDataDto);
 
         Page<Board> boards = boardRepository.findByCategoryAndDeletedFalse(Category.HAVRUTA, pageable);
 
-        return boards.stream().map(ListBoardDto::from).toList();
+        return new PageBoardDto(boards.stream().map(ListBoardDto::from).toList(), boards.getTotalPages());
     }
 
     @Override
-    public List<ListBoardDto> getPaginationHavrutaBoard(Long havrutaId, PageBoardDto pageBoardDto) {
+    public PageBoardDto getPaginationHavrutaBoard(Long havrutaId, PageBoardDataDto pageBoardDataDto) {
 
-        Pageable pageable = getPageable(pageBoardDto);
+        Pageable pageable = getPageable(pageBoardDataDto);
 
         Havruta havruta = havrutaRepository.findById(havrutaId).orElseThrow();
         Page<Board> boards = boardRepository.findAllByHavrutaAndDeletedFalse(havruta, pageable);
 
-        return boards.stream().map(ListBoardDto::from).toList();
+        return new PageBoardDto(boards.stream().map(ListBoardDto::from).toList(), boards.getTotalPages());
     }
 
     private void boardAuthCheck(Long writerId, Long userId) {
