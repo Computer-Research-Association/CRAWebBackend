@@ -2,7 +2,6 @@ package com.handong.cra.crawebbackend.board.dto.response;
 
 import com.handong.cra.crawebbackend.board.domain.Category;
 import com.handong.cra.crawebbackend.board.dto.CreateBoardDto;
-import com.handong.cra.crawebbackend.board.dto.UpdateBoardDto;
 import com.handong.cra.crawebbackend.havruta.dto.HavrutaDto;
 import com.handong.cra.crawebbackend.user.dto.response.ResUserDetailDto;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -19,9 +18,6 @@ import java.util.List;
 public class ResCreateBoardDto {
     @Schema(description = "글 제목")
     private Long id;
-
-    @Schema(description = "작성자 id")
-    private Long userId;
 
     @Schema(description = "글 제목")
     private String title;
@@ -45,7 +41,6 @@ public class ResCreateBoardDto {
     public ResCreateBoardDto(CreateBoardDto createBoardDto) {
 
         this.id = createBoardDto.getId();
-        this.userId = createBoardDto.getUserId();
         this.title = createBoardDto.getTitle();
         this.content = createBoardDto.getContent();
         this.category = createBoardDto.getCategory();

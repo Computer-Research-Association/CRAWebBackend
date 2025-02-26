@@ -21,9 +21,6 @@ public class ResDetailBoardDto {
     @Schema(description = "글 id")
     private Long id;
 
-    @Schema(description = "작성자 id")
-    private Long userId;
-
     @Schema(description = "글 제목")
     private String title;
 
@@ -62,7 +59,6 @@ public class ResDetailBoardDto {
 
     public ResDetailBoardDto(DetailBoardDto detailBoardDto) {
         this.id = detailBoardDto.getId();
-        this.userId = detailBoardDto.getUserId();
         this.title = detailBoardDto.getTitle();
         this.content = detailBoardDto.getContent();
         this.category = detailBoardDto.getCategory();

@@ -14,7 +14,6 @@ import java.util.List;
 @Builder
 public class ResListCommentDto {
     private Long id;
-    private Long userId;
     private Long boardId;
     private ResUserDetailDto resUserDetailDto;
     private List<ResListCommentDto> commentList;
@@ -25,7 +24,6 @@ public class ResListCommentDto {
 
     public ResListCommentDto(ListCommentDto listCommentDto) {
         this.id = listCommentDto.getId();
-        this.userId = listCommentDto.getUserId();
         this.boardId = listCommentDto.getBoardId();
         this.resUserDetailDto = ResUserDetailDto.from(listCommentDto.getUserDetailDto());
         this.commentList = listCommentDto.getCommentDtoList().stream().filter(comment -> !comment.getDeleted()) .map(ResListCommentDto::from).toList();
