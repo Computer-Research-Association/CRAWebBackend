@@ -53,6 +53,8 @@ public class WebSecurityConfig {
 
                         // ADMIN 권한
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/backend-api-data/**").hasRole("ADMIN")
+                        .requestMatchers("/swagger-ui/**").denyAll()
 
                         // 계정 관리(아이디 찾기 등) 권한
                         .requestMatchers(HttpMethod.POST, "/api/account/**").permitAll()
