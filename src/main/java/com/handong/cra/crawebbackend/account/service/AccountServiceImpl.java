@@ -137,29 +137,32 @@ public class AccountServiceImpl implements AccountService {
         mailService.sendMimeMessage(mailSendDto);
     }
 
-    @Override
-    public List<UserDetailDto> getUsersByEntranceYear(String year, String term) {
-        List<UserDetailDto> userDetailDtos = new ArrayList<>();
-        // 기수로 찾기
-
-        if (year.isEmpty()) {
-            List<User> users = userRepository.findAllByTerm(term);
-            for (User user : users) userDetailDtos.add(UserDetailDto.from(user));
-        }
-        // 학번으로 찾기
-        else if (term.isEmpty()) {
-            List<User> users = userRepository.findByStudentCodeNative(year);
-            for (User user : users) userDetailDtos.add(UserDetailDto.from(user));
-        }
-        return userDetailDtos;
-    }
+//    @Override
+//    public List<UserDetailDto> getUsersByEntranceYear(String year, String term) {
+//        List<UserDetailDto> userDetailDtos = new ArrayList<>();
+//        // 기수로 찾기
+//
+//        if (year.isEmpty()) {
+//            List<User> users = userRepository.findAllByTerm(term);
+//            for (User user : users) userDetailDtos.add(UserDetailDto.from(user));
+//        }
+//        // 학번으로 찾기
+//        else if (term.isEmpty()) {
+//            List<User> users = userRepository.findByStudentCodeNative(year);
+//            for (User user : users) userDetailDtos.add(UserDetailDto.from(user));
+//        }
+//        return userDetailDtos;
+//    }
 
     @Override
     public void updateUserAuthById(Long userId, UserRoleEnum userRoleEnum) {
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
-
         user.getRoles().addRole(userRoleEnum);
-
     }
 
+    @Override
+    public List<UserDetailDto> findUsersByName(String name) {
+        List<User> users = userRepository.findAllByName(name);
+        return users.stream().map(UserDetailDto::from).toList();
+    }
 }

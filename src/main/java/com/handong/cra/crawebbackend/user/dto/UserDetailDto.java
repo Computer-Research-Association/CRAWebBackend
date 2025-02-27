@@ -1,6 +1,7 @@
 package com.handong.cra.crawebbackend.user.dto;
 
 import com.handong.cra.crawebbackend.user.domain.User;
+import com.handong.cra.crawebbackend.user.domain.UserRoleSet;
 import lombok.*;
 
 @Getter
@@ -15,6 +16,7 @@ public class UserDetailDto {
     private String term;
     private String githubId;
     private String imgUrl;
+    private UserRoleSet roles;
     private String greetingMessage;
     private Boolean deleted;
 
@@ -27,6 +29,7 @@ public class UserDetailDto {
         this.githubId = user.getGithubId();
         this.imgUrl = user.getImgUrl();
         this.greetingMessage = user.getGreetingMessage();
+        this.roles =user.getRoles();
         this.deleted = user.getDeleted();
     }
 

@@ -2,6 +2,7 @@ package com.handong.cra.crawebbackend.account.service;
 
 import com.handong.cra.crawebbackend.account.domain.ManageTokenCategory;
 import com.handong.cra.crawebbackend.account.dto.CodeDto;
+import com.handong.cra.crawebbackend.item.dto.response.ResAdminDetailItemDto;
 import com.handong.cra.crawebbackend.user.domain.UserRoleEnum;
 import com.handong.cra.crawebbackend.user.dto.UserDetailDto;
 import com.handong.cra.crawebbackend.user.dto.response.ResUserDetailDto;
@@ -24,7 +25,9 @@ public interface AccountService {
 
     public void emailValidCheck(String email);
 
-    public List<UserDetailDto> getUsersByEntranceYear(String year, String term);
+//    public List<UserDetailDto> getUsersByEntranceYear(String year, String term);
 
     public void updateUserAuthById(Long userId, UserRoleEnum userRoleEnum);
+
+    public List<UserDetailDto> findUsersByName(String name);
 }

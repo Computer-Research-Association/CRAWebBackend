@@ -27,8 +27,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     public List<User> findAllByLastLoginAtBeforeAndDeletedTrue(LocalDateTime time); // 삭제 대상
 
-    @Query(value = "SELECT * FROM user " + "WHERE SUBSTRING(student_id, 2, 2) = :entranceYear", nativeQuery = true)
-    public List<User> findByStudentCodeNative(@Param("entranceYear") String entranceYear);
+    public List<User> findAllByName(String name);
 
-    public List<User> findAllByTerm(String term);
+
+//    @Query(value = "SELECT * FROM user " + "WHERE SUBSTRING(student_id, 2, 2) = :entranceYear", nativeQuery = true)
+//    public List<User> findByStudentCodeNative(@Param("entranceYear") String entranceYear);
+
+//    public List<User> findAllByTerm(String term);
 }

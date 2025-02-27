@@ -4,7 +4,7 @@ package com.handong.cra.crawebbackend.account.controller;
 import com.handong.cra.crawebbackend.account.dto.response.ResCodeDto;
 import com.handong.cra.crawebbackend.account.service.AccountService;
 import com.handong.cra.crawebbackend.user.domain.UserRoleEnum;
-import com.handong.cra.crawebbackend.user.dto.response.ResUserDetailDto;
+import com.handong.cra.crawebbackend.user.dto.response.ResUserAdminDetailDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -25,22 +25,32 @@ public class AccountAdminController {
         return ResponseEntity.ok(accountService.generateSignupCodes(length).stream().map(ResCodeDto::from).toList());
     }
 
-    @GetMapping("/users")
-    public ResponseEntity<List<ResUserDetailDto>> getUsersByEntranceYear(@RequestParam(required = false, defaultValue = "") String year, @RequestParam(required = false, defaultValue = "") String term) {
-        if (year.isEmpty() && term.isEmpty()) throw new RuntimeException("test");
-        return ResponseEntity.ok(accountService.getUsersByEntranceYear(year, term).stream().map(ResUserDetailDto::from).toList());
+//    @GetMapping("/users")
+//    public ResponseEntity<List<ResUserDetailDto>> getUsersByEntranceYear(@RequestParam(required = false, defaultValue = "") String year, @RequestParam(required = false, defaultValue = "") String term) {
+//        if (year.isEmpty() && term.isEmpty()) throw new RuntimeException("test");
+//        return ResponseEntity.ok(accountService.getUsersByEntranceYear(year, term).stream().map(ResUserDetailDto::from).toList());
+//    }
+
+    @GetMapping("/users/search")
+    public ResponseEntity<List<ResUserAdminDetailDto>> findUsersByName(@RequestParam(required = false, defaultValue = "") String name) {
+        return ResponseEntity.ok(accountService.findUsersByName(name).stream().map(ResUserAdminDetailDto::from).toList());
     }
 
+    // TODO : admin을 뺴야 하는 경우 ?
     @PutMapping("/users/{userId}")
     public ResponseEntity<Void> updateUserAuthById(@PathVariable Long userId, @RequestParam Integer authOption) {
         accountService.updateUserAuthById(userId, UserRoleEnum.values()[authOption]);
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/users/{userId}")
-    public ResponseEntity<Void> deleteUserById(@PathVariable Long userId){
+    //TODO 휴면 해제
 
-         // 구현중
+
+
+    @DeleteMapping("/users/{userId}")
+    public ResponseEntity<Void> deleteUserById(@PathVariable Long userId) {
+
+        // 구현중
         return ResponseEntity.ok().build();
     }
 }
