@@ -11,7 +11,7 @@ import com.handong.cra.crawebbackend.board.dto.request.ReqUpdateBoardDto;
 import com.handong.cra.crawebbackend.board.dto.response.*;
 import com.handong.cra.crawebbackend.board.service.BoardService;
 import com.handong.cra.crawebbackend.exception.ErrorResponse;
-import com.handong.cra.crawebbackend.exception.board.BoardPageSizeLimitExceededException;
+import com.handong.cra.crawebbackend.exception.board.PageSizeLimitExceededException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
@@ -140,7 +140,7 @@ public class BoardController {
             @RequestParam(required = false, defaultValue = "true") Boolean isASC
     ) {
         if (perPage > MAX_PAGE_SIZE) {
-            throw new BoardPageSizeLimitExceededException();
+            throw new PageSizeLimitExceededException();
         }
 
         PageBoardDataDto pageBoardDataDto = PageBoardDataDto.builder()

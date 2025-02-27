@@ -10,10 +10,12 @@ public enum ErrorCode {
     NOT_FOUND_ERROR(HttpStatus.NOT_FOUND, "E3", "잘못된 URL 요청입니다."),
     BAD_REQUEST_ERROR(HttpStatus.BAD_REQUEST, "E4", "잘못된 요청입니다."),
 
+    PAGE_SIZE_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST, "PG1", "비정상적으로 큰 Per page 값입니다."),
+    
     BOARD_NOT_FOUND(HttpStatus.NOT_FOUND, "B1", "존재하지 않는 게시글입니다."),
     BOARD_LIKE_BAD_REQUEST(HttpStatus.BAD_REQUEST, "B2", "잘못된 게시글 좋아요 요청입니다."),
     BOARD_ILLEGAL_CATEGORY(HttpStatus.BAD_REQUEST, "B3", "잘못된 게시글 카테고리입니다."),
-    BOARD_PAGE_SIZE_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST, "B4", "비정상적으로 큰 Per page 값입니다."),
+    
 
     COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "C1", "존재하지 않는 댓글입니다."),
     COMMENT_NESTED_REPLY_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "C2", "2차 대댓글은 허용되지 않습니다."),
