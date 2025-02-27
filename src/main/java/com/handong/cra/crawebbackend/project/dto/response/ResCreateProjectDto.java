@@ -42,7 +42,6 @@ public class ResCreateProjectDto {
     }
 
     public static ResCreateProjectDto of(CreateProjectDto createProjectDto) {
-        if (createProjectDto.getId() == null) throw new ProjectNotFoundException();
-        else return new ResCreateProjectDto(createProjectDto);
+        return new ResCreateProjectDto(createProjectDto);
     }
 }
