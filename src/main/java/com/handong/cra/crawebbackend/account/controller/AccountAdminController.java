@@ -66,11 +66,16 @@ public class AccountAdminController {
 
     //TODO 휴면 해제
 
+    @PutMapping("/users/active")
+    public ResponseEntity<Void> activeAccount(@RequestParam Long userId) {
+        accountService.activeAccount(userId);
+        return ResponseEntity.ok().build();
+    }
+
 
     @DeleteMapping("/users/{userId}")
     public ResponseEntity<Void> deleteUserById(@PathVariable Long userId) {
-
-        // 구현중
+        accountService.deleteUser(userId);
         return ResponseEntity.ok().build();
     }
 }

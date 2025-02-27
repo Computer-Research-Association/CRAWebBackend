@@ -14,7 +14,7 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class User extends BaseEntity{
+public class User extends BaseEntity {
     @Column(nullable = false, unique = true)
     private String username;
 
@@ -39,7 +39,7 @@ public class User extends BaseEntity{
     @Column(nullable = false)
     private String term;
 
-//    @Column(nullable = false)
+    //    @Column(nullable = false)
     private String greetingMessage;
 
     @Setter
@@ -57,7 +57,9 @@ public class User extends BaseEntity{
     @Setter
     private LocalDateTime lastLoginAt;
 
-
+    public void activeUser() {
+        super.setDeleted(false);
+    }
 
     public User(String username, String name, String password, String githubId, String email, UserRoleSet role, String studentId, String term) {
         this.username = username;
@@ -85,16 +87,17 @@ public class User extends BaseEntity{
         return new User(signupDto);
     }
 
-    public void likeBoard(Board board){
+    public void likeBoard(Board board) {
         this.likedBoards.add(board);
     }
-    public void unlikeBoard(Board board){
+
+    public void unlikeBoard(Board board) {
         this.likedBoards.remove(board);
 
     }
 
 
-    public User update(UpdateUserDto updateUserDto){
+    public User update(UpdateUserDto updateUserDto) {
         this.name = updateUserDto.getName();
         this.studentId = updateUserDto.getStudentId();
         this.term = updateUserDto.getTerm();

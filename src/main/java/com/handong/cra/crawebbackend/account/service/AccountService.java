@@ -36,4 +36,8 @@ public interface AccountService {
     public List<UserDetailDto> findUsersByName(String name);
 
     public PageUserDto getPaginationUser(PageUserDataDto pageUserDataDto);
+
+    public Boolean activeAccount(Long userId);
+
+    public Boolean deleteUser(Long userId);
 }
