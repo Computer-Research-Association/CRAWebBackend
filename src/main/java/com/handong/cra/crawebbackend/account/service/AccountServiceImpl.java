@@ -13,11 +13,17 @@ import com.handong.cra.crawebbackend.mail.domain.MailSendDto;
 import com.handong.cra.crawebbackend.mail.service.MailService;
 import com.handong.cra.crawebbackend.user.domain.User;
 import com.handong.cra.crawebbackend.user.domain.UserRoleEnum;
+import com.handong.cra.crawebbackend.user.dto.PageUserDataDto;
+import com.handong.cra.crawebbackend.user.dto.PageUserDto;
 import com.handong.cra.crawebbackend.user.dto.UserDetailDto;
 import com.handong.cra.crawebbackend.user.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -137,29 +143,62 @@ public class AccountServiceImpl implements AccountService {
         mailService.sendMimeMessage(mailSendDto);
     }
 
-    @Override
-    public List<UserDetailDto> getUsersByEntranceYear(String year, String term) {
-        List<UserDetailDto> userDetailDtos = new ArrayList<>();
-        // 기수로 찾기
+//    @Override
+//    public List<UserDetailDto> getUsersByEntranceYear(String year, String term) {
+//        List<UserDetailDto> userDetailDtos = new ArrayList<>();
+//        // 기수로 찾기
+//
+//        if (year.isEmpty()) {
+//            List<User> users = userRepository.findAllByTerm(term);
+//            for (User user : users) userDetailDtos.add(UserDetailDto.from(user));
+//        }
+//        // 학번으로 찾기
+//        else if (term.isEmpty()) {
+//            List<User> users = userRepository.findByStudentCodeNative(year);
+//            for (User user : users) userDetailDtos.add(UserDetailDto.from(user));
+//        }
+//        return userDetailDtos;
+//    }
 
-        if (year.isEmpty()) {
-            List<User> users = userRepository.findAllByTerm(term);
-            for (User user : users) userDetailDtos.add(UserDetailDto.from(user));
-        }
-        // 학번으로 찾기
-        else if (term.isEmpty()) {
-            List<User> users = userRepository.findByStudentCodeNative(year);
-            for (User user : users) userDetailDtos.add(UserDetailDto.from(user));
-        }
-        return userDetailDtos;
-    }
 
     @Override
-    public void updateUserAuthById(Long userId, UserRoleEnum userRoleEnum) {
+    @Transactional
+    public void addUserAuthById(Long userId, UserRoleEnum userRoleEnum) {
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
-
         user.getRoles().addRole(userRoleEnum);
-
     }
 
+    @Override
+    @Transactional
+    public void removeUserAuthById(Long userId, UserRoleEnum userRoleEnum) {
+        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+        user.getRoles().removeRole(userRoleEnum);
+    }
+
+    @Override
+    public List<UserDetailDto> findUsersByName(String name) {
+        List<User> users = userRepository.findAllByName(name);
+        return users.stream().map(UserDetailDto::from).toList();
+    }
+
+    @Override
+    public PageUserDto getPaginationUser(PageUserDataDto pageUserDataDto) {
+        Page<User> users = userRepository.findAll(PageRequest.of(Math.toIntExact(pageUserDataDto.getPage()), pageUserDataDto.getPerPage()));
+        return PageUserDto.of(users.stream().map(UserDetailDto::from).toList(), users.getTotalPages());
+    }
+
+    @Override
+    @Transactional
+    public Boolean activeAccount(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+        user.activeUser();
+        return true;
+    }
+
+    @Override
+    @Transactional
+    public Boolean deleteUser(Long userId) {
+        userRepository.deleteById(userId);
+        return true;
+    }
 }
