@@ -1,7 +1,10 @@
 package com.handong.cra.crawebbackend.user.repository;
 
 import com.handong.cra.crawebbackend.board.domain.Board;
+import com.handong.cra.crawebbackend.board.domain.Category;
 import com.handong.cra.crawebbackend.user.domain.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -29,6 +32,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     public List<User> findAllByName(String name);
 
+//    public Page<User> (Pageable pageable);
 
 //    @Query(value = "SELECT * FROM user " + "WHERE SUBSTRING(student_id, 2, 2) = :entranceYear", nativeQuery = true)
 //    public List<User> findByStudentCodeNative(@Param("entranceYear") String entranceYear);

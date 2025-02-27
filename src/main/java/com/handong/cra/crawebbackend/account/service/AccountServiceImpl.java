@@ -13,11 +13,16 @@ import com.handong.cra.crawebbackend.mail.domain.MailSendDto;
 import com.handong.cra.crawebbackend.mail.service.MailService;
 import com.handong.cra.crawebbackend.user.domain.User;
 import com.handong.cra.crawebbackend.user.domain.UserRoleEnum;
+import com.handong.cra.crawebbackend.user.dto.PageUserDataDto;
+import com.handong.cra.crawebbackend.user.dto.PageUserDto;
 import com.handong.cra.crawebbackend.user.dto.UserDetailDto;
 import com.handong.cra.crawebbackend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -154,6 +159,7 @@ public class AccountServiceImpl implements AccountService {
 //        return userDetailDtos;
 //    }
 
+
     @Override
     public void updateUserAuthById(Long userId, UserRoleEnum userRoleEnum) {
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
@@ -164,5 +170,16 @@ public class AccountServiceImpl implements AccountService {
     public List<UserDetailDto> findUsersByName(String name) {
         List<User> users = userRepository.findAllByName(name);
         return users.stream().map(UserDetailDto::from).toList();
+    }
+
+    @Override
+    public PageUserDto getPaginationUser(PageUserDataDto pageUserDataDto) {
+
+
+        Page<User> users = userRepository.findAll(PageRequest.of(Math.toIntExact(pageUserDataDto.getPage()), pageUserDataDto.getPerPage()));
+
+
+
+        return PageUserDto.of(users.stream().map(UserDetailDto::from).toList(), users.getTotalPages());
     }
 }
