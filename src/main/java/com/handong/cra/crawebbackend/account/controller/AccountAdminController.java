@@ -57,14 +57,19 @@ public class AccountAdminController {
         return ResponseEntity.ok(accountService.findUsersByName(name).stream().map(ResUserAdminDetailDto::from).toList());
     }
 
-    // TODO : admin을 뺴야 하는 경우 ?
-    @PutMapping("/users/{userId}")
-    public ResponseEntity<Void> updateUserAuthById(@PathVariable Long userId, @RequestParam Integer authOption) {
-        accountService.updateUserAuthById(userId, UserRoleEnum.values()[authOption]);
+    @PutMapping("/users/auth")
+    public ResponseEntity<Void> addUserAuthById(@RequestParam Long userId, @RequestParam Integer authOption) {
+        accountService.addUserAuthById(userId, UserRoleEnum.values()[authOption]);
         return ResponseEntity.ok().build();
     }
 
-    //TODO 휴면 해제
+
+    @DeleteMapping("/users/auth")
+    public ResponseEntity<Void> removeUserAuthById(@RequestParam Long userId, @RequestParam Integer authOption) {
+        accountService.removeUserAuthById(userId, UserRoleEnum.values()[authOption]);
+        return ResponseEntity.ok().build();
+    }
+
 
     @PutMapping("/users/active")
     public ResponseEntity<Void> activeAccount(@RequestParam Long userId) {

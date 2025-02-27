@@ -52,7 +52,7 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests((authorize) -> authorize
 
                         // ADMIN 권한
-//                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/backend-api-data/**").hasRole("ADMIN")
                         .requestMatchers("/swagger-ui/**").denyAll()
 
@@ -66,9 +66,9 @@ public class WebSecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll()
 
                         // 기본 권한
-//                        .requestMatchers(HttpMethod.POST, "/api/**").hasAnyRole("USER", "ADMIN")
-//                        .requestMatchers(HttpMethod.PUT, "/api/**").hasAnyRole("USER", "ADMIN")
-//                        .requestMatchers(HttpMethod.DELETE, "/api/**").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/**").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/**").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/**").hasAnyRole("USER", "ADMIN")
                         .anyRequest().permitAll())
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .sessionManagement(session -> session

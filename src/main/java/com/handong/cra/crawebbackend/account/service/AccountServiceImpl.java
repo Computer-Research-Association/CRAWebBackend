@@ -162,9 +162,17 @@ public class AccountServiceImpl implements AccountService {
 
 
     @Override
-    public void updateUserAuthById(Long userId, UserRoleEnum userRoleEnum) {
+    @Transactional
+    public void addUserAuthById(Long userId, UserRoleEnum userRoleEnum) {
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         user.getRoles().addRole(userRoleEnum);
+    }
+
+    @Override
+    @Transactional
+    public void removeUserAuthById(Long userId, UserRoleEnum userRoleEnum) {
+        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+        user.getRoles().removeRole(userRoleEnum);
     }
 
     @Override

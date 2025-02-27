@@ -31,7 +31,8 @@ public interface AccountService {
 
 //    public List<UserDetailDto> getUsersByEntranceYear(String year, String term);
 
-    public void updateUserAuthById(Long userId, UserRoleEnum userRoleEnum);
+    public void addUserAuthById(Long userId, UserRoleEnum userRoleEnum);
+    public void removeUserAuthById(Long userId, UserRoleEnum userRoleEnum);
 
     public List<UserDetailDto> findUsersByName(String name);
 

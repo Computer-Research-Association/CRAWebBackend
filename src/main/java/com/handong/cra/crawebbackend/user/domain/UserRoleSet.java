@@ -23,6 +23,10 @@ public class UserRoleSet {
         if (!roles.contains(userRoleEnum)) this.roles.add(userRoleEnum);
     }
 
+    public void removeRole(UserRoleEnum userRoleEnum){
+        if (roles.contains(userRoleEnum)) this.roles.remove(userRoleEnum);
+    }
+
     public UserRoleSet(final Collection<UserRoleEnum> roles) {
         this.roles.addAll(roles);
     }
