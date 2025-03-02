@@ -65,12 +65,12 @@ public class JwtTokenProvider {
     }
 
     public TokenDto generateTokenByLogin(String username) {
-        User user = userRepository.findByUsername(username);
-        Long userId = user.getId();
-        UserRoleSet roles = user.getRoles();
-        String refreshToken = generateToken(userId, refreshExpiration, roles);
-        refreshTokenRepository.save(new RefreshToken(userId, refreshToken));
-        return TokenDto.of(userId, null, refreshToken);
+        final User user = userRepository.findByUsername(username);
+        final Long userId = user.getId();
+        final UserRoleSet roles = user.getRoles();
+        final String refreshToken = generateToken(userId, refreshExpiration, roles);
+        final RefreshToken newRefreshToken = refreshTokenRepository.save(new RefreshToken(userId, refreshToken));
+        return TokenDto.of(newRefreshToken.getUserId(), null, newRefreshToken.getRefreshToken());
     }
 
     @Transactional
@@ -78,12 +78,12 @@ public class JwtTokenProvider {
         RefreshToken savedToken = refreshTokenRepository.findByRefreshToken(reissueTokenDto.getRefreshToken());
 
         // 만료되었는지 검사
-        if(savedToken == null)
+        if (savedToken == null)
             return TokenDto.of(null, "expired", "expired");
-        else if(!validateToken(reissueTokenDto.getRefreshToken()))
-           return TokenDto.of(null, "expired", "expired");
+        else if (!validateToken(reissueTokenDto.getRefreshToken()))
+            return TokenDto.of(null, "expired", "expired");
 
-        // 잘못된 토큰
+            // 잘못된 토큰
         else if (!savedToken.getRefreshToken().equals(reissueTokenDto.getRefreshToken()))
             return TokenDto.of(null, "invalid", "invalid");
 
@@ -91,7 +91,7 @@ public class JwtTokenProvider {
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         UserRoleSet roles = user.getRoles();
 
-        String accessToken = generateToken(reissueTokenDto.getUserId(), accessExpiration, roles);
+        String accessToken = generateToken(userId, accessExpiration, roles);
         return TokenDto.of(userId, accessToken, null);
     }
 
@@ -103,7 +103,7 @@ public class JwtTokenProvider {
             Jwts.parser().verifyWith(jwtSecretKey).build().parseSignedClaims(token);
             return true;
         } catch (JwtException | IllegalArgumentException e) {
-            return  false;
+            return false;
         }
     }
 

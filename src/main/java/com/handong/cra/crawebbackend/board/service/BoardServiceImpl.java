@@ -188,11 +188,9 @@ public class BoardServiceImpl implements BoardService {
         if (user != null) {
             viewerLiked = user.getLikedBoards().contains(board);
             return DetailBoardDto.from(board, viewerLiked);
-        } else { // 로그인 안되어있을때
-            // 공지 이외 확인 불가
-            if (!board.getCategory().equals(Category.NOTICE)) throw new AuthForbiddenActionException();
         }
 
+        if (!board.getCategory().equals(Category.NOTICE)) throw new AuthForbiddenActionException();
         return DetailBoardDto.from(board, board.getComments());
 
     }
