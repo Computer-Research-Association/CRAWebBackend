@@ -179,10 +179,7 @@ public class BoardServiceImpl implements BoardService {
 
         if (userId != null) user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
 
-        Board board = boardRepository.findBoardByIdAndDeletedFalse(id);
-
-        // 글이 없으면 404
-        if (board == null) throw new BoardNotFoundException();
+        Board board = boardRepository.findBoardByIdAndDeletedFalse(id).orElseThrow(BoardNotFoundException::new);
 
         // 로그인 되어있다면
         if (user != null) {

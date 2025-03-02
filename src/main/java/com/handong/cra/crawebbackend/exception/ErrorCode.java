@@ -15,7 +15,10 @@ public enum ErrorCode {
     BOARD_NOT_FOUND(HttpStatus.NOT_FOUND, "B1", "존재하지 않는 게시글입니다."),
     BOARD_LIKE_BAD_REQUEST(HttpStatus.BAD_REQUEST, "B2", "잘못된 게시글 좋아요 요청입니다."),
     BOARD_ILLEGAL_CATEGORY(HttpStatus.BAD_REQUEST, "B3", "잘못된 게시글 카테고리입니다."),
-    
+
+    BOARD_PIN_NOT_FOUND(HttpStatus.NOT_FOUND, "BP1", "존재하지 않는 고정 게시글입니다."),
+    BOARD_PIN_DUPLICATED(HttpStatus.BAD_REQUEST, "BP2", "이미 지정된 고정 게시글 입니다."),
+
 
     COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "C1", "존재하지 않는 댓글입니다."),
     COMMENT_NESTED_REPLY_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "C2", "2차 대댓글은 허용되지 않습니다."),
