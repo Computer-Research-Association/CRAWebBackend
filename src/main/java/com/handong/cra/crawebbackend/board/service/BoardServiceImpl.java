@@ -230,6 +230,18 @@ public class BoardServiceImpl implements BoardService {
         sort = (pageBoardDataDto.getIsASC()) ? sort.ascending() : sort.descending();
         return PageRequest.of(Math.toIntExact(pageBoardDataDto.getPage()), pageBoardDataDto.getPerPage(), sort);
     }
+
+    @Override
+    public PageBoardDto searchPaginationBoardsByKeyword(final PageBoardDataDto pageBoardDataDto, final String keyword) {
+        final Pageable pageable = getPageable(pageBoardDataDto);
+        final Page<Board> boards = boardRepository.findByTitleContainingOrContentContainingAndDeletedFalse(keyword, keyword, pageable);
+        return PageBoardDto.builder()
+                .listBoardDtos((!boards.isEmpty()) ? boards.stream().map(ListBoardDto::from).toList() : List.of())
+                .totalPages(boards.getTotalPages())
+                .build();
+        // TODO : spring casing
+    }
+
     private void boardAuthCheck(Long writerId, Long userId) {
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         if (!writerId.equals(userId) && !user.getRoles().hasRole(UserRoleEnum.ADMIN))

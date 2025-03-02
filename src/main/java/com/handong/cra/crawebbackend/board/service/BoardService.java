@@ -24,4 +24,6 @@ public interface BoardService {
     public Integer boardLike(Long boardId, Long userId, Boolean isLiked);
 
     public Pageable getPageable(PageBoardDataDto pageBoardDataDto);
+
+    public PageBoardDto searchPaginationBoardsByKeyword(PageBoardDataDto pageBoardDataDto, String keyword);
 }
