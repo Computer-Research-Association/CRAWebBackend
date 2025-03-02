@@ -65,7 +65,12 @@ public class WebSecurityConfig {
                         // 가입, 로그인 등 권한
                         .requestMatchers("/api/auth/**").permitAll()
 
+                        // 공지는 확인 가능
+                        .requestMatchers(HttpMethod.GET, "/api/board/0/page/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/board/view/**").permitAll()
+
                         // 기본 권한
+                        .requestMatchers(HttpMethod.GET, "/api/**").hasAnyRole("USER", "ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/**").hasAnyRole("USER", "ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/**").hasAnyRole("USER", "ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/**").hasAnyRole("USER", "ADMIN")

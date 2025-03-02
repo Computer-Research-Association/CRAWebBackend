@@ -10,6 +10,7 @@ import com.handong.cra.crawebbackend.board.dto.request.ReqCreateBoardDto;
 import com.handong.cra.crawebbackend.board.dto.request.ReqUpdateBoardDto;
 import com.handong.cra.crawebbackend.board.dto.response.*;
 import com.handong.cra.crawebbackend.board.service.BoardService;
+import com.handong.cra.crawebbackend.board.service.HavrutaBoardService;
 import com.handong.cra.crawebbackend.exception.ErrorResponse;
 import com.handong.cra.crawebbackend.exception.board.PageSizeLimitExceededException;
 import io.swagger.v3.oas.annotations.Operation;
@@ -37,6 +38,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Tag(name = "Board API", description = "Board 관련 컨트롤러.")
 public class BoardController {
     private final BoardService boardService;
+    private final HavrutaBoardService havrutaBoardService;
 
     @Value("${spring.data.page.MAX_PER_PAGE}")
     private Integer MAX_PAGE_SIZE;
@@ -244,7 +246,7 @@ public class BoardController {
                 .orderBy(BoardOrderBy.values()[orderBy])
                 .isASC(isASC)
                 .build();
-        return ResponseEntity.ok(ResPageBoardDto.from(boardService.getPaginationAllHavrutaBoard(pageBoardDataDto)));
+        return ResponseEntity.ok(ResPageBoardDto.from(havrutaBoardService.getPaginationAllHavrutaBoard(pageBoardDataDto)));
     }
 
     @GetMapping("/havruta/{havrutaId}/page/{page}")
@@ -264,6 +266,6 @@ public class BoardController {
                 .isASC(isASC)
                 .build();
 
-        return ResponseEntity.ok(ResPageBoardDto.from(boardService.getPaginationHavrutaBoard(havrutaId, pageBoardDataDto)));
+        return ResponseEntity.ok(ResPageBoardDto.from(havrutaBoardService.getPaginationHavrutaBoard(havrutaId, pageBoardDataDto)));
     }
 }

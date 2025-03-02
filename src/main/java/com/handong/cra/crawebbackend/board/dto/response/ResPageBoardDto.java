@@ -1,24 +1,23 @@
 package com.handong.cra.crawebbackend.board.dto.response;
 
 import com.handong.cra.crawebbackend.board.dto.PageBoardDto;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 
 @Setter
 @Getter
-@AllArgsConstructor
-@NoArgsConstructor
+@Builder
 public class ResPageBoardDto {
-    private List<ResListBoardDto> resListBoardDtoList;
+    private List<ResListBoardDto> resListBoardDtos;
+    private List<ResBoardPinDto> resBoardPinDtos;
     private Integer totalPages;
 
     public static ResPageBoardDto from(PageBoardDto pageBoardDto) {
-        return new ResPageBoardDto(
-                pageBoardDto.getListBoardDtoList().stream().map(ResListBoardDto::from).toList(),
-                pageBoardDto.getTotalPages());
+        return builder()
+                .resListBoardDtos(pageBoardDto.getListBoardDtos().stream().map(ResListBoardDto::from).toList())
+                .resBoardPinDtos(pageBoardDto.getBoardPinDtos().stream().map(ResBoardPinDto::from).toList())
+                .totalPages(pageBoardDto.getTotalPages())
+                .build();
     }
 }
