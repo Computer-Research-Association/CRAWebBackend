@@ -1,10 +1,7 @@
 package com.handong.cra.crawebbackend.user.service;
 
 import com.handong.cra.crawebbackend.auth.dto.SignupDto;
-import com.handong.cra.crawebbackend.user.dto.LoginUserDto;
-import com.handong.cra.crawebbackend.user.dto.UpdateUserDto;
-import com.handong.cra.crawebbackend.user.dto.UpdateUserPasswordDto;
-import com.handong.cra.crawebbackend.user.dto.UserDetailDto;
+import com.handong.cra.crawebbackend.user.dto.*;
 
 public interface UserService {
     public Boolean isUserExist(String username);

@@ -26,6 +26,9 @@ import lombok.RequiredArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.PageRequest;
@@ -62,6 +65,7 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
+    @Cacheable(value = "boards", key = "#pageBoardDataDto.page + '-' + #pageBoardDataDto.perPage + '-' + #pageBoardDataDto.orderBy")
     public PageBoardDto getPaginationBoard(final PageBoardDataDto pageBoardDataDto) {
         final Pageable pageable = getPageable(pageBoardDataDto);
         final Page<Board> boards = boardRepository.findAllByCategoryAndDeletedFalse(pageBoardDataDto.getCategory(), pageable);
@@ -75,6 +79,7 @@ public class BoardServiceImpl implements BoardService {
 
 
     @Override
+    @CachePut(value = "boards", key = "#createBoardDto.id")
     @Transactional
     public CreateBoardDto createBoard(CreateBoardDto createBoardDto) {
 
@@ -110,6 +115,7 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
+    @CachePut(value = "boards", key = "#updateBoardDto.id")
     @Transactional
     public UpdateBoardDto updateBoard(UpdateBoardDto updateBoardDto) {
         Board board = boardRepository.findById(updateBoardDto.getId()).orElseThrow(BoardNotFoundException::new);
@@ -158,6 +164,7 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
+    @CacheEvict(value = "boards", key = "#updateBoardDto.id")
     @Transactional
     public Boolean deleteBoardById(UpdateBoardDto updateBoardDto) {
         Board board = boardRepository.findById(updateBoardDto.getId()).orElseThrow(BoardNotFoundException::new);
@@ -174,6 +181,7 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
+    @Cacheable(value = "boards", key = "#id")
     public DetailBoardDto getDetailBoardById(Long id, Long userId) {
         // 확인하는 유저가 좋아요 누른 글인지 확인
         User user = null;

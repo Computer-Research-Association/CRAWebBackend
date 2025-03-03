@@ -30,17 +30,10 @@ import java.util.List;
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig {
-    private final JwtTokenProvider jwtTokenProvider;
-    private final CustomUserDetailsService userDetailsService;
-    private final UserRepository userRepository;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Value("${site.frontend.url}")
     private String frontUrl;
-
-    @Bean
-    public JwtAuthenticationFilter jwtAuthenticationFilter() {
-        return new JwtAuthenticationFilter(jwtTokenProvider, userDetailsService, userRepository);
-    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -52,30 +45,30 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests((authorize) -> authorize
 
                         // ADMIN 권한
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/api/backend-api-data/**").hasRole("ADMIN")
-                        .requestMatchers("/swagger-ui/**").denyAll()
-
-                        // 계정 관리(아이디 찾기 등) 권한
-                        .requestMatchers(HttpMethod.POST, "/api/account/**").permitAll()
-
-                        // 비밀번호 변경 권한
-                        .requestMatchers(HttpMethod.PUT, "/api/user/password-change").permitAll()
-
-                        // 가입, 로그인 등 권한
-                        .requestMatchers("/api/auth/**").permitAll()
-
-                        // 공지는 확인 가능
-                        .requestMatchers(HttpMethod.GET, "/api/board/0/page/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/board/view/**").permitAll()
-
-                        // 기본 권한
-                        .requestMatchers(HttpMethod.GET, "/api/**").hasAnyRole("USER", "ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/api/**").hasAnyRole("USER", "ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/**").hasAnyRole("USER", "ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/api/**").hasAnyRole("USER", "ADMIN")
+//                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+//                        .requestMatchers("/api/backend-api-data/**").hasRole("ADMIN")
+//                        .requestMatchers("/swagger-ui/**").denyAll()
+//
+//                        // 계정 관리(아이디 찾기 등) 권한
+//                        .requestMatchers(HttpMethod.POST, "/api/account/**").permitAll()
+//
+//                        // 비밀번호 변경 권한
+//                        .requestMatchers(HttpMethod.PUT, "/api/user/password-change").permitAll()
+//
+//                        // 가입, 로그인 등 권한
+//                        .requestMatchers("/api/auth/**").permitAll()
+//
+//                        // 공지는 확인 가능
+//                        .requestMatchers(HttpMethod.GET, "/api/board/0/page/**").permitAll()
+//                        .requestMatchers(HttpMethod.GET, "/api/board/view/**").permitAll()
+//
+//                        // 기본 권한
+//                        .requestMatchers(HttpMethod.GET, "/api/**").hasAnyRole("USER", "ADMIN")
+//                        .requestMatchers(HttpMethod.POST, "/api/**").hasAnyRole("USER", "ADMIN")
+//                        .requestMatchers(HttpMethod.PUT, "/api/**").hasAnyRole("USER", "ADMIN")
+//                        .requestMatchers(HttpMethod.DELETE, "/api/**").hasAnyRole("USER", "ADMIN")
                         .anyRequest().permitAll())
-                .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 );

@@ -11,21 +11,19 @@ import com.handong.cra.crawebbackend.file.service.S3ImageService;
 import com.handong.cra.crawebbackend.exception.user.UserNotFoundException;
 import com.handong.cra.crawebbackend.user.domain.User;
 import com.handong.cra.crawebbackend.user.domain.UserRoleEnum;
-import com.handong.cra.crawebbackend.user.dto.LoginUserDto;
-import com.handong.cra.crawebbackend.user.dto.UpdateUserDto;
-import com.handong.cra.crawebbackend.user.dto.UpdateUserPasswordDto;
-import com.handong.cra.crawebbackend.user.dto.UserDetailDto;
+import com.handong.cra.crawebbackend.user.dto.*;
 import com.handong.cra.crawebbackend.user.repository.UserRepository;
 import com.handong.cra.crawebbackend.util.AESUtill;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -40,7 +38,6 @@ public class UserServiceImpl implements UserService {
     private final S3ImageService s3ImageService;
     private final AccountService accountService;
     private final PasswordEncoder passwordEncoder;
-
 
     @Override
     public Boolean isUserExist(String username) {
@@ -83,6 +80,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @CacheEvict(value = "users", key = "#updateUserDto.id")
     @Transactional
     public UpdateUserDto updateUserInfo(UpdateUserDto updateUserDto) {
 
@@ -94,6 +92,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Cacheable(value = "userDetails", key = "#username")
     public UserDetailDto getUserDetailByUsername(String username) {
         User user = userRepository.findByUsername(username);
         if (user == null) throw new UserNotFoundException();

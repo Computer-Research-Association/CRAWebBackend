@@ -4,6 +4,8 @@ import com.handong.cra.crawebbackend.auth.domain.CustomUserDetails;
 import com.handong.cra.crawebbackend.auth.service.CustomUserDetailsService;
 import com.handong.cra.crawebbackend.user.domain.User;
 import com.handong.cra.crawebbackend.user.repository.UserRepository;
+import com.handong.cra.crawebbackend.user.service.JwtUserService;
+import com.handong.cra.crawebbackend.user.service.UserService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,6 +28,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final CustomUserDetailsService userDetailsService;
     private final UserRepository userRepository;
+    private final JwtUserService userService;
 
 
     @Override
@@ -42,7 +45,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
 
             Long userId = Long.valueOf(jwtTokenProvider.getSubject(jwt));
-            User user = userRepository.getUserById(userId);
+            User user = userService.getUserById(userId).getUser();
 
 
             // error
