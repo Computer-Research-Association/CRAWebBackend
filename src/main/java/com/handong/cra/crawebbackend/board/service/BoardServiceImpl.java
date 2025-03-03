@@ -21,16 +21,15 @@ import com.handong.cra.crawebbackend.user.domain.User;
 import com.handong.cra.crawebbackend.user.domain.UserRoleEnum;
 import com.handong.cra.crawebbackend.user.repository.UserRepository;
 import com.handong.cra.crawebbackend.util.BoardMDParser;
+import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.search.mapper.orm.Search;
+import org.hibernate.search.mapper.orm.session.SearchSession;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.PageRequest;
-
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 
 import org.springframework.stereotype.Service;
 
@@ -50,6 +49,9 @@ public class BoardServiceImpl implements BoardService {
     private final S3FileService s3FileService;
     private final AmazonS3 amazonS3;
     private final BoardPinService boardPinService;
+
+    private final EntityManager entityManager;
+
 
     @Value("${spring.cloud.aws.s3.bucket}")
     private String bucket;
@@ -234,10 +236,21 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public PageBoardDto searchPaginationBoardsByKeyword(final PageBoardDataDto pageBoardDataDto, final String keyword) {
         final Pageable pageable = getPageable(pageBoardDataDto);
-        final Page<Board> boards = boardRepository.findByTitleContainingOrContentContainingAndDeletedFalse(keyword, keyword, pageable);
+        final SearchSession searchSession = Search.session(entityManager);
+        try {
+            searchSession.massIndexer(Board.class).startAndWait();
+        } catch (Exception e) {
+//            throw n
+        }
+        final List<Board> boards = searchSession.search(Board.class)
+                .where(f -> f.bool()
+                        .should(f.match().field("title").matching(keyword).boost(2.0f))
+                        .should(f.match().field("content").matching(keyword)))
+                .fetchHits(1000);
+        final Page<Board> boardPage = new PageImpl<>(boards, pageable, boards.size() / pageBoardDataDto.getPerPage());
         return PageBoardDto.builder()
-                .listBoardDtos((!boards.isEmpty()) ? boards.stream().map(ListBoardDto::from).toList() : List.of())
-                .totalPages(boards.getTotalPages())
+                .listBoardDtos((!boards.isEmpty()) ? boardPage.stream().map(ListBoardDto::from).toList() : List.of())
+                .totalPages(boardPage.getTotalPages())
                 .build();
         // TODO : spring casing
     }

@@ -8,6 +8,8 @@ import com.handong.cra.crawebbackend.havruta.domain.Havruta;
 import com.handong.cra.crawebbackend.user.domain.User;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,16 +17,19 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Indexed
 public class Board extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "user")
     private User user;
 
+    @FullTextField
     @Column(length = 100, nullable = false)
     private String title;
 
     private Category category;
 
+    @FullTextField
     @Column(length = 2048, nullable = false)
     @Setter
     private String content;
@@ -85,10 +90,10 @@ public class Board extends BaseEntity {
         return new Board(user, createBoardDto);
 
     }
-    public static Board of(User user, Havruta havruta,  CreateBoardDto createBoardDto) {
+
+    public static Board of(User user, Havruta havruta, CreateBoardDto createBoardDto) {
         return new Board(user, havruta, createBoardDto);
     }
-
 
 
     // TODO : 수정할 데이터 추가

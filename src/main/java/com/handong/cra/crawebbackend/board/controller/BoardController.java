@@ -177,6 +177,9 @@ public class BoardController {
     }
 
 
+
+
+
     @Operation(summary = "Board 생성")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "정상 작동", content = @Content(schema = @Schema(implementation = ResCreateBoardDto.class))),
