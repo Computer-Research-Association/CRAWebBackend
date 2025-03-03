@@ -15,8 +15,8 @@ public class ResPageBoardDto {
 
     public static ResPageBoardDto from(PageBoardDto pageBoardDto) {
         return builder()
-                .resListBoardDtos(pageBoardDto.getListBoardDtos().stream().map(ResListBoardDto::from).toList())
-                .resBoardPinDtos(pageBoardDto.getBoardPinDtos().stream().map(ResBoardPinDto::from).toList())
+                .resListBoardDtos((pageBoardDto.getListBoardDtos() != null) ? pageBoardDto.getListBoardDtos().stream().map(ResListBoardDto::from).toList() : List.of())
+                .resBoardPinDtos((pageBoardDto.getBoardPinDtos() != null) ? pageBoardDto.getBoardPinDtos().stream().map(ResBoardPinDto::from).toList() : List.of())
                 .totalPages(pageBoardDto.getTotalPages())
                 .build();
     }

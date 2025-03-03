@@ -5,6 +5,7 @@ import com.handong.cra.crawebbackend.board.domain.Category;
 import com.handong.cra.crawebbackend.board.domain.BoardOrderBy;
 import com.handong.cra.crawebbackend.board.dto.CreateBoardDto;
 import com.handong.cra.crawebbackend.board.dto.PageBoardDataDto;
+import com.handong.cra.crawebbackend.board.dto.PageBoardDto;
 import com.handong.cra.crawebbackend.board.dto.UpdateBoardDto;
 import com.handong.cra.crawebbackend.board.dto.request.ReqCreateBoardDto;
 import com.handong.cra.crawebbackend.board.dto.request.ReqUpdateBoardDto;
@@ -155,6 +156,29 @@ public class BoardController {
 
         return ResponseEntity.ok(ResPageBoardDto.from(boardService.getPaginationBoard(pageBoardDataDto)));
     }
+
+    @GetMapping("/search")
+    public ResponseEntity<ResPageBoardDto> searchBoardByString(
+            @RequestParam Long page, // 0부터 시작
+            @RequestParam String keyword,
+            @RequestParam(required = false) Integer category,
+            @RequestParam(required = false, defaultValue = "10") Integer perPage,
+            @RequestParam(required = false, defaultValue = "0") Integer orderBy,
+            @RequestParam(required = false, defaultValue = "true") Boolean isASC
+    ) {
+        final PageBoardDataDto pageBoardDataDto = PageBoardDataDto.builder()
+//                .category(Category.values()[category])
+                .page(page)
+                .perPage(perPage)
+                .orderBy(BoardOrderBy.values()[orderBy])
+                .isASC(isASC)
+                .build();
+        return ResponseEntity.ok(ResPageBoardDto.from(boardService.searchPaginationBoardsByKeyword(pageBoardDataDto, keyword)));
+    }
+
+
+
+
 
     @Operation(summary = "Board 생성")
     @ApiResponses(value = {

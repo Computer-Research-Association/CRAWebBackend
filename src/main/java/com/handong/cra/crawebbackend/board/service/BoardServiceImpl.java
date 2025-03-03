@@ -21,16 +21,15 @@ import com.handong.cra.crawebbackend.user.domain.User;
 import com.handong.cra.crawebbackend.user.domain.UserRoleEnum;
 import com.handong.cra.crawebbackend.user.repository.UserRepository;
 import com.handong.cra.crawebbackend.util.BoardMDParser;
+import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.search.mapper.orm.Search;
+import org.hibernate.search.mapper.orm.session.SearchSession;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.PageRequest;
-
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 
 import org.springframework.stereotype.Service;
 
@@ -50,6 +49,9 @@ public class BoardServiceImpl implements BoardService {
     private final S3FileService s3FileService;
     private final AmazonS3 amazonS3;
     private final BoardPinService boardPinService;
+
+    private final EntityManager entityManager;
+
 
     @Value("${spring.cloud.aws.s3.bucket}")
     private String bucket;
@@ -230,6 +232,34 @@ public class BoardServiceImpl implements BoardService {
         sort = (pageBoardDataDto.getIsASC()) ? sort.ascending() : sort.descending();
         return PageRequest.of(Math.toIntExact(pageBoardDataDto.getPage()), pageBoardDataDto.getPerPage(), sort);
     }
+
+    @Override
+    public PageBoardDto searchPaginationBoardsByKeyword(final PageBoardDataDto pageBoardDataDto, final String keyword) {
+        final Pageable pageable = getPageable(pageBoardDataDto);
+        final List<Board> boards = searchBoards(keyword);
+        final Page<Board> boardPage = new PageImpl<>(boards, pageable, boards.size() / pageBoardDataDto.getPerPage());
+        return PageBoardDto.builder()
+                .listBoardDtos((!boards.isEmpty()) ? boardPage.stream().map(ListBoardDto::from).toList() : List.of())
+                .totalPages(boardPage.getTotalPages())
+                .build();
+        // TODO : spring casing
+    }
+
+    private List<Board>searchBoards(String keyword){
+        final SearchSession searchSession = Search.session(entityManager);
+        try {
+            searchSession.massIndexer(Board.class).startAndWait();
+        } catch (Exception e) {
+//            throw n
+        }
+        return searchSession.search(Board.class)
+                .where(f -> f.bool()
+                        .should(f.match().field("title").matching(keyword).boost(2.0f))
+                        .should(f.match().field("content").matching(keyword)))
+                .fetchHits(1000);
+
+    }
+
     private void boardAuthCheck(Long writerId, Long userId) {
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         if (!writerId.equals(userId) && !user.getRoles().hasRole(UserRoleEnum.ADMIN))

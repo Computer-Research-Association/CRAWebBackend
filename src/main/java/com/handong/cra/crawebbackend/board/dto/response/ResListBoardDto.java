@@ -72,6 +72,9 @@ public class ResListBoardDto {
     }
 
     public static ResListBoardDto from(ListBoardDto listBoardDto) {
+        if (listBoardDto == null) {
+            return new ResListBoardDto();
+        }
         return new ResListBoardDto(listBoardDto);
     }
 }
