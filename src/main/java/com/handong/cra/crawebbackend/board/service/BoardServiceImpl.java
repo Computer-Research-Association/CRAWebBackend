@@ -236,23 +236,28 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public PageBoardDto searchPaginationBoardsByKeyword(final PageBoardDataDto pageBoardDataDto, final String keyword) {
         final Pageable pageable = getPageable(pageBoardDataDto);
-        final SearchSession searchSession = Search.session(entityManager);
-        try {
-            searchSession.massIndexer(Board.class).startAndWait();
-        } catch (Exception e) {
-//            throw n
-        }
-        final List<Board> boards = searchSession.search(Board.class)
-                .where(f -> f.bool()
-                        .should(f.match().field("title").matching(keyword).boost(2.0f))
-                        .should(f.match().field("content").matching(keyword)))
-                .fetchHits(1000);
+        final List<Board> boards = searchBoards(keyword);
         final Page<Board> boardPage = new PageImpl<>(boards, pageable, boards.size() / pageBoardDataDto.getPerPage());
         return PageBoardDto.builder()
                 .listBoardDtos((!boards.isEmpty()) ? boardPage.stream().map(ListBoardDto::from).toList() : List.of())
                 .totalPages(boardPage.getTotalPages())
                 .build();
         // TODO : spring casing
+    }
+
+    private List<Board>searchBoards(String keyword){
+        final SearchSession searchSession = Search.session(entityManager);
+        try {
+            searchSession.massIndexer(Board.class).startAndWait();
+        } catch (Exception e) {
+//            throw n
+        }
+        return searchSession.search(Board.class)
+                .where(f -> f.bool()
+                        .should(f.match().field("title").matching(keyword).boost(2.0f))
+                        .should(f.match().field("content").matching(keyword)))
+                .fetchHits(1000);
+
     }
 
     private void boardAuthCheck(Long writerId, Long userId) {
