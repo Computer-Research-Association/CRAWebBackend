@@ -5,11 +5,13 @@ import com.handong.cra.crawebbackend.board.domain.Category;
 import com.handong.cra.crawebbackend.board.domain.BoardOrderBy;
 import com.handong.cra.crawebbackend.board.dto.CreateBoardDto;
 import com.handong.cra.crawebbackend.board.dto.PageBoardDataDto;
+import com.handong.cra.crawebbackend.board.dto.PageBoardDto;
 import com.handong.cra.crawebbackend.board.dto.UpdateBoardDto;
 import com.handong.cra.crawebbackend.board.dto.request.ReqCreateBoardDto;
 import com.handong.cra.crawebbackend.board.dto.request.ReqUpdateBoardDto;
 import com.handong.cra.crawebbackend.board.dto.response.*;
 import com.handong.cra.crawebbackend.board.service.BoardService;
+import com.handong.cra.crawebbackend.board.service.HavrutaBoardService;
 import com.handong.cra.crawebbackend.exception.ErrorResponse;
 import com.handong.cra.crawebbackend.exception.board.PageSizeLimitExceededException;
 import io.swagger.v3.oas.annotations.Operation;
@@ -37,6 +39,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Tag(name = "Board API", description = "Board 관련 컨트롤러.")
 public class BoardController {
     private final BoardService boardService;
+    private final HavrutaBoardService havrutaBoardService;
 
     @Value("${spring.data.page.MAX_PER_PAGE}")
     private Integer MAX_PAGE_SIZE;
@@ -154,6 +157,29 @@ public class BoardController {
         return ResponseEntity.ok(ResPageBoardDto.from(boardService.getPaginationBoard(pageBoardDataDto)));
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<ResSearchPageBoardDto> searchBoardByString(
+            @RequestParam Long page, // 0부터 시작
+            @RequestParam String keyword,
+            @RequestParam(required = false) Integer category,
+            @RequestParam(required = false, defaultValue = "10") Integer perPage,
+            @RequestParam(required = false, defaultValue = "0") Integer orderBy,
+            @RequestParam(required = false, defaultValue = "true") Boolean isASC
+    ) {
+        final PageBoardDataDto pageBoardDataDto = PageBoardDataDto.builder()
+//                .category(Category.values()[category])
+                .page(page)
+                .perPage(perPage)
+                .orderBy(BoardOrderBy.values()[orderBy])
+                .isASC(isASC)
+                .build();
+        return ResponseEntity.ok(ResSearchPageBoardDto.from(boardService.searchPaginationBoardsByKeyword(pageBoardDataDto, keyword)));
+    }
+
+
+
+
+
     @Operation(summary = "Board 생성")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "정상 작동", content = @Content(schema = @Schema(implementation = ResCreateBoardDto.class))),
@@ -244,7 +270,7 @@ public class BoardController {
                 .orderBy(BoardOrderBy.values()[orderBy])
                 .isASC(isASC)
                 .build();
-        return ResponseEntity.ok(ResPageBoardDto.from(boardService.getPaginationAllHavrutaBoard(pageBoardDataDto)));
+        return ResponseEntity.ok(ResPageBoardDto.from(havrutaBoardService.getPaginationAllHavrutaBoard(pageBoardDataDto)));
     }
 
     @GetMapping("/havruta/{havrutaId}/page/{page}")
@@ -264,6 +290,6 @@ public class BoardController {
                 .isASC(isASC)
                 .build();
 
-        return ResponseEntity.ok(ResPageBoardDto.from(boardService.getPaginationHavrutaBoard(havrutaId, pageBoardDataDto)));
+        return ResponseEntity.ok(ResPageBoardDto.from(havrutaBoardService.getPaginationHavrutaBoard(havrutaId, pageBoardDataDto)));
     }
 }

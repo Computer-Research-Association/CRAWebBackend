@@ -1,14 +1,17 @@
 package com.handong.cra.crawebbackend.board.dto;
 
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
-@Getter
 @Setter
+@Getter
 @Builder
-public class PageBoardDto {
+public class SearchPageBoardDto {
     private List<ListBoardDto> listBoardDtos;
-    private List<BoardPinDto> boardPinDtos;
     private Integer totalPages;
+    private Integer totalBoards;
+
 }

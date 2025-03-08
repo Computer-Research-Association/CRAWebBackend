@@ -45,8 +45,6 @@ public class ResListBoardDto {
 
     private Integer commentCount;
 
-    private Integer totalPages;
-
     private ResUserDetailDto resUserDetailDto = new ResUserDetailDto();
 
     public ResListBoardDto(ListBoardDto listBoardDto) {
@@ -74,6 +72,9 @@ public class ResListBoardDto {
     }
 
     public static ResListBoardDto from(ListBoardDto listBoardDto) {
+        if (listBoardDto == null) {
+            return new ResListBoardDto();
+        }
         return new ResListBoardDto(listBoardDto);
     }
 }

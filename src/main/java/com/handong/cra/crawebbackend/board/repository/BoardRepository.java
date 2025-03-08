@@ -17,20 +17,23 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     @Query("SELECT b FROM Board b LEFT JOIN FETCH b.likedUsers WHERE b.id = :boardId")
     public Optional<Board> findByIdWithLikedUsers(@Param("boardId") Long boardId);
 
-//    public List<Board> findAllByCategory(Category category);
+    //    public List<Board> findAllByCategory(Category category);
     public List<Board> findAllByCategoryAndDeletedFalse(Category category);
 
-    public Page<Board> findAllByCategoryAndDeletedFalse(Category category,Pageable pageable);
+    public Page<Board> findAllByCategoryAndDeletedFalse(Category category, Pageable pageable);
     //public Page<Board> findByDeletedFalse(Pageable pageable);
 
-    public Page<Board>  findAllByHavrutaAndDeletedFalse(Havruta havruta, Pageable pageable);
+    public Page<Board> findAllByHavrutaAndDeletedFalse(Havruta havruta, Pageable pageable);
 
     @EntityGraph(attributePaths = {"likedUsers"})
-    public Board findBoardByIdAndDeletedFalse(Long id);
+    public Optional<Board> findBoardByIdAndDeletedFalse(Long id);
 
     public List<Board> findByCategory(Category category);
 
 
     //test
     public Page<Board> findByCategoryAndDeletedFalse(Category category, Pageable pageable);
+
+
+    public Page<Board> findByTitleContainingOrContentContainingAndDeletedFalse(String titleKeyword, String contentKeyword, Pageable pageable);
 }

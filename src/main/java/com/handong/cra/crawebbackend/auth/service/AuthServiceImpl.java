@@ -2,6 +2,7 @@ package com.handong.cra.crawebbackend.auth.service;
 
 import com.handong.cra.crawebbackend.account.domain.ManageTokenCategory;
 import com.handong.cra.crawebbackend.account.service.AccountService;
+import com.handong.cra.crawebbackend.auth.domain.RefreshToken;
 import com.handong.cra.crawebbackend.auth.dto.LoginDto;
 import com.handong.cra.crawebbackend.auth.dto.ReissueTokenDto;
 import com.handong.cra.crawebbackend.auth.dto.SignupDto;
@@ -90,14 +91,14 @@ public class AuthServiceImpl implements AuthService {
         refreshTokenRepository.deleteAllByUserId(userDetailDto.getId());
 
         // 새로 생성
-        TokenDto tokenDto = jwtTokenProvider.generateTokenByLogin(loginUserDto.getUsername());
-
+        final TokenDto tokenDto = jwtTokenProvider.generateTokenByLogin(loginUserDto.getUsername());
         return LoginDto.of(userDetailDto, tokenDto);
     }
 
     @Override
     public TokenDto reissueToken(ReissueTokenDto reissueTokenDto) {
         TokenDto tokenDto = jwtTokenProvider.reissueToken(reissueTokenDto);
+        log.info(reissueTokenDto.getRefreshToken());
         if (tokenDto.getAccessToken().equals("invalid")) throw new AuthInvalidTokenException();
         else if (tokenDto.getAccessToken().equals("expired")) throw new AuthTokenExpiredException();
         else return tokenDto;

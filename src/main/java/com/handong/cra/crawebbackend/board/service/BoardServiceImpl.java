@@ -2,6 +2,7 @@ package com.handong.cra.crawebbackend.board.service;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.handong.cra.crawebbackend.board.domain.Board;
+import com.handong.cra.crawebbackend.board.domain.BoardPin;
 import com.handong.cra.crawebbackend.board.domain.Category;
 import com.handong.cra.crawebbackend.board.domain.BoardOrderBy;
 import com.handong.cra.crawebbackend.board.dto.*;
@@ -20,16 +21,15 @@ import com.handong.cra.crawebbackend.user.domain.User;
 import com.handong.cra.crawebbackend.user.domain.UserRoleEnum;
 import com.handong.cra.crawebbackend.user.repository.UserRepository;
 import com.handong.cra.crawebbackend.util.BoardMDParser;
+import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.search.mapper.orm.Search;
+import org.hibernate.search.mapper.orm.session.SearchSession;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.PageRequest;
-
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 
 import org.springframework.stereotype.Service;
 
@@ -48,6 +48,10 @@ public class BoardServiceImpl implements BoardService {
     private final S3ImageService s3ImageService;
     private final S3FileService s3FileService;
     private final AmazonS3 amazonS3;
+    private final BoardPinService boardPinService;
+
+    private final EntityManager entityManager;
+
 
     @Value("${spring.cloud.aws.s3.bucket}")
     private String bucket;
@@ -55,20 +59,20 @@ public class BoardServiceImpl implements BoardService {
     @Override
     @Transactional
     public List<ListBoardDto> getBoardsByCategory(Category category) {
-        // get data
-        List<Board> boards = boardRepository.findAllByCategoryAndDeletedFalse(category);
-
-        // parsing to dto
+        final List<Board> boards = boardRepository.findAllByCategoryAndDeletedFalse(category);
         return boards.stream().map(ListBoardDto::from).filter(Objects::nonNull).toList();
     }
 
     @Override
-    public PageBoardDto getPaginationBoard(PageBoardDataDto pageBoardDataDto) {
-
-        Pageable pageable = getPageable(pageBoardDataDto);
-        Page<Board> boards = boardRepository.findAllByCategoryAndDeletedFalse(pageBoardDataDto.getCategory(), pageable);
-
-        return new PageBoardDto(boards.stream().map(ListBoardDto::from).toList(), boards.getTotalPages());
+    public PageBoardDto getPaginationBoard(final PageBoardDataDto pageBoardDataDto) {
+        final Pageable pageable = getPageable(pageBoardDataDto);
+        final Page<Board> boards = boardRepository.findAllByCategoryAndDeletedFalse(pageBoardDataDto.getCategory(), pageable);
+        final List<BoardPinDto> pins = boardPinService.getPinByBoardCategory(pageBoardDataDto.getCategory());
+        return PageBoardDto.builder()
+                .boardPinDtos(pins)
+                .listBoardDtos(boards.stream().map(ListBoardDto::from).toList())
+                .totalPages(boards.getTotalPages())
+                .build();
     }
 
 
@@ -179,20 +183,15 @@ public class BoardServiceImpl implements BoardService {
 
         if (userId != null) user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
 
-        Board board = boardRepository.findBoardByIdAndDeletedFalse(id);
-
-        // 글이 없으면 404
-        if (board == null) throw new BoardNotFoundException();
+        Board board = boardRepository.findBoardByIdAndDeletedFalse(id).orElseThrow(BoardNotFoundException::new);
 
         // 로그인 되어있다면
         if (user != null) {
             viewerLiked = user.getLikedBoards().contains(board);
             return DetailBoardDto.from(board, viewerLiked);
-        } else { // 로그인 안되어있을때
-            // 공지 이외 확인 불가
-            if (!board.getCategory().equals(Category.NOTICE)) throw new AuthForbiddenActionException();
         }
 
+        if (!board.getCategory().equals(Category.NOTICE)) throw new AuthForbiddenActionException();
         return DetailBoardDto.from(board, board.getComments());
 
     }
@@ -224,7 +223,7 @@ public class BoardServiceImpl implements BoardService {
     }
 
 
-    private Pageable getPageable(PageBoardDataDto pageBoardDataDto) {
+    public Pageable getPageable(PageBoardDataDto pageBoardDataDto) {
         HashMap<BoardOrderBy, String> map = new HashMap<>();
         map.put(BoardOrderBy.DATE, "createdAt");
         map.put(BoardOrderBy.LIKECOUNT, "likeCount");
@@ -234,48 +233,42 @@ public class BoardServiceImpl implements BoardService {
         return PageRequest.of(Math.toIntExact(pageBoardDataDto.getPage()), pageBoardDataDto.getPerPage(), sort);
     }
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // havruta board
-
-
     @Override
-    public List<ListBoardDto> getHavrutaBoards() {
+    public SearchPageBoardDto searchPaginationBoardsByKeyword(final PageBoardDataDto pageBoardDataDto, final String keyword) {
+        final Pageable pageable = getPageable(pageBoardDataDto);
+        final List<Board> boards = searchBoards(keyword);
+        final Page<Board> boardPage = new PageImpl<>(boards, pageable, boards.size() / pageBoardDataDto.getPerPage());
+        return SearchPageBoardDto.builder()
+                .listBoardDtos((!boards.isEmpty()) ? boardPage.stream().map(ListBoardDto::from).toList() : List.of())
+                .totalPages(boardPage.getTotalPages())
+                .totalBoards(boards.size())
+                .build();
+        // TODO : spring caching
+    }
 
-        List<Board> boards = boardRepository.findByCategory(Category.HAVRUTA);
-
-        return boards.stream()
-                .map(ListBoardDto::from).filter(Objects::nonNull).toList();
+    private List<Board> searchBoards(String keyword) {
+        final SearchSession searchSession = getSearchSession();
+        return searchSession.search(Board.class)
+                .where(f -> f.bool()
+                        .should(f.match().field("title").matching(keyword).boost(2.0f))
+                        .should(f.match().field("content").matching(keyword)))
+                .fetchHits(1000);
     }
 
     @Override
-    public List<ListBoardDto> getHavrutaBoardsByHavrutaId(Long havrutaId) {
-        Havruta havruta = havrutaRepository.findById(havrutaId).orElseThrow(HavrutaNotFoundException::new);
-        List<Board> havrutas = havruta.getBoards();
-
-        return havrutas.stream()
-                .map(ListBoardDto::from).filter(Objects::nonNull).toList();
+    public void setSearchIndex() {
+        final SearchSession searchSession = getSearchSession();
+        try {
+            searchSession.massIndexer(Board.class).startAndWait();
+        } catch (InterruptedException e) {
+            log.error("fail to set search index");
+        }
     }
 
-    @Override
-    public PageBoardDto getPaginationAllHavrutaBoard(PageBoardDataDto pageBoardDataDto) {
-
-        Pageable pageable = getPageable(pageBoardDataDto);
-
-        Page<Board> boards = boardRepository.findByCategoryAndDeletedFalse(Category.HAVRUTA, pageable);
-
-        return new PageBoardDto(boards.stream().map(ListBoardDto::from).toList(), boards.getTotalPages());
+    private SearchSession getSearchSession() {
+        return Search.session(entityManager);
     }
 
-    @Override
-    public PageBoardDto getPaginationHavrutaBoard(Long havrutaId, PageBoardDataDto pageBoardDataDto) {
-
-        Pageable pageable = getPageable(pageBoardDataDto);
-
-        Havruta havruta = havrutaRepository.findById(havrutaId).orElseThrow();
-        Page<Board> boards = boardRepository.findAllByHavrutaAndDeletedFalse(havruta, pageable);
-
-        return new PageBoardDto(boards.stream().map(ListBoardDto::from).toList(), boards.getTotalPages());
-    }
 
     private void boardAuthCheck(Long writerId, Long userId) {
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
