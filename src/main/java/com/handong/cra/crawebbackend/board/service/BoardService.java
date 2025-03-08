@@ -26,4 +26,6 @@ public interface BoardService {
     public Pageable getPageable(PageBoardDataDto pageBoardDataDto);
 
     public SearchPageBoardDto searchPaginationBoardsByKeyword(PageBoardDataDto pageBoardDataDto, String keyword);
+
+    public void setSearchIndex();
 }

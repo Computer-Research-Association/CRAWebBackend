@@ -247,19 +247,28 @@ public class BoardServiceImpl implements BoardService {
     }
 
     private List<Board> searchBoards(String keyword) {
-        final SearchSession searchSession = Search.session(entityManager);
-        try {
-            searchSession.massIndexer(Board.class).startAndWait();
-        } catch (Exception e) {
-//            throw n
-        }
+        final SearchSession searchSession = getSearchSession();
         return searchSession.search(Board.class)
                 .where(f -> f.bool()
                         .should(f.match().field("title").matching(keyword).boost(2.0f))
                         .should(f.match().field("content").matching(keyword)))
                 .fetchHits(1000);
-
     }
+
+    @Override
+    public void setSearchIndex() {
+        final SearchSession searchSession = getSearchSession();
+        try {
+            searchSession.massIndexer(Board.class).startAndWait();
+        } catch (InterruptedException e) {
+            log.error("fail to set search index");
+        }
+    }
+
+    private SearchSession getSearchSession() {
+        return Search.session(entityManager);
+    }
+
 
     private void boardAuthCheck(Long writerId, Long userId) {
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
