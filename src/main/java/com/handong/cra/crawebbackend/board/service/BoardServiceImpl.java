@@ -234,18 +234,19 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public PageBoardDto searchPaginationBoardsByKeyword(final PageBoardDataDto pageBoardDataDto, final String keyword) {
+    public SearchPageBoardDto searchPaginationBoardsByKeyword(final PageBoardDataDto pageBoardDataDto, final String keyword) {
         final Pageable pageable = getPageable(pageBoardDataDto);
         final List<Board> boards = searchBoards(keyword);
         final Page<Board> boardPage = new PageImpl<>(boards, pageable, boards.size() / pageBoardDataDto.getPerPage());
-        return PageBoardDto.builder()
+        return SearchPageBoardDto.builder()
                 .listBoardDtos((!boards.isEmpty()) ? boardPage.stream().map(ListBoardDto::from).toList() : List.of())
                 .totalPages(boardPage.getTotalPages())
+                .totalBoards(boards.size())
                 .build();
-        // TODO : spring casing
+        // TODO : spring caching
     }
 
-    private List<Board>searchBoards(String keyword){
+    private List<Board> searchBoards(String keyword) {
         final SearchSession searchSession = Search.session(entityManager);
         try {
             searchSession.massIndexer(Board.class).startAndWait();

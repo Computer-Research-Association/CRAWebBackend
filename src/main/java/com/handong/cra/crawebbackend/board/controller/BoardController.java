@@ -158,7 +158,7 @@ public class BoardController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<ResPageBoardDto> searchBoardByString(
+    public ResponseEntity<ResSearchPageBoardDto> searchBoardByString(
             @RequestParam Long page, // 0부터 시작
             @RequestParam String keyword,
             @RequestParam(required = false) Integer category,
@@ -173,7 +173,7 @@ public class BoardController {
                 .orderBy(BoardOrderBy.values()[orderBy])
                 .isASC(isASC)
                 .build();
-        return ResponseEntity.ok(ResPageBoardDto.from(boardService.searchPaginationBoardsByKeyword(pageBoardDataDto, keyword)));
+        return ResponseEntity.ok(ResSearchPageBoardDto.from(boardService.searchPaginationBoardsByKeyword(pageBoardDataDto, keyword)));
     }
 
 
