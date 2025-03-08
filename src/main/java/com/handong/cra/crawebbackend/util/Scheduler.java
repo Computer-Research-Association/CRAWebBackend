@@ -2,14 +2,19 @@ package com.handong.cra.crawebbackend.util;
 
 import com.handong.cra.crawebbackend.account.domain.ManageToken;
 import com.handong.cra.crawebbackend.account.repository.ManageTokenRepository;
+import com.handong.cra.crawebbackend.board.service.BoardService;
+import com.handong.cra.crawebbackend.board.service.BoardServiceImpl;
 import com.handong.cra.crawebbackend.mail.domain.MailCategory;
 import com.handong.cra.crawebbackend.mail.domain.MailSendDto;
 import com.handong.cra.crawebbackend.mail.service.MailService;
 import com.handong.cra.crawebbackend.user.domain.User;
 import com.handong.cra.crawebbackend.user.repository.UserRepository;
+import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -23,6 +28,7 @@ public class Scheduler {
     private final UserRepository userRepository;
     private final MailService mailService;
     private final ManageTokenRepository manageTokenRepository;
+    private final BoardService boardService;
 
 
     // 주기적으로 토큰 DB 정리
@@ -42,6 +48,23 @@ public class Scheduler {
 
         log.info("[TOKEN CLEANUP] {} expired tokens deleted.", count);
         log.info("[TOKEN CLEANUP] Scheduled task completed.");
+        log.info("============================================");
+    }
+
+
+    @EventListener(ContextRefreshedEvent.class)
+    @Transactional
+    protected void initSearchIndex() {
+        setSearchIndex();
+    }
+
+    @Scheduled(cron = "0 0 0 * * ?", zone = "Asia/Seoul") // 매일 00:00 에 실행
+    @Transactional
+    protected void setSearchIndex() {
+        log.info("============================================");
+        log.info("[SEARCH INDEXING] Indexer started.");
+        boardService.setSearchIndex();
+        log.info("[SEARCH INDEXING] Scheduled task completed.");
         log.info("============================================");
     }
 
