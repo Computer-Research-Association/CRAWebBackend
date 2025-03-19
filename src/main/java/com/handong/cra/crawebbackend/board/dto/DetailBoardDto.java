@@ -33,8 +33,8 @@ public class DetailBoardDto {
     private LocalDateTime updatedAt;
 
     private Boolean viewerLiked;
-
     private List<ListCommentDto> listCommentDtos;
+    private Boolean isPined = false;
 
     public DetailBoardDto(Board board) {
         this.id = board.getId();
