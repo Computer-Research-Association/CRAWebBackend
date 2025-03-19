@@ -29,7 +29,7 @@ public class BoardPinServiceImpl implements BoardPinService {
     public BoardPinDto setPin(final BoardPinDto boardPinDto) {
         final Board board = boardRepository.findBoardByIdAndDeletedFalse(boardPinDto.getBoardId())
                 .orElseThrow(BoardNotFoundException::new);
-        final BoardPin existingBoardPin = boardPinRepository.findBoardPinByBoard(board);
+        final BoardPin existingBoardPin = boardPinRepository.findBoardPinByBoardAndDeletedFalse(board);
         if (existingBoardPin != null) {
             existingBoardPin.setDeleted(false);
             return BoardPinDto.from(existingBoardPin);

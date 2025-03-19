@@ -36,7 +36,7 @@ public class ResDetailBoardDto {
     @Schema(description = "글 조회수")
     private Long view;
 
-    @Schema(description = "사진 주소 목록")
+//    @Schema(description = "사진 주소 목록")
     private List<String> imageUrls;
 
     @Schema(description = "파일 주소 목록")
@@ -54,6 +54,8 @@ public class ResDetailBoardDto {
 
     private Boolean viewerLiked;
 
+    private Boolean isPined;
+
     // 댓글
     private List<ResListCommentDto> resListCommentDtos;
 
@@ -64,10 +66,11 @@ public class ResDetailBoardDto {
         this.category = detailBoardDto.getCategory();
         this.likeCount = detailBoardDto.getLikeCount();
         this.view = detailBoardDto.getView();
-        this.imageUrls = detailBoardDto.getImageUrls();
         this.fileUrl = detailBoardDto.getFileUrl();
         this.createdAt = detailBoardDto.getCreatedAt();
         this.updatedAt = detailBoardDto.getUpdatedAt();
+        this.imageUrls = detailBoardDto.getImageUrls();
+        this.isPined = detailBoardDto.getIsPined();
 
         if (detailBoardDto.getHavrutaDto() != null) {
             this.havrutaDto = detailBoardDto.getHavrutaDto();

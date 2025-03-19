@@ -6,6 +6,7 @@ import com.handong.cra.crawebbackend.board.domain.BoardPin;
 import com.handong.cra.crawebbackend.board.domain.Category;
 import com.handong.cra.crawebbackend.board.domain.BoardOrderBy;
 import com.handong.cra.crawebbackend.board.dto.*;
+import com.handong.cra.crawebbackend.board.repository.BoardPinRepository;
 import com.handong.cra.crawebbackend.board.repository.BoardRepository;
 import com.handong.cra.crawebbackend.exception.auth.AuthForbiddenActionException;
 import com.handong.cra.crawebbackend.exception.havruta.HavrutaNotFoundException;
@@ -51,6 +52,7 @@ public class BoardServiceImpl implements BoardService {
     private final BoardPinService boardPinService;
 
     private final EntityManager entityManager;
+    private final BoardPinRepository boardPinRepository;
 
 
     @Value("${spring.cloud.aws.s3.bucket}")
@@ -176,24 +178,39 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public DetailBoardDto getDetailBoardById(Long id, Long userId) {
+    public DetailBoardDto getDetailBoardById(final Long boardId, final Long userId) {
         // 확인하는 유저가 좋아요 누른 글인지 확인
-        User user = null;
-        boolean viewerLiked;
+        final Board board = boardRepository.findBoardByIdAndDeletedFalse(boardId).orElseThrow(BoardNotFoundException::new);
+        final DetailBoardDto detailBoardDto = DetailBoardDto.from(board, board.getComments());
 
-        if (userId != null) user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+        // 로그인 유저 로직
+        if (userId != null) {
+            final User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
 
-        Board board = boardRepository.findBoardByIdAndDeletedFalse(id).orElseThrow(BoardNotFoundException::new);
+            // 휴면 계정인 경우
+            if (user.getDeleted()) {
+                throw new UserNotFoundException();
+            }
 
-        // 로그인 되어있다면
-        if (user != null) {
-            viewerLiked = user.getLikedBoards().contains(board);
-            return DetailBoardDto.from(board, viewerLiked);
+            // 고정 공지인지 확인
+            final BoardPin boardPin = boardPinRepository.findBoardPinByBoardIdAndDeletedFalse(board.getId());
+
+            detailBoardDto.setIsPined(false);
+            if (boardPin != null) {
+                detailBoardDto.setIsPined(true);
+            }
+
+            final boolean viewerLiked = user.getLikedBoards().contains(board);
+            detailBoardDto.setViewerLiked(viewerLiked);
+            return detailBoardDto;
         }
 
-        if (!board.getCategory().equals(Category.NOTICE)) throw new AuthForbiddenActionException();
-        return DetailBoardDto.from(board, board.getComments());
+        // 비 로그인시 공지 이외 확인시 403
+        if (!board.getCategory().equals(Category.NOTICE)) {
+            throw new AuthForbiddenActionException();
+        }
 
+        return detailBoardDto;
     }
 
     @Override
