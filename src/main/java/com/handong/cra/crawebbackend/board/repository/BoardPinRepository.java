@@ -19,4 +19,5 @@ public interface BoardPinRepository extends JpaRepository<BoardPin, Long> {
 
     public BoardPin findBoardPinByBoardIdAndDeletedFalse(Long boardId);
     public BoardPin findBoardPinByBoardAndDeletedFalse(Board board);
+    public BoardPin findBoardPinByBoard(Board board);
 }
