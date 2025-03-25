@@ -34,6 +34,7 @@ public class DetailBoardDto {
 
     private Boolean viewerLiked;
     private List<ListCommentDto> listCommentDtos;
+    private Long pinId;
     private Boolean isPined = false;
 
     public DetailBoardDto(Board board) {
