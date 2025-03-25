@@ -255,7 +255,11 @@ public class BoardServiceImpl implements BoardService {
     public SearchPageBoardDto searchPaginationBoardsByKeyword(final PageBoardDataDto pageBoardDataDto, final String keyword) {
         final Pageable pageable = getPageable(pageBoardDataDto);
         final List<Board> boards = searchBoards(keyword);
-        final Page<Board> boardPage = new PageImpl<>(boards, pageable, boards.size() / pageBoardDataDto.getPerPage());
+//        final Page<Board> boardPage = new PageImpl<>(boards, pageable, boards.size());
+        final int startIndex = (int) pageable.getOffset();
+        final int endIndex = Math.min(boards.size(), startIndex + pageable.getPageSize());
+        final List<Board> pageBoards = boards.subList(startIndex, endIndex);
+        final Page<Board> boardPage = new PageImpl<>(pageBoards, pageable, boards.size());
         return SearchPageBoardDto.builder()
                 .listBoardDtos((!boards.isEmpty()) ? boardPage.stream().map(ListBoardDto::from).toList() : List.of())
                 .totalPages(boardPage.getTotalPages())
