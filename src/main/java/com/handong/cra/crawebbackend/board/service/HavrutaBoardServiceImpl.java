@@ -7,6 +7,7 @@ import com.handong.cra.crawebbackend.board.dto.ListBoardDto;
 import com.handong.cra.crawebbackend.board.dto.PageBoardDataDto;
 import com.handong.cra.crawebbackend.board.dto.PageBoardDto;
 import com.handong.cra.crawebbackend.board.repository.BoardRepository;
+import com.handong.cra.crawebbackend.exception.board.BoardNotFoundException;
 import com.handong.cra.crawebbackend.exception.havruta.HavrutaNotFoundException;
 import com.handong.cra.crawebbackend.havruta.domain.Havruta;
 import com.handong.cra.crawebbackend.havruta.repository.HavrutaRepository;
@@ -46,9 +47,12 @@ public class HavrutaBoardServiceImpl implements HavrutaBoardService {
         final Pageable pageable = boardService.getPageable(pageBoardDataDto);
         final Page<Board> boards = boardRepository.findByCategoryAndDeletedFalse(Category.HAVRUTA, pageable);
         final List<BoardPinDto> boardPinDtos = boardPinService.getPinByBoardCategory(pageBoardDataDto.getCategory());
+        final List<Board> pinLists = boardPinDtos.stream().map((pin) ->
+                boardRepository.findBoardByIdAndDeletedFalse(pin.getBoardId()).orElseThrow(BoardNotFoundException::new)).toList();
+
         return PageBoardDto.builder()
                 .listBoardDtos(boards.stream().map(ListBoardDto::from).toList())
-                .boardPinDtos(boardPinDtos)
+                .boardPinDtos(pinLists.stream().map(ListBoardDto::new).toList())
                 .totalPages(boards.getTotalPages())
                 .build();
     }
@@ -59,9 +63,12 @@ public class HavrutaBoardServiceImpl implements HavrutaBoardService {
         final Havruta havruta = havrutaRepository.findById(havrutaId).orElseThrow();
         final Page<Board> boards = boardRepository.findAllByHavrutaAndDeletedFalse(havruta, pageable);
         final List<BoardPinDto> boardPinDtos = boardPinService.getPinByBoardCategory(pageBoardDataDto.getCategory());
+        final List<Board> pinLists = boardPinDtos.stream().map((pin) ->
+                boardRepository.findBoardByIdAndDeletedFalse(pin.getBoardId()).orElseThrow(BoardNotFoundException::new)).toList();
+
         return PageBoardDto.builder()
                 .listBoardDtos(boards.stream().map(ListBoardDto::from).toList())
-                .boardPinDtos(boardPinDtos)
+                .boardPinDtos(pinLists.stream().map(ListBoardDto::new).toList())
                 .totalPages(boards.getTotalPages())
                 .build();
     }

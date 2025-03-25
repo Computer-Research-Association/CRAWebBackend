@@ -9,6 +9,6 @@ import java.util.List;
 @Builder
 public class PageBoardDto {
     private List<ListBoardDto> listBoardDtos;
-    private List<BoardPinDto> boardPinDtos;
+    private List<ListBoardDto> boardPinDtos;
     private Integer totalPages;
 }
