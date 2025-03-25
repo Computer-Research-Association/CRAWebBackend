@@ -54,6 +54,7 @@ public class ResDetailBoardDto {
 
     private Boolean viewerLiked;
 
+    private Long pidId;
     private Boolean isPined;
 
     // 댓글
@@ -70,6 +71,7 @@ public class ResDetailBoardDto {
         this.createdAt = detailBoardDto.getCreatedAt();
         this.updatedAt = detailBoardDto.getUpdatedAt();
         this.imageUrls = detailBoardDto.getImageUrls();
+        this.pidId = detailBoardDto.getPinId();
         this.isPined = detailBoardDto.getIsPined();
 
         if (detailBoardDto.getHavrutaDto() != null) {

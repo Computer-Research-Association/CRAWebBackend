@@ -198,6 +198,7 @@ public class BoardServiceImpl implements BoardService {
             detailBoardDto.setIsPined(false);
             if (boardPin != null) {
                 detailBoardDto.setIsPined(true);
+                detailBoardDto.setPinId(boardPin.getId());
             }
 
             final boolean viewerLiked = user.getLikedBoards().contains(board);
