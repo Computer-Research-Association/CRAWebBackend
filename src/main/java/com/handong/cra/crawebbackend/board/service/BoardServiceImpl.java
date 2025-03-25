@@ -70,8 +70,11 @@ public class BoardServiceImpl implements BoardService {
         final Pageable pageable = getPageable(pageBoardDataDto);
         final Page<Board> boards = boardRepository.findAllByCategoryAndDeletedFalse(pageBoardDataDto.getCategory(), pageable);
         final List<BoardPinDto> pins = boardPinService.getPinByBoardCategory(pageBoardDataDto.getCategory());
+        final List<Board> pinLists = pins.stream().map((pin) ->
+                boardRepository.findBoardByIdAndDeletedFalse(pin.getBoardId()).orElseThrow(BoardNotFoundException::new)).toList();
+
         return PageBoardDto.builder()
-                .boardPinDtos(pins)
+                .boardPinDtos(pinLists.stream().map(ListBoardDto::from).toList())
                 .listBoardDtos(boards.stream().map(ListBoardDto::from).toList())
                 .totalPages(boards.getTotalPages())
                 .build();
