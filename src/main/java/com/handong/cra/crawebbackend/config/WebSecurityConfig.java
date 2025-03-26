@@ -73,7 +73,7 @@ public class WebSecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/project/**").permitAll()
 
                         // 도서
-                        .requestMatchers(HttpMethod.GET, "/api/item/1/page").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/item/1/page/**").permitAll()
 
 
                         // 기본 권한
