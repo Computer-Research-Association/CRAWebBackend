@@ -58,6 +58,7 @@ public class WebSecurityConfig {
 
                         // 계정 관리(아이디 찾기 등) 권한
                         .requestMatchers(HttpMethod.POST, "/api/account/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/account/**").permitAll()
 
                         // 비밀번호 변경 권한
                         .requestMatchers(HttpMethod.PUT, "/api/user/password-change").permitAll()
