@@ -2,6 +2,7 @@ package com.handong.cra.crawebbackend.account.controller;
 
 
 import com.handong.cra.crawebbackend.account.domain.ManageTokenCategory;
+import com.handong.cra.crawebbackend.account.dto.FindUsernameDto;
 import com.handong.cra.crawebbackend.account.dto.req.ReqFindUsernameDto;
 import com.handong.cra.crawebbackend.account.service.AccountService;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +25,7 @@ public class AccountController {
 
     @GetMapping("/find/username")
     public ResponseEntity<String> findUsername(ReqFindUsernameDto reqFindUsernameDto){
-        return ResponseEntity.ok(accountService.findUsername(reqFindUsernameDto.getStudentId(), reqFindUsernameDto.getName(), reqFindUsernameDto.getEmail()));
+        return ResponseEntity.ok(accountService.findUsername(FindUsernameDto.from(reqFindUsernameDto)));
     }
 
     @PostMapping("/password-change")

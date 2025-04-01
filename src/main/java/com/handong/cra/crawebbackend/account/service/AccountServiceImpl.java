@@ -3,6 +3,7 @@ package com.handong.cra.crawebbackend.account.service;
 import com.handong.cra.crawebbackend.account.domain.ManageToken;
 import com.handong.cra.crawebbackend.account.domain.ManageTokenCategory;
 import com.handong.cra.crawebbackend.account.dto.CodeDto;
+import com.handong.cra.crawebbackend.account.dto.FindUsernameDto;
 import com.handong.cra.crawebbackend.account.repository.ManageTokenRepository;
 import com.handong.cra.crawebbackend.exception.account.AccountCodeExpiredException;
 import com.handong.cra.crawebbackend.exception.account.AccountCodeNotFoundException;
@@ -116,8 +117,12 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public String findUsername(String studentId, String name, String email) {
-        User user = userRepository.findByNameAndStudentIdAndEmail(name, studentId, email);
+    public String findUsername(FindUsernameDto findUsernameDto) {
+        User user = userRepository.findByNameAndStudentIdAndEmail(
+                findUsernameDto.getName(),
+                findUsernameDto.getStudentId(),
+                findUsernameDto.getEmail()
+        );
 
         if (user == null) throw new UserNotFoundException();
 
