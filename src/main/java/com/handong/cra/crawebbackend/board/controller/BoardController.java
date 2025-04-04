@@ -44,7 +44,6 @@ public class BoardController {
     @Value("${spring.data.page.MAX_PER_PAGE}")
     private Integer MAX_PAGE_SIZE;
 
-
     @Parameters(value = {
             @Parameter(name = "id", description = "Board id to delete"),
     })
