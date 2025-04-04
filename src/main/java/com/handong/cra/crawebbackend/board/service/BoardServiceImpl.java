@@ -83,7 +83,7 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     @Transactional
-    public CreateBoardDto createBoard(CreateBoardDto createBoardDto) {
+    public CreateBoardDto createBoard(final CreateBoardDto createBoardDto) {
 
         User user = userRepository.findById(createBoardDto.getUserId()).orElseThrow(UserNotFoundException::new);
 
@@ -129,7 +129,6 @@ public class BoardServiceImpl implements BoardService {
         if (updateBoardDto.getIsChangedFile()) {
             String fileUrl = null;
             if (updateBoardDto.getFile() != null) {
-
                 fileUrl = s3FileService.uploadFile(updateBoardDto.getFile(), S3ImageCategory.BOARD);
             }
             log.info(fileUrl);
