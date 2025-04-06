@@ -33,6 +33,9 @@ import java.util.Map;
 @Component
 @RequiredArgsConstructor
 public class JwtTokenProvider {
+    private final RefreshTokenRepository refreshTokenRepository;
+    private final UserRepository userRepository;
+
     @Value("${jwt.secret}")
     private String secret;
 
@@ -42,18 +45,13 @@ public class JwtTokenProvider {
     @Value("${jwt.refresh-expiration}")
     private Long refreshExpiration;
 
-    private final RefreshTokenRepository refreshTokenRepository;
-    private final UserRepository userRepository;
-
-    public String generateToken(Long id, Long expirationTime, UserRoleSet roles) {
-        Key jwtSecretKey = Keys.hmacShaKeyFor(secret.getBytes());
-        log.info("jwtSecretKey: {}", jwtSecretKey);
-        Date now = new Date();
-        List<String> rolesString = new ArrayList<>(List.of());
+    public String generateToken(final Long id, final Long expirationTime, final UserRoleSet roles) {
+        final Key jwtSecretKey = Keys.hmacShaKeyFor(secret.getBytes());
+        final Date now = new Date();
+        final List<String> rolesString = new ArrayList<>(List.of());
         roles.getAuthorities().forEach(authority -> {
             rolesString.add(authority.getAuthority());
         });
-
         return Jwts.builder()
                 .subject(id.toString())
                 .issuedAt(now)
@@ -64,7 +62,7 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    public TokenDto generateTokenByLogin(String username) {
+    public TokenDto generateTokenByLogin(final String username) {
         final User user = userRepository.findByUsername(username);
         final Long userId = user.getId();
         final UserRoleSet roles = user.getRoles();
@@ -74,31 +72,27 @@ public class JwtTokenProvider {
     }
 
     @Transactional
-    public TokenDto reissueToken(ReissueTokenDto reissueTokenDto) {
-        RefreshToken savedToken = refreshTokenRepository.findByRefreshToken(reissueTokenDto.getRefreshToken());
-
-        // 만료되었는지 검사
-        if (savedToken == null)
+    public TokenDto reissueToken(final ReissueTokenDto reissueTokenDto) {
+        final RefreshToken savedToken = refreshTokenRepository.findByRefreshToken(reissueTokenDto.getRefreshToken());
+        if (savedToken == null) { // 만료되었는지 검사
             return TokenDto.of(null, "expired", "expired");
-        else if (!validateToken(reissueTokenDto.getRefreshToken()))
+        }
+        if (!validateToken(reissueTokenDto.getRefreshToken())) {
             return TokenDto.of(null, "expired", "expired");
-
-            // 잘못된 토큰
-        else if (!savedToken.getRefreshToken().equals(reissueTokenDto.getRefreshToken()))
+        }
+        if (!savedToken.getRefreshToken().equals(reissueTokenDto.getRefreshToken())) { // 잘못된 토큰
             return TokenDto.of(null, "invalid", "invalid");
-
-        Long userId = savedToken.getUserId();
-        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
-        UserRoleSet roles = user.getRoles();
-
-        String accessToken = generateToken(userId, accessExpiration, roles);
+        }
+        final Long userId = savedToken.getUserId();
+        final User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+        final UserRoleSet roles = user.getRoles();
+        final String accessToken = generateToken(userId, accessExpiration, roles);
         return TokenDto.of(userId, accessToken, null);
     }
 
     // access token 검사
-    public Boolean validateToken(String token) {
-        SecretKey jwtSecretKey = Keys.hmacShaKeyFor(secret.getBytes());
-
+    public Boolean validateToken(final String token) {
+        final SecretKey jwtSecretKey = Keys.hmacShaKeyFor(secret.getBytes());
         try {
             Jwts.parser().verifyWith(jwtSecretKey).build().parseSignedClaims(token);
             return true;
@@ -107,9 +101,8 @@ public class JwtTokenProvider {
         }
     }
 
-    public String getSubject(String token) {
-        SecretKey jwtSecretKey = Keys.hmacShaKeyFor(secret.getBytes());
-
+    public String getSubject(final String token) {
+        final SecretKey jwtSecretKey = Keys.hmacShaKeyFor(secret.getBytes());
         return Jwts.parser().verifyWith(jwtSecretKey).build().parseSignedClaims(token).getPayload().getSubject();
     }
 }

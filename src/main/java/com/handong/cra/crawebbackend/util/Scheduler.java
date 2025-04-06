@@ -30,7 +30,6 @@ public class Scheduler {
     private final ManageTokenRepository manageTokenRepository;
     private final BoardService boardService;
 
-
     // 주기적으로 토큰 DB 정리
     @Scheduled(cron = "0 0 12 * * *", zone = "Asia/Seoul")
     @Transactional
@@ -50,7 +49,6 @@ public class Scheduler {
         log.info("[TOKEN CLEANUP] Scheduled task completed.");
         log.info("============================================");
     }
-
 
     @EventListener(ContextRefreshedEvent.class)
     @Transactional
@@ -79,8 +77,6 @@ public class Scheduler {
         log.info("[USER CLEANUP] Dormant user check started.");
         LocalDateTime aYearBefore = LocalDateTime.now().minusYears(1);
         List<User> users = userRepository.findAllByLastLoginAtBeforeAndDeletedFalse(aYearBefore);
-
-
         for (User user : users) {
             dormantCount++;
             user.setLastLoginAt(LocalDateTime.now()); // 휴면 계정 처리 1년 이후 삭제
@@ -93,8 +89,6 @@ public class Scheduler {
             mailService.sendMimeMessage(mailSendDto);
         }
         log.info("[USER CLEANUP] {} users marked as dormant.", dormantCount);
-
-
         users = userRepository.findAllByLastLoginAtBeforeAndDeletedTrue(aYearBefore);
 
         // 유저 데이터 삭제
@@ -110,7 +104,6 @@ public class Scheduler {
         }
 
         log.info("[USER CLEANUP] {} dormant users deleted.", deleteCount);
-
         log.info("[USER CLEANUP] Scheduled task completed.");
         log.info("============================================");
     }

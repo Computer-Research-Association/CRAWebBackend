@@ -1,6 +1,5 @@
 package com.handong.cra.crawebbackend.user.dto.response;
 
-import com.handong.cra.crawebbackend.user.domain.UserRoleEnum;
 import com.handong.cra.crawebbackend.user.domain.UserRoleSet;
 import com.handong.cra.crawebbackend.user.dto.UserDetailDto;
 import lombok.AllArgsConstructor;
