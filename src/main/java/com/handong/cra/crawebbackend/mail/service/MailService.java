@@ -14,48 +14,30 @@ import java.nio.charset.Charset;
 @Slf4j
 @RequiredArgsConstructor
 public class MailService {
-
     private final JavaMailSender javaMailSender;
 
-    public void sendMimeMessage(MailSendDto mailSendDto) { // TODO exception 처리?
-//        if (!mailSendDto.getSendEmail().contains("@")){
-//            throw new
-//        }
-
-
+    public void sendMimeMessage(final MailSendDto mailSendDto) { // TODO : exception 처리?
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
-
-
         try {
             MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
-
-            // set email to send
-            mimeMessageHelper.setTo(mailSendDto.getSendEmail());
-
-            // set title
-            mimeMessageHelper.setSubject(mailSendDto.getMailCategory().getTitle());
-
-            // set content
-            String content = mailSendDto.getMailCategory().getTemplate().getContentAsString(Charset.defaultCharset());
-
-            // change to username
-            if (mailSendDto.getUsername()!=null)
+            mimeMessageHelper.setTo(mailSendDto.getSendEmail()); // set email to send
+            mimeMessageHelper.setSubject(mailSendDto.getMailCategory().getTitle()); // set title
+            String content = mailSendDto.getMailCategory().getTemplate()
+                    .getContentAsString(Charset.defaultCharset()); // set content
+            if (mailSendDto.getUsername() != null) { // change to username
                 content = content.replace("#username", mailSendDto.getUsername());
-            if (mailSendDto.getUrl() != null)
+            }
+            if (mailSendDto.getUrl() != null) { // set URLS
                 content = content.replace("#url", mailSendDto.getUrl());
-            if (mailSendDto.getCode() != null)
-                content=content.replace("#verification_code", mailSendDto.getCode());
-
+            }
+            if (mailSendDto.getCode() != null) { // set token code
+                content = content.replace("#verification_code", mailSendDto.getCode());
+            }
             mimeMessageHelper.setText(content, true);
-
-            // send
-            javaMailSender.send(mimeMessage);
-
-            log.info("send Email to {}, category = {}", mailSendDto.getSendEmail(), mailSendDto.getMailCategory().toString());
+            javaMailSender.send(mimeMessage); // send
         } catch (Exception e) {
             log.error("Fail sending Email!");
             throw new RuntimeException(e);
         }
     }
-
 }
