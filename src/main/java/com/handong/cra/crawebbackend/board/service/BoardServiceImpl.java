@@ -83,7 +83,7 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     @Transactional
-    public CreateBoardDto createBoard(CreateBoardDto createBoardDto) {
+    public CreateBoardDto createBoard(final CreateBoardDto createBoardDto) {
 
         User user = userRepository.findById(createBoardDto.getUserId()).orElseThrow(UserNotFoundException::new);
 
@@ -129,7 +129,6 @@ public class BoardServiceImpl implements BoardService {
         if (updateBoardDto.getIsChangedFile()) {
             String fileUrl = null;
             if (updateBoardDto.getFile() != null) {
-
                 fileUrl = s3FileService.uploadFile(updateBoardDto.getFile(), S3ImageCategory.BOARD);
             }
             log.info(fileUrl);
@@ -182,38 +181,29 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     public DetailBoardDto getDetailBoardById(final Long boardId, final Long userId) {
-        // 확인하는 유저가 좋아요 누른 글인지 확인
         final Board board = boardRepository.findBoardByIdAndDeletedFalse(boardId).orElseThrow(BoardNotFoundException::new);
         final DetailBoardDto detailBoardDto = DetailBoardDto.from(board, board.getComments());
 
         // 로그인 유저 로직
         if (userId != null) {
             final User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
-
-            // 휴면 계정인 경우
-            if (user.getDeleted()) {
+            final BoardPin boardPin = boardPinRepository.findBoardPinByBoardIdAndDeletedFalse(board.getId());
+            detailBoardDto.setIsPined(false); // default set
+            if (user.getDeleted()) { // 휴면 계정인 경우
                 throw new UserNotFoundException();
             }
-
-            // 고정 공지인지 확인
-            final BoardPin boardPin = boardPinRepository.findBoardPinByBoardIdAndDeletedFalse(board.getId());
-
-            detailBoardDto.setIsPined(false);
-            if (boardPin != null) {
+            if (boardPin != null) {// 고정 공지 확인
                 detailBoardDto.setIsPined(true);
                 detailBoardDto.setPinId(boardPin.getId());
             }
-
-            final boolean viewerLiked = user.getLikedBoards().contains(board);
-            detailBoardDto.setViewerLiked(viewerLiked);
+            // 유저가 좋아요 누른 글인지 확인
+            detailBoardDto.setViewerLiked(user.getLikedBoards().contains(board));
             return detailBoardDto;
         }
-
         // 비 로그인시 공지 이외 확인시 403
         if (!board.getCategory().equals(Category.NOTICE)) {
             throw new AuthForbiddenActionException();
         }
-
         return detailBoardDto;
     }
 
