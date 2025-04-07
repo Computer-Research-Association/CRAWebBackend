@@ -8,10 +8,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("")
 public class CommonController {
-
     @GetMapping("")
-    public ResponseEntity<Void> root(){
+    public ResponseEntity<Void> root() {
         return ResponseEntity.ok().build();
     }
-
 }
