@@ -6,18 +6,14 @@ import com.handong.cra.crawebbackend.comment.dto.UpdateCommentDto;
 import com.handong.cra.crawebbackend.comment.dto.request.ReqCreateCommentDto;
 import com.handong.cra.crawebbackend.comment.dto.request.ReqUpdateCommentDto;
 import com.handong.cra.crawebbackend.comment.dto.response.ResCreateCommentDto;
-import com.handong.cra.crawebbackend.comment.dto.response.ResListCommentDto;
 import com.handong.cra.crawebbackend.comment.dto.response.ResUpdateCommentDto;
 import com.handong.cra.crawebbackend.comment.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/comment")
@@ -26,41 +22,30 @@ import java.util.List;
 public class CommentController {
     private final CommentService commentService;
 
-
-//    @PreAuthorize("denyAll()")// 접속 불가
-//    @GetMapping("/{boardId}")
-//    public ResponseEntity<List<ResListCommentDto>> getCommentsByBoardId(@PathVariable Long boardId) {
-//        return ResponseEntity.ok().body(commentService.getCommentsByBoardId(boardId)
-//                .stream().map(ResListCommentDto::from).toList());
-//    }
-
-
-//    // 아래 방식 적용시 속도 너무 느려요..
-//    @PreAuthorize("denyAll()")// 접속 불가
-//    @GetMapping("/count/{boardId}")
-//    public ResponseEntity<Long> getCommentCount(@PathVariable Long boardId) {
-//        return ResponseEntity.ok(commentService.getCommentCount(boardId));
-//    }
-
-    @PostMapping("/{boardId}")
-    public ResponseEntity<ResCreateCommentDto> createComment(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Long boardId, @RequestBody ReqCreateCommentDto reqCreateCommentDto) {
+    @PostMapping("/{boardId}") // 댓글 작성
+    public ResponseEntity<ResCreateCommentDto> createComment(
+            @AuthenticationPrincipal final CustomUserDetails customUserDetails,
+            @PathVariable final Long boardId,
+            @RequestBody final ReqCreateCommentDto reqCreateCommentDto) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new ResCreateCommentDto(
-                        commentService.createComment(CreateCommentDto.of(boardId, customUserDetails.getUserId(), reqCreateCommentDto))));
+                .body(new ResCreateCommentDto(commentService.createComment(
+                        CreateCommentDto.of(boardId, customUserDetails.getUserId(), reqCreateCommentDto))));
     }
 
-    @PutMapping("/{commentId}")
-    public ResponseEntity<ResUpdateCommentDto> updateComment(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Long commentId, @RequestBody ReqUpdateCommentDto reqUpdateCommentDto) {
+    @PutMapping("/{commentId}") // 댓글 수정
+    public ResponseEntity<ResUpdateCommentDto> updateComment(
+            @AuthenticationPrincipal final CustomUserDetails customUserDetails,
+            @PathVariable final Long commentId,
+            @RequestBody final ReqUpdateCommentDto reqUpdateCommentDto) {
         return ResponseEntity.ok().body(new ResUpdateCommentDto(commentService.updateComment(UpdateCommentDto.of(commentId, customUserDetails.getUserId(), reqUpdateCommentDto))));
     }
 
-    @DeleteMapping("/{commentId}")
-    public ResponseEntity<Void> deleteComment(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Long commentId) {
-        // success
-
+    @DeleteMapping("/{commentId}") // 댓글 삭제
+    public ResponseEntity<Void> deleteComment(
+            @AuthenticationPrincipal final CustomUserDetails customUserDetails,
+            @PathVariable final Long commentId) {
         if (commentService.deleteCommentById(UpdateCommentDto.of(commentId, customUserDetails.getUserId())))
             return ResponseEntity.ok().build();
-
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
 }
