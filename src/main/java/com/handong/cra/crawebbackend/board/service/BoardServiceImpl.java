@@ -16,8 +16,6 @@ import com.handong.cra.crawebbackend.file.service.S3ImageService;
 import com.handong.cra.crawebbackend.exception.board.BoardLikeBadRequestException;
 import com.handong.cra.crawebbackend.exception.board.BoardNotFoundException;
 import com.handong.cra.crawebbackend.exception.user.UserNotFoundException;
-import com.handong.cra.crawebbackend.havruta.domain.Havruta;
-import com.handong.cra.crawebbackend.havruta.repository.HavrutaRepository;
 import com.handong.cra.crawebbackend.user.domain.User;
 import com.handong.cra.crawebbackend.user.domain.UserRoleEnum;
 import com.handong.cra.crawebbackend.user.repository.UserRepository;
@@ -44,7 +42,6 @@ import java.util.Objects;
 @Slf4j
 public class BoardServiceImpl implements BoardService {
     private final BoardRepository boardRepository;
-    private final HavrutaRepository havrutaRepository;
     private final UserRepository userRepository;
     private final S3ImageService s3ImageService;
     private final S3FileService s3FileService;
@@ -97,15 +94,7 @@ public class BoardServiceImpl implements BoardService {
             String fileUrl = s3FileService.uploadFile(createBoardDto.getFile(), S3ImageCategory.BOARD);
             createBoardDto.setFileUrl(fileUrl);
         }
-        Board board;
-
-        // havruta
-        if (createBoardDto.getHavrutaDto() != null) {
-            Havruta havruta = havrutaRepository.findById(createBoardDto.getHavrutaDto().getId()).orElseThrow(HavrutaNotFoundException::new);
-            board = Board.of(user, havruta, createBoardDto);
-        } else {
-            board = Board.of(user, createBoardDto);
-        }
+        Board board = Board.of(user, createBoardDto);
 
         if (!board.getImageUrls().isEmpty()) {
             board.setImageUrls(s3ImageService.transferImage(board.getImageUrls(), S3ImageCategory.BOARD));

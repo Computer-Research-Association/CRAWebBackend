@@ -5,13 +5,11 @@ import com.handong.cra.crawebbackend.board.domain.Category;
 import com.handong.cra.crawebbackend.board.domain.BoardOrderBy;
 import com.handong.cra.crawebbackend.board.dto.CreateBoardDto;
 import com.handong.cra.crawebbackend.board.dto.PageBoardDataDto;
-import com.handong.cra.crawebbackend.board.dto.PageBoardDto;
 import com.handong.cra.crawebbackend.board.dto.UpdateBoardDto;
 import com.handong.cra.crawebbackend.board.dto.request.ReqCreateBoardDto;
 import com.handong.cra.crawebbackend.board.dto.request.ReqUpdateBoardDto;
 import com.handong.cra.crawebbackend.board.dto.response.*;
 import com.handong.cra.crawebbackend.board.service.BoardService;
-import com.handong.cra.crawebbackend.board.service.HavrutaBoardService;
 import com.handong.cra.crawebbackend.exception.ErrorResponse;
 import com.handong.cra.crawebbackend.exception.board.PageSizeLimitExceededException;
 import io.swagger.v3.oas.annotations.Operation;
@@ -39,7 +37,6 @@ import org.springframework.web.multipart.MultipartFile;
 @Tag(name = "Board API", description = "Board 관련 컨트롤러.")
 public class BoardController {
     private final BoardService boardService;
-    private final HavrutaBoardService havrutaBoardService;
 
     @Value("${spring.data.page.MAX_PER_PAGE}")
     private Integer MAX_PAGE_SIZE;
@@ -60,29 +57,6 @@ public class BoardController {
         boardService.deleteBoardById(UpdateBoardDto.of(customUserDetails.getUserId(), boardId));
         return ResponseEntity.ok().build();
     }
-
-
-//    @Parameters(value = {
-//            @Parameter(name = "category", description = "0 = NOTICE, 1 = ACADEMIC, 2 = HAVRUTA"),
-//    })
-//    @Operation(summary = "Category 로 전체 Board List 가져오기", description = "카테고리로 데이터의 리스트를 읽어옴.많은 데이터를 가져올 수 있기 때문에, 권장되지 않음. (page 사용 권장) [추후 admin만 접근 가능하게 할 예정]")
-//    @ApiResponses(value = {
-//
-//            @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = ResListBoardDto.class))),
-//            @ApiResponse(responseCode = "403", description = "권한 없음", content = @Content()),
-//            @ApiResponse(responseCode = "404", description = "category 정보 없음", content = @Content())
-//    })
-//
-//    @PreAuthorize("denyAll()")// 접속 불가
-//    @GetMapping("/{category}")
-//    public ResponseEntity<List<ResListBoardDto>> getBoardsByCategory(@PathVariable Integer category) {
-//        if (category < 0 || category >= Category.values().length) {
-//            throw new BoardIllegalCategoryException();
-//        }
-//
-//        return ResponseEntity.ok().body(boardService.getBoardsByCategory(Category.values()[category])
-//                .stream().map(ResListBoardDto::from).toList());
-//    }
 
     // 조회수 상승 없이 데이터 읽어옴
     @Parameters(value = {
@@ -177,9 +151,6 @@ public class BoardController {
     }
 
 
-
-
-
     @Operation(summary = "Board 생성")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "정상 작동", content = @Content(schema = @Schema(implementation = ResCreateBoardDto.class))),
@@ -237,59 +208,5 @@ public class BoardController {
 
 
         return ResponseEntity.ok(ResLikedBoardDto.of(isLike, likes));
-    }
-
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Havruta Board
-
-
-//    @GetMapping("/havruta")
-//    public ResponseEntity<List<ResListBoardDto>> getHavrutaBoards() {
-//        return ResponseEntity.ok().body(boardService.getHavrutaBoards().stream().map(ResListBoardDto::from).toList());
-//    }
-
-
-//    @PreAuthorize("denyAll()")// 접속 불가
-//    @GetMapping("/havruta/{havrutaId}")
-//    public ResponseEntity<List<ResListBoardDto>> getHavrutaBoardsByHavrutaId(@PathVariable Long havrutaId) {
-//        return ResponseEntity.ok().body(boardService.getHavrutaBoardsByHavrutaId(havrutaId).stream().map(ResListBoardDto::from).toList());
-//    }
-
-    @GetMapping("/havruta/page/{page}")
-    public ResponseEntity<ResPageBoardDto> getPaginationAllHavrutaBoard(
-            @PathVariable Long page,
-            @RequestParam(required = false, defaultValue = "0") Integer perPage,
-            @RequestParam(required = false, defaultValue = "0") Integer orderBy,
-            @RequestParam(required = false, defaultValue = "true") Boolean isASC
-    ) {
-        PageBoardDataDto pageBoardDataDto = PageBoardDataDto.builder()
-                .category(Category.HAVRUTA)
-                .page(page)
-                .perPage(perPage)
-                .orderBy(BoardOrderBy.values()[orderBy])
-                .isASC(isASC)
-                .build();
-        return ResponseEntity.ok(ResPageBoardDto.from(havrutaBoardService.getPaginationAllHavrutaBoard(pageBoardDataDto)));
-    }
-
-    @GetMapping("/havruta/{havrutaId}/page/{page}")
-    public ResponseEntity<ResPageBoardDto> getPaginationHavrutaBoard(
-            @PathVariable Long havrutaId,
-            @PathVariable Long page,
-            @RequestParam(required = false, defaultValue = "0") Integer perPage,
-            @RequestParam(required = false, defaultValue = "0") Integer orderBy,
-            @RequestParam(required = false, defaultValue = "true") Boolean isASC
-    ) {
-
-        PageBoardDataDto pageBoardDataDto = PageBoardDataDto.builder()
-                .category(Category.HAVRUTA)
-                .page(page)
-                .perPage(perPage)
-                .orderBy(BoardOrderBy.values()[orderBy])
-                .isASC(isASC)
-                .build();
-
-        return ResponseEntity.ok(ResPageBoardDto.from(havrutaBoardService.getPaginationHavrutaBoard(havrutaId, pageBoardDataDto)));
     }
 }

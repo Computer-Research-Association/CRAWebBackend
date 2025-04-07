@@ -4,7 +4,6 @@ import com.handong.cra.crawebbackend.board.domain.Board;
 import com.handong.cra.crawebbackend.board.repository.BoardRepository;
 import com.handong.cra.crawebbackend.comment.domain.Comment;
 import com.handong.cra.crawebbackend.comment.dto.CreateCommentDto;
-import com.handong.cra.crawebbackend.comment.dto.ListCommentDto;
 import com.handong.cra.crawebbackend.comment.dto.UpdateCommentDto;
 import com.handong.cra.crawebbackend.comment.repository.CommentRepository;
 import com.handong.cra.crawebbackend.exception.auth.AuthForbiddenActionException;
@@ -55,14 +54,6 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    public List<ListCommentDto> getCommentsByBoardId(final Long boardId) {
-        final Board board = boardRepository.findById(boardId).orElseThrow(BoardNotFoundException::new);
-        final List<Comment> comments = commentRepository.findAllByBoardAndDeletedFalseAndParentCommentIsNull(board);
-        return comments.stream().map(ListCommentDto::from).toList();
-    }
-
-    @Override
-    @Transactional
     public UpdateCommentDto updateComment(final UpdateCommentDto updateCommentDto) {
         final Comment comment = commentRepository.findWithUserById(updateCommentDto.getId())
                 .orElseThrow(CommentNotFoundException::new);
@@ -91,13 +82,6 @@ public class CommentServiceImpl implements CommentService {
             }
         }
         return true;
-    }
-
-    @Override
-    public Long getCommentCount(final Long boardId) {
-        boardRepository.findById(boardId)
-                .orElseThrow(BoardNotFoundException::new);
-        return (long) commentRepository.findAllByBoardIdAndDeletedFalse(boardId).size();
     }
 
     private void commentAuthCheck(final Long writerId, final Long userId) {
