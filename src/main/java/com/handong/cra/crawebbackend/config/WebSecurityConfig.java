@@ -76,6 +76,9 @@ public class WebSecurityConfig {
                         // 도서
                         .requestMatchers(HttpMethod.GET, "/api/item/1/page/**").permitAll()
 
+                        // test 접근 금지
+                        .requestMatchers(HttpMethod.GET, "/api/test/**").denyAll()
+
 
                         // 기본 권한
                         .requestMatchers(HttpMethod.GET, "/api/**").hasAnyRole("USER", "ADMIN")

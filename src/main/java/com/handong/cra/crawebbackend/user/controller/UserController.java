@@ -19,31 +19,28 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RequestMapping("/api/user")
 public class UserController {
-
     private final UserService userService;
 
-    @PutMapping("/image")
+    @PutMapping("/image") // 유저 프로필 이미지 변경
     public ResponseEntity<String> updateUserProfileImage(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestParam String imgUrl) {
-        log.info("userid = {}", customUserDetails.getUser().getId());
         return ResponseEntity.ok(userService.updateUserProfileImage(customUserDetails.getUserId(), imgUrl));
     }
 
-    @PutMapping("/info")
+    @PutMapping("/info") // 유저 정보 수정
     public ResponseEntity<ResUpdateUserDto> updateUserInfo(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody ReqUpdateUserDto reqUpdateUserDto) {
         return ResponseEntity.ok(ResUpdateUserDto.from((userService.updateUserInfo(UpdateUserDto.of(customUserDetails.getUserId(), reqUpdateUserDto)))));
     }
 
 
-    @PutMapping("/password-change")
+    @PutMapping("/password-change") // 유저 비밀번호 변경
     public ResponseEntity<Void> updatePassword(@RequestBody ReqUpdateUserPasswordDto reqUpdateUserPasswordDto) {
         userService.updateUserPassword(UpdateUserPasswordDto.from(reqUpdateUserPasswordDto));
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("")
-    public ResponseEntity<Void> deleteUser (@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+    @DeleteMapping("") // 유저 삭제 (본인 계정)
+    public ResponseEntity<Void> deleteUser(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
         userService.deleteUser(UpdateUserDto.of(customUserDetails.getUserId(), true));
         return ResponseEntity.ok().build();
     }
-
 }

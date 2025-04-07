@@ -13,8 +13,8 @@ public class UpdateUserPasswordDto {
     private String password;
 
     public UpdateUserPasswordDto(ReqUpdateUserPasswordDto reqUpdateUserPasswordDto) {
-        this.code = reqUpdateUserPasswordDto.getCode();;
-        this.password =reqUpdateUserPasswordDto.getPassword();
+        this.code = reqUpdateUserPasswordDto.getCode();
+        this.password = reqUpdateUserPasswordDto.getPassword();
     }
 
     public static UpdateUserPasswordDto from(ReqUpdateUserPasswordDto reqUpdateUserPasswordDto) {

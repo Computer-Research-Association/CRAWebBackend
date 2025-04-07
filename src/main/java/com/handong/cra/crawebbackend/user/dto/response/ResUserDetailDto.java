@@ -1,7 +1,6 @@
 package com.handong.cra.crawebbackend.user.dto.response;
 
 
-import com.handong.cra.crawebbackend.user.dto.UpdateUserDto;
 import com.handong.cra.crawebbackend.user.dto.UserDetailDto;
 import lombok.*;
 
@@ -19,7 +18,7 @@ public class ResUserDetailDto {
     private String imgUrl;
 
 
-    public ResUserDetailDto(UserDetailDto userDetailDto){
+    public ResUserDetailDto(UserDetailDto userDetailDto) {
         this.name = userDetailDto.getName();
         this.email = userDetailDto.getEmail();
         this.studentId = userDetailDto.getStudentId();
@@ -29,7 +28,7 @@ public class ResUserDetailDto {
         this.imgUrl = userDetailDto.getImgUrl();
     }
 
-    public static ResUserDetailDto from (UserDetailDto userDetailDto){
+    public static ResUserDetailDto from(UserDetailDto userDetailDto) {
         return new ResUserDetailDto(userDetailDto);
     }
 }
