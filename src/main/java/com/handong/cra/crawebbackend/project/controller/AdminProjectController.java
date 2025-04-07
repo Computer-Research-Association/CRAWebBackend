@@ -19,27 +19,33 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/api/admin/project")
 public class AdminProjectController {
-
     private final ProjectService projectService;
 
 
-    @PostMapping("")
-    public ResponseEntity<ResCreateProjectDto> createProject(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody ReqCreateProjectDto reqCreateProjectDto) {
-
+    @PostMapping("") // 새로운 프로젝트 데이터 생성
+    public ResponseEntity<ResCreateProjectDto> createProject(
+            @AuthenticationPrincipal final CustomUserDetails customUserDetails,
+            @RequestBody final ReqCreateProjectDto reqCreateProjectDto) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(ResCreateProjectDto.of(projectService.createProject(CreateProjectDto.of(customUserDetails.getUserId(), reqCreateProjectDto))));
+                .body(ResCreateProjectDto.of(projectService.createProject(
+                        CreateProjectDto.of(customUserDetails.getUserId(), reqCreateProjectDto))));
     }
 
-    @PutMapping("/{projectId}")
-    public ResponseEntity<ResUpdateProjectDto> updateProjectById(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Long projectId, @RequestBody ReqUpdateProjectDto reqUpdateProjectDto) {
-        ResUpdateProjectDto resUpdateProjectDto = ResUpdateProjectDto.from(projectService.updateProject(UpdateProjectDto.of(projectId,customUserDetails.getUserId(), reqUpdateProjectDto)));
-        return ResponseEntity.ok(resUpdateProjectDto);
+    @PutMapping("/{projectId}") // 기존 프로젝트 데이터 수정
+    public ResponseEntity<ResUpdateProjectDto> updateProjectById(
+            @AuthenticationPrincipal final CustomUserDetails customUserDetails,
+            @PathVariable final Long projectId,
+            @RequestBody final ReqUpdateProjectDto reqUpdateProjectDto) {
+        return ResponseEntity.ok(ResUpdateProjectDto.from(projectService.updateProject(
+                UpdateProjectDto.of(projectId, customUserDetails.getUserId(), reqUpdateProjectDto))));
     }
 
-    @DeleteMapping("/{projectId}")
-    public ResponseEntity<Void> deleteProjectById(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Long projectId) {
-        if (projectService.deleteProjectById(UpdateProjectDto.of(projectId,customUserDetails.getUserId()))) return ResponseEntity.ok().build();
-        else return ResponseEntity.internalServerError().build();
+    @DeleteMapping("/{projectId}") // 기존 프로젝트 데이터 삭제
+    public ResponseEntity<Void> deleteProjectById(
+            @AuthenticationPrincipal final CustomUserDetails customUserDetails,
+            @PathVariable final Long projectId) {
+        projectService.deleteProjectById(UpdateProjectDto.of(projectId, customUserDetails.getUserId()));
+        return ResponseEntity.ok().build();
     }
 
 }

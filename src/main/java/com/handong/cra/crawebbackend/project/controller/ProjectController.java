@@ -1,63 +1,53 @@
 package com.handong.cra.crawebbackend.project.controller;
 
-import com.handong.cra.crawebbackend.board.domain.BoardOrderBy;
 import com.handong.cra.crawebbackend.exception.project.ProjectNotFoundException;
 import com.handong.cra.crawebbackend.exception.project.ProjectPageSizeLimitExceededException;
 import com.handong.cra.crawebbackend.project.domain.ProjectOrderBy;
 import com.handong.cra.crawebbackend.project.dto.PageProjectDataDto;
 import com.handong.cra.crawebbackend.project.dto.response.ResDetailProjectDto;
-import com.handong.cra.crawebbackend.project.dto.response.ResListProjectDto;
 import com.handong.cra.crawebbackend.project.dto.response.ResPageProjectDto;
 import com.handong.cra.crawebbackend.project.service.ProjectService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Objects;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/project")
 public class ProjectController {
-
     private final ProjectService projectService;
-    private final Integer MAX_PAGE_SIZE = 100;
 
-//    // all
-//    @GetMapping("")
-//    public ResponseEntity<List<ResListProjectDto>> getAllProjects() {
-//        return ResponseEntity.ok(projectService.getListProject()
-//                .stream().map(ResListProjectDto::from).filter(Objects::nonNull).toList());
-//    }
+    @Value("${spring.data.page.MAX_PER_PAGE}")
+    private Integer MAX_PAGE_SIZE;
 
 
-    // pagenation
-    @GetMapping("/list/{page}")
+    @GetMapping("/list/{page}") // 프로젝트 pagenation
     public ResponseEntity<ResPageProjectDto> getPageListProject(
-            @PathVariable Long page,
-            @RequestParam(required = false, defaultValue = "5") Integer perPage,
-            @RequestParam(required = false, defaultValue = "0") Integer orderBy,
-            @RequestParam(required = false, defaultValue = "true") Boolean isASC
+            @PathVariable final Long page,
+            @RequestParam(required = false, defaultValue = "5") final Integer perPage,
+            @RequestParam(required = false, defaultValue = "0") final Integer orderBy,
+            @RequestParam(required = false, defaultValue = "true") final Boolean isASC
     ) {
         if (perPage > MAX_PAGE_SIZE) {
             throw new ProjectPageSizeLimitExceededException();
         }
-        PageProjectDataDto pageProjectDataDto = PageProjectDataDto.builder()
+        final PageProjectDataDto pageProjectDataDto = PageProjectDataDto.builder()
                 .page(page)
                 .perPage(perPage)
                 .isASC(isASC)
                 .projectOrderBy(ProjectOrderBy.values()[orderBy])
                 .build();
-
         return ResponseEntity.ok(ResPageProjectDto.from(projectService.getPaginationProject(pageProjectDataDto)));
     }
 
-    @GetMapping("/view/{id}")
-    public ResponseEntity<ResDetailProjectDto> getDetailProject(@PathVariable Long id) {
-        ResDetailProjectDto resDetailProjectDto = ResDetailProjectDto.from(projectService.getDetailProjectById(id));
+    @GetMapping("/view/{projectId}") // 프로젝트 정보 가져오기
+    public ResponseEntity<ResDetailProjectDto> getDetailProject(@PathVariable final Long projectId) {
+        final ResDetailProjectDto resDetailProjectDto = ResDetailProjectDto.from(projectService.getDetailProjectById(projectId));
         // 삭제되었거나 없는 경우
-        if (resDetailProjectDto == null) throw new ProjectNotFoundException();
-        else return ResponseEntity.ok(resDetailProjectDto);
+        if (resDetailProjectDto == null) {
+            throw new ProjectNotFoundException();
+        }
+        return ResponseEntity.ok(resDetailProjectDto);
     }
 }

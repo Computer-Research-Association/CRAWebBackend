@@ -1,7 +1,6 @@
 package com.handong.cra.crawebbackend.project.dto.response;
 
 
-import com.handong.cra.crawebbackend.exception.project.ProjectNotFoundException;
 import com.handong.cra.crawebbackend.project.dto.CreateProjectDto;
 import lombok.*;
 
