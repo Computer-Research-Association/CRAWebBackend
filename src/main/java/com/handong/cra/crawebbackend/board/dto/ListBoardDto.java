@@ -6,6 +6,7 @@ import com.handong.cra.crawebbackend.user.dto.UserDetailDto;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -38,7 +39,8 @@ public class ListBoardDto {
         this.userDetailDto = UserDetailDto.from(board.getUser());
 
         if (board.getComments() != null) {
-            this.commentCount = board.getComments().size();
+            this.commentCount = board.getComments().stream()
+                    .filter((comment -> !comment.getDeleted())).toList().size();
         }
         this.createdAt = board.getCreatedAt();
         this.updatedAt = board.getUpdatedAt();

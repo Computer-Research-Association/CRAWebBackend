@@ -189,6 +189,7 @@ public class BoardServiceImpl implements BoardService {
             return detailBoardDto;
         }
         if (!board.getCategory().equals(Category.NOTICE)) { // 비 로그인시 공지 이외 확인시 403
+
             throw new AuthForbiddenActionException();
         }
         return detailBoardDto;
