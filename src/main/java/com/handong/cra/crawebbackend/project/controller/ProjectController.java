@@ -7,6 +7,7 @@ import com.handong.cra.crawebbackend.project.dto.PageProjectDataDto;
 import com.handong.cra.crawebbackend.project.dto.response.ResDetailProjectDto;
 import com.handong.cra.crawebbackend.project.dto.response.ResPageProjectDto;
 import com.handong.cra.crawebbackend.project.service.ProjectService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,7 @@ public class ProjectController {
 
 
     @GetMapping("/list/{page}") // 프로젝트 pagenation
+    @Operation(summary = "프로젝트 페이지 조회")
     public ResponseEntity<ResPageProjectDto> getPageListProject(
             @PathVariable final Long page,
             @RequestParam(required = false, defaultValue = "5") final Integer perPage,
@@ -42,6 +44,7 @@ public class ProjectController {
     }
 
     @GetMapping("/view/{projectId}") // 프로젝트 정보 가져오기
+    @Operation(summary = "프로젝트 조회", description = "아이디로 프로젝트 조회")
     public ResponseEntity<ResDetailProjectDto> getDetailProject(@PathVariable final Long projectId) {
         final ResDetailProjectDto resDetailProjectDto = ResDetailProjectDto.from(projectService.getDetailProjectById(projectId));
         // 삭제되었거나 없는 경우

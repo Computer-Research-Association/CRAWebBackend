@@ -6,6 +6,7 @@ import com.handong.cra.crawebbackend.item.dto.PageItemDataDto;
 import com.handong.cra.crawebbackend.item.dto.response.ResDetailItemDto;
 import com.handong.cra.crawebbackend.item.dto.response.ResPageItemDto;
 import com.handong.cra.crawebbackend.item.service.ItemService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,7 @@ public class ItemController {
     private Integer MAX_PAGE_SIZE;
 
     @GetMapping("/{category}/page")
+    @Operation(summary = "카테고리별 아이템 페이지로 조회", description = "page 0부터 시작, 파라미터는 board 페이지와 동일")
     public ResponseEntity<ResPageItemDto> getPageListItem(
             @PathVariable final Integer category,
             @RequestParam final Long page,
@@ -40,6 +42,7 @@ public class ItemController {
     }
 
     @GetMapping("/view/{id}")
+    @Operation(summary = "아이템 조회", description = "id 로 아이템 조회")
     public ResponseEntity<ResDetailItemDto> getDetailItems(@PathVariable final Long id) {
         return ResponseEntity.ok(ResDetailItemDto.from(itemService.getDetailById(id)));
     }

@@ -34,8 +34,8 @@ public class BoardController {
     @Value("${spring.data.page.MAX_PER_PAGE}")
     private Integer MAX_PAGE_SIZE;
 
-    @Operation(summary = "Board 삭제", description = "유저의 권한 확인 이후 삭제 진행.")
     @DeleteMapping("/{boardId}")
+    @Operation(summary = "Board 삭제", description = "유저의 권한 확인 이후 삭제 진행.")
     public ResponseEntity<Void> deleteBoard(
             @AuthenticationPrincipal final CustomUserDetails customUserDetails,
             @PathVariable final Long boardId) {
@@ -44,8 +44,8 @@ public class BoardController {
         return ResponseEntity.ok().build();
     }
 
-    @Operation(summary = "Board 정보 조회", description = "아이디로 Board 의 정보 조회 ")
     @GetMapping("/view/{boardId}")
+    @Operation(summary = "Board 정보 조회", description = "아이디로 Board 의 정보 조회 ")
     public ResponseEntity<ResDetailBoardDto> getDetailBoard(
             @AuthenticationPrincipal final CustomUserDetails customUserDetails,
             @PathVariable final Long boardId) {
@@ -58,8 +58,8 @@ public class BoardController {
         return ResponseEntity.ok().body(resDetailBoardDto);
     }
 
-    @Operation(summary = "Board 조회수 증가", description = "아이디로 Board 조회수 상승 ")
     @PostMapping("/view/{boardId}")
+    @Operation(summary = "Board 조회수 증가", description = "아이디로 Board 조회수 상승 ")
     public ResponseEntity<Void> ascendingBoardView(@PathVariable final Long boardId) {
         boardService.ascendingBoardView(boardId);
         return ResponseEntity.ok().build();
@@ -72,8 +72,8 @@ public class BoardController {
             @Parameter(name = "orderBy", description = "정렬 방식 | 1. DATE 2.좋아요 수 순서"),
             @Parameter(name = "isASC", description = "오름차순"),
     })
-    @Operation(summary = "Board 페이지단위로 조회", description = "페이지별 Board list")
     @GetMapping("/{category}/page/{page}")
+    @Operation(summary = "Board 페이지단위로 조회", description = "페이지별 Board list")
     public ResponseEntity<ResPageBoardDto> getPaginationBoard(
             @PathVariable final Integer category,
             @PathVariable final Long page, // 0부터 시작
@@ -118,8 +118,8 @@ public class BoardController {
     }
 
 
-    @Operation(summary = "Board 생성")
     @PostMapping("")
+    @Operation(summary = "Board 생성")
     public ResponseEntity<ResCreateBoardDto> createBoard(
             @AuthenticationPrincipal final CustomUserDetails customUserDetails,
             @Valid @RequestPart("board") final ReqCreateBoardDto reqCreateBoardDto,
@@ -129,8 +129,8 @@ public class BoardController {
                         .of(customUserDetails.getUserId(), reqCreateBoardDto, file))));
     }
 
-    @Operation(summary = "Board 수정")
     @PutMapping("/{boardId}")
+    @Operation(summary = "Board 수정")
     public ResponseEntity<ResUpdateBoardDto> updateBoard(
             @AuthenticationPrincipal final CustomUserDetails customUserDetails,
             @PathVariable final Long boardId,
@@ -142,8 +142,8 @@ public class BoardController {
         return ResponseEntity.ok().body(resUpdateBoardDto);
     }
 
-    @Operation(summary = "Board 좋아요")
     @PostMapping("/like/{boardId}")
+    @Operation(summary = "Board 좋아요")
     public ResponseEntity<ResLikedBoardDto> BoardLike(
             @PathVariable final Long boardId,
             @AuthenticationPrincipal final CustomUserDetails customUserDetails,

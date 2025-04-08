@@ -10,6 +10,7 @@ import com.handong.cra.crawebbackend.item.dto.response.ResAdminDetailItemDto;
 import com.handong.cra.crawebbackend.item.dto.response.ResCreateItemDto;
 import com.handong.cra.crawebbackend.item.dto.response.ResUpdateItemDto;
 import com.handong.cra.crawebbackend.item.service.ItemService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +25,7 @@ public class AdminItemController {
     private final ItemService itemService;
 
     @PostMapping("")
+    @Operation(summary = "아이템 생성")
     public ResponseEntity<ResCreateItemDto> createItem(
             @AuthenticationPrincipal final CustomUserDetails customUserDetails,
             @RequestBody final ReqCreateItemDto reqCreateItemDto) {
@@ -32,6 +34,7 @@ public class AdminItemController {
     }
 
     @PutMapping("/{itemId}")
+    @Operation(summary = "아이템 수정")
     public ResponseEntity<ResUpdateItemDto> updateItem(
             @AuthenticationPrincipal final CustomUserDetails customUserDetails,
             @PathVariable final Long itemId,
@@ -43,12 +46,14 @@ public class AdminItemController {
     }
 
     @GetMapping("/{itemId}")
+    @Operation(summary = "아이템 조회", description = "어드민 유저 조회")
     public ResponseEntity<ResAdminDetailItemDto> getAdminItem(@PathVariable final Long itemId) {
         return ResponseEntity
                 .ok(ResAdminDetailItemDto.from(itemService.getDetailById(itemId)));
     }
 
     @DeleteMapping("/{itemId}")
+    @Operation(summary = "아이템 삭제")
     public ResponseEntity<Void> deleteItemById(
             @AuthenticationPrincipal final CustomUserDetails customUserDetails,
             @PathVariable final Long itemId) {
@@ -57,6 +62,7 @@ public class AdminItemController {
     }
 
     @PutMapping("/valid/{itemId}")
+    @Operation(summary = "아이템 상태 변경", description = "대여 상태 변경")
     public ResponseEntity<Void> changeValidatingById(
             @AuthenticationPrincipal final CustomUserDetails customUserDetails,
             @PathVariable final Long itemId,

@@ -9,6 +9,7 @@ import com.handong.cra.crawebbackend.project.dto.request.ReqUpdateProjectDto;
 import com.handong.cra.crawebbackend.project.dto.response.ResCreateProjectDto;
 import com.handong.cra.crawebbackend.project.dto.response.ResUpdateProjectDto;
 import com.handong.cra.crawebbackend.project.service.ProjectService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,7 @@ public class AdminProjectController {
 
 
     @PostMapping("") // 새로운 프로젝트 데이터 생성
+    @Operation(summary = "프로젝트 생성")
     public ResponseEntity<ResCreateProjectDto> createProject(
             @AuthenticationPrincipal final CustomUserDetails customUserDetails,
             @RequestBody final ReqCreateProjectDto reqCreateProjectDto) {
@@ -32,6 +34,7 @@ public class AdminProjectController {
     }
 
     @PutMapping("/{projectId}") // 기존 프로젝트 데이터 수정
+    @Operation(summary = "기존 프로젝트 수정")
     public ResponseEntity<ResUpdateProjectDto> updateProjectById(
             @AuthenticationPrincipal final CustomUserDetails customUserDetails,
             @PathVariable final Long projectId,
@@ -41,6 +44,7 @@ public class AdminProjectController {
     }
 
     @DeleteMapping("/{projectId}") // 기존 프로젝트 데이터 삭제
+    @Operation(summary = "프로젝트 삭제")
     public ResponseEntity<Void> deleteProjectById(
             @AuthenticationPrincipal final CustomUserDetails customUserDetails,
             @PathVariable final Long projectId) {
