@@ -9,7 +9,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface ItemRepository extends JpaRepository<Item, Long> {
-    public List<Item> findAllByItemCategoryAndDeletedFalse(ItemCategory itemCategory);
-    public Page<Item> findAllByItemCategoryAndDeletedFalse(ItemCategory itemCategory, Pageable pageable);
+    List<Item> findAllByItemCategoryAndDeletedFalse(ItemCategory itemCategory);
+
+    Page<Item> findAllByItemCategoryAndDeletedFalse(ItemCategory itemCategory, Pageable pageable);
 
 }

@@ -6,7 +6,6 @@ import com.handong.cra.crawebbackend.file.domain.S3ImageCategory;
 import com.handong.cra.crawebbackend.file.service.S3ImageService;
 import com.handong.cra.crawebbackend.exception.item.ItemNotFoundException;
 import com.handong.cra.crawebbackend.item.domain.Item;
-import com.handong.cra.crawebbackend.item.domain.ItemCategory;
 import com.handong.cra.crawebbackend.item.dto.*;
 import com.handong.cra.crawebbackend.item.repository.ItemRepository;
 import com.handong.cra.crawebbackend.user.domain.User;
@@ -20,8 +19,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 @RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService {
@@ -31,101 +28,89 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional
-    public CreateItemDto createItem(CreateItemDto createItemDto) {
-        // 권한 검사
-        itemAuthCheck(createItemDto.getUserId());
-
-        if (createItemDto.getImageUrl() != null)
-            createItemDto.setImageUrl(s3ImageService.transferImage(createItemDto.getImageUrl(), S3ImageCategory.ITEM));
-
-        Item item = Item.from(createItemDto);
-        item = itemRepository.save(item);
-        return CreateItemDto.from(item);
+    public CreateItemDto createItem(final CreateItemDto createItemDto) {
+        itemAuthCheck(createItemDto.getUserId()); // 권한 검사
+        if (createItemDto.getImageUrl() != null) {
+            createItemDto.setImageUrl(
+                    s3ImageService.transferImage(createItemDto.getImageUrl(), S3ImageCategory.ITEM));
+        }
+        final Item item = Item.from(createItemDto);
+        final Item savedItem = itemRepository.save(item);
+        return CreateItemDto.from(savedItem);
     }
 
     @Override
     @Transactional
-    public UpdateItemDto updateItem(UpdateItemDto updateItemDto) {
-        // 권한 검사
-        itemAuthCheck(updateItemDto.getUserId());
-
-        Item item = itemRepository.findById(updateItemDto.getId()).orElseThrow(ItemNotFoundException::new);
-
+    public UpdateItemDto updateItem(final UpdateItemDto updateItemDto) {
+        itemAuthCheck(updateItemDto.getUserId()); // 권한 검사
+        final Item item = itemRepository.findById(updateItemDto.getId())
+                .orElseThrow(ItemNotFoundException::new);
         if (updateItemDto.getImageUrl().contains("temp")) { // 변경됨
             s3ImageService.transferImage(item.getImageUrl(), S3ImageCategory.DELETED);
-            updateItemDto.setImageUrl(s3ImageService.transferImage(updateItemDto.getImageUrl(), S3ImageCategory.ITEM));
+            updateItemDto.setImageUrl(
+                    s3ImageService.transferImage(updateItemDto.getImageUrl(), S3ImageCategory.ITEM));
         }
-
-        item = item.update(updateItemDto);
-        return UpdateItemDto.from(item);
+        final Item updatedItem = item.update(updateItemDto);
+        return UpdateItemDto.from(updatedItem);
     }
 
     @Override
     @Transactional
-    public Boolean deleteItemById(UpdateItemDto updateItemDto) {
-        // 권한 검사
-        itemAuthCheck(updateItemDto.getUserId());
-
-        Item item = itemRepository.findById(updateItemDto.getId()).orElseThrow(ItemNotFoundException::new);
-
+    public Boolean deleteItemById(final UpdateItemDto updateItemDto) {
+        itemAuthCheck(updateItemDto.getUserId()); // 권한 검사
+        final Item item = itemRepository.findById(updateItemDto.getId())
+                .orElseThrow(ItemNotFoundException::new);
         item.delete();
-
-        if (item.getImageUrl() != null)
-            s3ImageService.transferImage(item.getImageUrl(), S3ImageCategory.DELETED);
-
+        if (item.getImageUrl() != null) {
+            s3ImageService.transferImage(
+                    item.getImageUrl(), S3ImageCategory.DELETED);
+        }
         return true;
     }
 
     @Override
     @Transactional
-    public Boolean changeValidatingById(UpdateItemDto updateItemDto) {
-        // 권한 검사
-        itemAuthCheck(updateItemDto.getUserId());
-
-
-        User user = userRepository.findByUsername(updateItemDto.getBorrowerUsername());
-        if (user == null) throw new UserNotFoundException();
-
-        Item item = itemRepository.findById(updateItemDto.getId()).orElseThrow(ItemNotFoundException::new);
-
+    public Boolean changeValidatingById(final UpdateItemDto updateItemDto) {
+        itemAuthCheck(updateItemDto.getUserId()); // 권한 검사
+        final User user = userRepository.
+                findByUsername(updateItemDto.getBorrowerUsername());
+        if (user == null) {
+            throw new UserNotFoundException();
+        }
+        final Item item = itemRepository.findById(updateItemDto.getId())
+                .orElseThrow(ItemNotFoundException::new);
         item.setBorrowerUser(user);
-
         item.setIsBorrowed(updateItemDto.getIsBorrowed());
         return true;
     }
 
     @Override
-    public PageItemDto getPaginationItem(PageItemDataDto pageItemDataDto) {
+    public PageItemDto getPaginationItem(final PageItemDataDto pageItemDataDto) {
         Sort sort = Sort.by("createdAt");
-
         sort = (pageItemDataDto.getIsASC()) ? sort.ascending() : sort.descending();
-
-        Pageable pageable = PageRequest.of(Math.toIntExact(pageItemDataDto.getPage()), pageItemDataDto.getPerPage(), sort);
-        Page<Item> pages = itemRepository.findAllByItemCategoryAndDeletedFalse(pageItemDataDto.getItemCategory(), pageable);
-
+        Pageable pageable = PageRequest.
+                of(Math.toIntExact(pageItemDataDto.getPage()), pageItemDataDto.getPerPage(), sort);
+        final Page<Item> pages = itemRepository
+                .findAllByItemCategoryAndDeletedFalse(pageItemDataDto.getItemCategory(), pageable);
         return PageItemDto.of(pages.stream().map(ListItemDto::from).toList(), pages.getTotalPages());
     }
 
-
     @Override
-    public List<ListItemDto> getItemsByCategory(ItemCategory itemCategory) {
-        List<Item> items = itemRepository.findAllByItemCategoryAndDeletedFalse(itemCategory);
-        return items.stream().map(ListItemDto::from).toList();
+    public DetailItemDto getDetailById(final Long itemId) {
+        final Item item = itemRepository.findById(itemId)
+                .orElseThrow(ItemNotFoundException::new);
+        if (item.getDeleted()) {
+            return null;
+        }
+        return DetailItemDto.from(item);
     }
 
-
-    @Override
-    public DetailItemDto getDetailById(Long id) {
-        Item item = itemRepository.findById(id).orElseThrow(ItemNotFoundException::new);
-        if (item.getDeleted()) return null;
-        else return DetailItemDto.from(item);
-    }
-
-    private void itemAuthCheck(Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
-
-        if (!user.getRoles().hasRole(UserRoleEnum.ADMIN)) throw new AuthForbiddenActionException();
+    private void itemAuthCheck(final Long userId) {
+        final User user = userRepository.findById(userId)
+                .orElseThrow(UserNotFoundException::new);
+        if (!user.getRoles().hasRole(UserRoleEnum.ADMIN)) {
+            throw new AuthForbiddenActionException();
+        }
 
     }
-
 }
