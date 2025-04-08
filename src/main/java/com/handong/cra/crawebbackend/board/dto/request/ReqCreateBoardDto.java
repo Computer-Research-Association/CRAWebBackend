@@ -11,7 +11,6 @@ import java.util.List;
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Schema(description = "Board 생성 데이터 전달 DTO")
 public class ReqCreateBoardDto {
 
     @NotNull

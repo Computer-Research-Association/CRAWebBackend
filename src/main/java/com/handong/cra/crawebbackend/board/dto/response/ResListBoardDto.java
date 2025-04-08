@@ -13,7 +13,6 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Schema(description = "Board 리스트 정보 데이터 전달 DTO")
 public class ResListBoardDto {
     private Long id;
     private String title;

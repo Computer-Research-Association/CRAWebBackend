@@ -14,7 +14,6 @@ import java.util.List;
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Schema(description = "Board 정보 데이터 전달 DTO")
 public class ResDetailBoardDto {
     private Long id;
     private String title;
@@ -50,7 +49,7 @@ public class ResDetailBoardDto {
         if (detailBoardDto.getListCommentDtos() != null)
             this.resListCommentDtos = detailBoardDto.getListCommentDtos().stream().map(ResListCommentDto::from).toList();
     }
-    
+
     public static ResDetailBoardDto from(DetailBoardDto detailBoardDto) {
         return new ResDetailBoardDto(detailBoardDto);
     }

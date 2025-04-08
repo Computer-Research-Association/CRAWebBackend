@@ -13,7 +13,6 @@ import java.util.List;
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Schema(description = "Board 생성 완료 데이터 전달 DTO")
 public class ResCreateBoardDto {
     private Long id;
     private String title;

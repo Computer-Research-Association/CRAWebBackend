@@ -14,8 +14,7 @@ public class BoardPin extends BaseEntity {
     @Column(nullable = false)
     private Category category;
 
-        @OneToOne
-//    @OneToOne(mappedBy = "board", cascade = CascadeType.ALL)
+    @OneToOne
     @JoinColumn(name = "board_id", nullable = false, unique = false)
     private Board board;
 

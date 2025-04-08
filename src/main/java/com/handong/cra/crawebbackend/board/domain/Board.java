@@ -70,27 +70,11 @@ public class Board extends BaseEntity {
         view = 0L;
     }
 
-//    public Board(User user, Havruta havruta, CreateBoardDto createBoardDto) {
-//        this(user, createBoardDto);
-//        this.havruta = havruta;
-//    }
-
-//    public Board(User user, Havruta havruta, CreateHavrutaBoardDto createHavrutaBoardDto) {
-//      this(user, CreateBoardDto.from(user.getId(), createHavrutaBoardDto));
-//      this.havruta = havruta;
-//    }
-
     public static Board of(User user, CreateBoardDto createBoardDto) {
         return new Board(user, createBoardDto);
 
     }
 
-//    public static Board of(User user, Havruta havruta, CreateBoardDto createBoardDto) {
-//        return new Board(user, havruta, createBoardDto);
-//    }
-
-
-    // TODO : 수정할 데이터 추가
     public Board update(UpdateBoardDto updateBoardDto) {
         this.title = updateBoardDto.getTitle();
         this.content = updateBoardDto.getContent();

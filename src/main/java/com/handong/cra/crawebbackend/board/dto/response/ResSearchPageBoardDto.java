@@ -1,6 +1,5 @@
 package com.handong.cra.crawebbackend.board.dto.response;
 
-import com.handong.cra.crawebbackend.board.dto.PageBoardDto;
 import com.handong.cra.crawebbackend.board.dto.SearchPageBoardDto;
 import lombok.Builder;
 import lombok.Getter;
