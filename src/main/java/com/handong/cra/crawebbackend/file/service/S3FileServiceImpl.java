@@ -28,17 +28,18 @@ public class S3FileServiceImpl implements S3FileService {
     @Value("${spring.cloud.aws.s3.bucket}")
     private String bucket;
 
-    private String getKeyFromUrl(String url) {
-        String originUrl = getPublicUrl("");
-        if (!url.startsWith(originUrl)) return null;
-        else return url.substring(originUrl.length());
+    private String getKeyFromUrl(final String url) {
+        final String originUrl = getPublicUrl("");
+        if (!url.startsWith(originUrl)) {
+            return null;
+        }
+        return url.substring(originUrl.length());
     }
 
-    private String getPublicUrl(String fileName) {
+    private String getPublicUrl(final String fileName) {
         try {
             String encodedFileName = URLEncoder.encode(fileName, "UTF-8");
             encodedFileName = encodedFileName.replace("+", "%20");
-
             return String.format("https://%s.s3.%s.amazonaws.com/%s", bucket, amazonS3.getRegionName(), encodedFileName);
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
@@ -46,14 +47,14 @@ public class S3FileServiceImpl implements S3FileService {
     }
 
     @Override
-    public String uploadFile(MultipartFile file, S3ImageCategory s3ImageCategory) {
+    public String uploadFile(final MultipartFile file, final S3ImageCategory s3ImageCategory) {
         // filename -> uuid
-        String filename = "file/" + s3ImageCategory.toString().toLowerCase() + "/" + UUID.randomUUID() + "_" + file.getOriginalFilename();
+        final String filename = "file/" + s3ImageCategory.toString().toLowerCase() + "/" + UUID.randomUUID() + "_" + file.getOriginalFilename();
         try {
-            ObjectMetadata metadata = new ObjectMetadata();
+            final ObjectMetadata metadata = new ObjectMetadata();
             metadata.setContentLength(file.getSize());
             metadata.setContentType(file.getContentType());
-            PutObjectRequest putObjectRequest = new PutObjectRequest(bucket, filename, file.getInputStream(), metadata);
+            final PutObjectRequest putObjectRequest = new PutObjectRequest(bucket, filename, file.getInputStream(), metadata);
             amazonS3.putObject(putObjectRequest);
             return getPublicUrl(filename);
         } catch (Exception e) {
@@ -62,59 +63,44 @@ public class S3FileServiceImpl implements S3FileService {
     }
 
     @Override
-    public List<String> uploadFiles(List<MultipartFile> files, S3ImageCategory s3ImageCategory) {
-        List<String> result = new ArrayList<>();
+    public List<String> uploadFiles(final List<MultipartFile> files, final S3ImageCategory s3ImageCategory) {
+        final List<String> result = new ArrayList<>();
         files.forEach(file -> {
             String filename = "file/" + s3ImageCategory.toString().toLowerCase() + "/" + UUID.randomUUID() + "_" + file.getOriginalFilename();
             try {
-                ObjectMetadata metadata = new ObjectMetadata();
+                final ObjectMetadata metadata = new ObjectMetadata();
                 metadata.setContentLength(file.getSize());
                 metadata.setContentType(file.getContentType());
-                PutObjectRequest putObjectRequest = new PutObjectRequest(bucket, filename, file.getInputStream(), metadata);
+                final PutObjectRequest putObjectRequest = new PutObjectRequest(bucket, filename, file.getInputStream(), metadata);
                 amazonS3.putObject(putObjectRequest);
                 result.add(getPublicUrl(filename));
             } catch (Exception e) {
                 log.error(e.getMessage());
             }
         });
-
         return result;
     }
 
-    public String transferFile(String path, S3ImageCategory s3ImageCategory) {
-        String key = getKeyFromUrl(path);
-        log.info("key = {}", key);
-        String filename = Objects.requireNonNull(key).substring(key.indexOf("/"));
-        log.info("filename = {}", filename);
-
+    public String transferFile(final String path, final S3ImageCategory s3ImageCategory) {
+        final String key = getKeyFromUrl(path);
+        final String filename = Objects.requireNonNull(key).substring(key.indexOf("/"));
         try {
-            CopyObjectRequest copyObjectRequest =
+            final CopyObjectRequest copyObjectRequest =
                     new CopyObjectRequest(bucket, key, bucket, s3ImageCategory.toString().toLowerCase() + "/" + filename);
-            DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(bucket, key);
-
+            final DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(bucket, key);
             amazonS3.copyObject(copyObjectRequest);
             amazonS3.deleteObject(deleteObjectRequest);
-            return   getPublicUrl(filename);
+            return getPublicUrl(filename);
         } catch (Exception e) {
             return null;
         }
     }
 
-    public List<String> transferFile(List<String> paths, S3ImageCategory s3ImageCategory) {
-        List<String> urls = new ArrayList<>();
-        for (String path : paths)
+    public List<String> transferFile(final List<String> paths, final S3ImageCategory s3ImageCategory) {
+        final List<String> urls = new ArrayList<>();
+        for (String path : paths) {
             urls.add(transferFile(path, s3ImageCategory));
+        }
         return urls;
     }
-
-//
-//    public Boolean deleteImageById(Long id) {
-//        S3Image s3Image = s3ImageRepository.findById(id).orElseThrow(() -> new RuntimeException("데이터가 없어요"));
-//        DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(bucket, s3Image.getKey());
-//        amazonS3.deleteObject(deleteObjectRequest);
-//        s3ImageRepository.deleteById(id);
-//        return true;
-//    }
-
-
 }

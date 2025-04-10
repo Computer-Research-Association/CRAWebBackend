@@ -16,12 +16,6 @@ public class ResLoginDto {
     private ResUserDetailDto resUserDetailDto;
     private ResTokenDto resTokenDto;
 
-//    public ResLoginDto(ResUserDetailDto resUserDetailDto, ResTokenDto resTokenDto) {
-//        this.resUserDetailDto = resUserDetailDto;
-//        this.resTokenDto = resTokenDto;
-//    }
-
-
     public static ResLoginDto of(UserDetailDto userDetailDto, TokenDto tokenDto) {
         return new ResLoginDto(ResUserDetailDto.from(userDetailDto), ResTokenDto.from(tokenDto));
     }

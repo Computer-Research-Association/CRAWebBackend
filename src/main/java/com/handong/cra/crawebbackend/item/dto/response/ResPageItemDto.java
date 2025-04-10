@@ -1,8 +1,5 @@
 package com.handong.cra.crawebbackend.item.dto.response;
 
-import com.handong.cra.crawebbackend.board.dto.PageBoardDto;
-import com.handong.cra.crawebbackend.board.dto.response.ResListBoardDto;
-import com.handong.cra.crawebbackend.board.dto.response.ResPageBoardDto;
 import com.handong.cra.crawebbackend.item.dto.PageItemDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

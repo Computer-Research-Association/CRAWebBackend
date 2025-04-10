@@ -1,7 +1,6 @@
 package com.handong.cra.crawebbackend.auth.dto;
 
 import com.handong.cra.crawebbackend.auth.dto.request.ReqSignupDto;
-import com.handong.cra.crawebbackend.auth.dto.response.ResSignupDto;
 import com.handong.cra.crawebbackend.user.domain.UserRoleEnum;
 import com.handong.cra.crawebbackend.user.domain.UserRoleSet;
 import lombok.*;

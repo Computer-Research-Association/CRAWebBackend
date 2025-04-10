@@ -23,15 +23,15 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtTokenProvider jwtTokenProvider;
-
     private final CustomUserDetailsService userDetailsService;
     private final UserRepository userRepository;
 
-
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String jwt = parseJwt(request);
-
+    protected void doFilterInternal(
+            final HttpServletRequest request,
+            final HttpServletResponse response,
+            final FilterChain filterChain) throws ServletException, IOException {
+        final String jwt = parseJwt(request);
         // null 인 경우 넘어감
         if (jwt != null) {
             // 토큰이 없거나 만료된 경우
@@ -40,40 +40,26 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "토큰이 만료되었습니다.");
                 return;
             }
-
-            Long userId = Long.valueOf(jwtTokenProvider.getSubject(jwt));
-            User user = userRepository.getUserById(userId);
-
-
-            // error
-            if (user == null) {
+            final Long userId = Long.valueOf(jwtTokenProvider.getSubject(jwt));
+            final User user = userRepository.getUserById(userId);
+            if (user == null) { // error
                 response.sendError(HttpServletResponse.SC_NOT_FOUND, "유저를 찾을 수 없습니다");
                 return;
             }
-
-            String username = user.getUsername();
-
-            log.info(username);
-            log.info("username: {}", username);
-            log.info("role: {}", userRepository.getUserById(userId).getRoles().getAuthorities());
-
+            final String username = user.getUsername();
             setAuthentication(username);
         }
         filterChain.doFilter(request, response);
     }
 
-    private void setAuthentication(String username) {
-        SecurityContext context = SecurityContextHolder.createEmptyContext();
-        CustomUserDetails userDetails = userDetailsService.loadUserByUsername(username);
-
+    private void setAuthentication(final String username) {
+        final SecurityContext context = SecurityContextHolder.createEmptyContext();
+        final CustomUserDetails userDetails = userDetailsService.loadUserByUsername(username);
         context.setAuthentication(new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities()));
-
-        log.info("context: {}", context);
-
         SecurityContextHolder.setContext(context);
     }
 
-    private String parseJwt(HttpServletRequest request) {
+    private String parseJwt(final HttpServletRequest request) {
         String token = request.getHeader("Authorization");
         if (token != null && token.startsWith("Bearer ")) {
             log.info(token);

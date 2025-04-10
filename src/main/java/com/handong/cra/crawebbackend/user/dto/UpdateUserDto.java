@@ -2,7 +2,6 @@ package com.handong.cra.crawebbackend.user.dto;
 
 import com.handong.cra.crawebbackend.user.domain.User;
 import com.handong.cra.crawebbackend.user.dto.request.ReqUpdateUserDto;
-import com.handong.cra.crawebbackend.user.dto.response.ResUpdateUserDto;
 import lombok.*;
 
 import java.time.LocalDateTime;

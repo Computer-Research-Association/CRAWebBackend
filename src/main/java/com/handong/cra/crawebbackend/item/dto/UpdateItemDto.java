@@ -57,7 +57,6 @@ public class UpdateItemDto {
         this.userId = userId;
     }
 
-
     public static UpdateItemDto of(Long userId, Long itemId, ReqUpdateItemDto reqUpdateItemDto) {
         return new UpdateItemDto(userId, itemId, reqUpdateItemDto);
     }

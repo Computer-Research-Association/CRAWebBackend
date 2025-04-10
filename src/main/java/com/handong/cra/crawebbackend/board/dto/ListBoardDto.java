@@ -2,8 +2,6 @@ package com.handong.cra.crawebbackend.board.dto;
 
 import com.handong.cra.crawebbackend.board.domain.Board;
 import com.handong.cra.crawebbackend.board.domain.Category;
-import com.handong.cra.crawebbackend.comment.domain.Comment;
-import com.handong.cra.crawebbackend.havruta.dto.HavrutaDto;
 import com.handong.cra.crawebbackend.user.dto.UserDetailDto;
 import lombok.*;
 
@@ -26,13 +24,9 @@ public class ListBoardDto {
     private Long likeCount;
     private Integer commentCount;
     private Long view;
-
-    private HavrutaDto havrutaDto;
     private Integer totalPages;
-
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-
 
     public ListBoardDto(Board board) {
         this.id = board.getId();
@@ -42,8 +36,6 @@ public class ListBoardDto {
         this.category = board.getCategory();
         this.likeCount = (long) board.getLikedUsers().size();
         this.view = board.getView();
-        if (board.getHavruta() != null)
-            this.havrutaDto = HavrutaDto.from(board.getHavruta());
         this.userDetailDto = UserDetailDto.from(board.getUser());
 
         if (board.getComments() != null) {

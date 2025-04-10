@@ -24,12 +24,12 @@ import org.springframework.beans.factory.annotation.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -44,166 +44,140 @@ public class AccountServiceImpl implements AccountService {
     private String frontUrl;
 
     @Override
-    public List<CodeDto> generateSignupCodes(Short length) {
-        List<CodeDto> codeDtos = new ArrayList<>();
-        for (int i = 0; i < length; i++) codeDtos.add(generateToken(ManageTokenCategory.SIGNUP));
+    public List<CodeDto> generateSignupCodes(final Short length) {
+        final List<CodeDto> codeDtos = new ArrayList<>();
+        for (int i = 0; i < length; i++) {
+            codeDtos.add(generateToken(ManageTokenCategory.SIGNUP));
+        }
         return codeDtos;
     }
 
-    private LocalDateTime getExpireDate(LocalDateTime now) { // TODO : refactor
-        return now.plusHours(24);
-    }
 
     @Override
-    public Long codeValidCheck(String code, ManageTokenCategory manageTokenCategory) {
-        ManageToken manageToken = manageTokenRepository.findByCode(code);
-        if (manageToken == null) // 없음
+    public Long codeValidCheck(final String code, final ManageTokenCategory manageTokenCategory) {
+        final ManageToken manageToken = manageTokenRepository.findByCode(code);
+        if (manageToken == null) {// 없음
             throw new AccountCodeNotFoundException();
-        else if (manageToken.getManageTokenCategory() != manageTokenCategory) // 코드는 있는데, 카테고리가 다름
+        }
+        if (manageToken.getManageTokenCategory() != manageTokenCategory) { // 코드는 있는데, 카테고리가 다름
             throw new AccountCodeNotFoundException();
-        else if (!manageToken.getExpireDate().isAfter(LocalDateTime.now())) // 만료됨
+        }
+        if (!manageToken.getExpireDate().isAfter(LocalDateTime.now())) { // 만료됨
             throw new AccountCodeExpiredException();
-
-        Long userId = manageToken.getUserId();
-
-        manageTokenRepository.delete(manageToken);
-
-        if (userId != null) return userId;
-        else return 0L;
-
+        }
+        final Long userId = manageToken.getUserId();
         // passed!
+        manageTokenRepository.delete(manageToken);
+        return Objects.requireNonNullElse(userId, 0L);
+
     }
 
-    private CodeDto generateToken(ManageTokenCategory manageTokenCategory) {
-        LocalDateTime expireDate = getExpireDate(LocalDateTime.now());
-        String uuid = UUID.randomUUID().toString();
-        CodeDto codeDto = CodeDto.of(uuid, manageTokenCategory, expireDate);
+    private CodeDto generateToken(final ManageTokenCategory manageTokenCategory) {
+        final LocalDateTime expireDate = getExpireDate(LocalDateTime.now());
+        final String uuid = UUID.randomUUID().toString();
+        final CodeDto codeDto = CodeDto.of(uuid, manageTokenCategory, expireDate);
         return CodeDto.of(manageTokenRepository.save(ManageToken.from(codeDto)));
     }
 
-    // password
-    private CodeDto generateToken(ManageTokenCategory manageTokenCategory, Long userId) {
-        LocalDateTime expireDate = getExpireDate(LocalDateTime.now());
-        String uuid = UUID.randomUUID().toString();
-        CodeDto codeDto = CodeDto.of(uuid, manageTokenCategory, userId, expireDate);
-        return CodeDto.of(manageTokenRepository.save(ManageToken.from(codeDto)));
-    }
 
     @Override
-    public void requestChangingPassword(String username) {
-        User user = userRepository.findByUsername(username);
-        if (user == null) throw new UserNotFoundException();
-
-        // 토큰 발행
-        CodeDto codeDto = generateToken(ManageTokenCategory.PASSWORD_CHANGE, user.getId());
-
-        String passwordChangeUrl = frontUrl + "/pwsearch/reset?code=" + codeDto.getCode();
-
-        // 이메일 전송
-        MailSendDto mailSendDto = MailSendDto.builder()
+    public void requestChangingPassword(final String username) {
+        final User user = userRepository.findByUsername(username);
+        final CodeDto codeDto = generateToken(ManageTokenCategory.PASSWORD_CHANGE, user.getId()); // 토큰 발행
+        final String passwordChangeUrl = frontUrl + "/pwsearch/reset?code=" + codeDto.getCode();
+        final MailSendDto mailSendDto = MailSendDto.builder() // 이메일 DTO 생성
                 .sendEmail(user.getEmail())
                 .url(passwordChangeUrl)
                 .mailCategory(MailCategory.PASSWORD_EMAIL)
                 .username(user.getUsername())
                 .build();
-
-        mailService.sendMimeMessage(mailSendDto);
+        mailService.sendMimeMessage(mailSendDto); // 이메일 전송
     }
 
     @Override
-    public Boolean validUsername(String username) {
-        User user = userRepository.findByUsername(username);
-        return user == null;
+    public Boolean validUsername(final String username) {
+        final User user = userRepository.findByUsername(username);
+        return (user == null);
     }
 
     @Override
-    public String findUsername(FindUsernameDto findUsernameDto) {
-        User user = userRepository.findByNameAndStudentIdAndEmail(
+    public String findUsername(final FindUsernameDto findUsernameDto) {
+        final User user = userRepository.findByNameAndStudentIdAndEmail(
                 findUsernameDto.getName(),
                 findUsernameDto.getStudentId(),
                 findUsernameDto.getEmail()
         );
 
-        if (user == null) throw new UserNotFoundException();
-
+        if (user == null) {
+            throw new UserNotFoundException();
+        }
         return user.getUsername();
     }
 
     @Override
-    public void emailValidCheck(String email) {
-
-        User user = userRepository.findByEmail(email);
-        if (user != null) throw new AccountEmailAlreadyExistsException();
-
-
-        log.info(ManageTokenCategory.EMAIL_VALID.toString());
-        CodeDto codeDto = generateToken(ManageTokenCategory.EMAIL_VALID);
-        String code = codeDto.getCode();
-
-        MailSendDto mailSendDto = MailSendDto.builder().mailCategory(MailCategory.EMAILVALID_EMAIL)
+    public void emailValidCheck(final String email) {
+        final User user = userRepository.findByEmail(email);
+        if (user != null) {
+            throw new AccountEmailAlreadyExistsException(); // 이미 존제하는 이메일
+        }
+        final CodeDto codeDto = generateToken(ManageTokenCategory.EMAIL_VALID);
+        final String code = codeDto.getCode();
+        final MailSendDto mailSendDto = MailSendDto.builder().mailCategory(MailCategory.EMAILVALID_EMAIL)
                 .code(code)
                 .sendEmail(email)
                 .build();
-
         mailService.sendMimeMessage(mailSendDto);
     }
 
-//    @Override
-//    public List<UserDetailDto> getUsersByEntranceYear(String year, String term) {
-//        List<UserDetailDto> userDetailDtos = new ArrayList<>();
-//        // 기수로 찾기
-//
-//        if (year.isEmpty()) {
-//            List<User> users = userRepository.findAllByTerm(term);
-//            for (User user : users) userDetailDtos.add(UserDetailDto.from(user));
-//        }
-//        // 학번으로 찾기
-//        else if (term.isEmpty()) {
-//            List<User> users = userRepository.findByStudentCodeNative(year);
-//            for (User user : users) userDetailDtos.add(UserDetailDto.from(user));
-//        }
-//        return userDetailDtos;
-//    }
-
-
     @Override
     @Transactional
-    public void addUserAuthById(Long userId, UserRoleEnum userRoleEnum) {
-        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+    public void addUserAuthById(final Long userId, final UserRoleEnum userRoleEnum) {
+        final User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         user.getRoles().addRole(userRoleEnum);
     }
 
     @Override
     @Transactional
-    public void removeUserAuthById(Long userId, UserRoleEnum userRoleEnum) {
-        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+    public void removeUserAuthById(final Long userId, final UserRoleEnum userRoleEnum) {
+        final User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         user.getRoles().removeRole(userRoleEnum);
     }
 
     @Override
-    public List<UserDetailDto> findUsersByName(String name) {
-        List<User> users = userRepository.findAllByName(name);
+    public List<UserDetailDto> findUsersByName(final String name) {
+        final List<User> users = userRepository.findAllByName(name);
         return users.stream().map(UserDetailDto::from).toList();
     }
 
     @Override
-    public PageUserDto getPaginationUser(PageUserDataDto pageUserDataDto) {
-        Page<User> users = userRepository.findAll(PageRequest.of(Math.toIntExact(pageUserDataDto.getPage()), pageUserDataDto.getPerPage()));
+    public PageUserDto getPaginationUser(final PageUserDataDto pageUserDataDto) {
+        final Page<User> users = userRepository.findAll(PageRequest.of(Math.toIntExact(pageUserDataDto.getPage()), pageUserDataDto.getPerPage()));
         return PageUserDto.of(users.stream().map(UserDetailDto::from).toList(), users.getTotalPages());
     }
 
     @Override
     @Transactional
-    public Boolean activeAccount(Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+    public Boolean activeAccount(final Long userId) {
+        final User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         user.activeUser();
         return true;
     }
 
     @Override
     @Transactional
-    public Boolean deleteUser(Long userId) {
+    public Boolean deleteUser(final Long userId) {
         userRepository.deleteById(userId);
         return true;
+    }
+
+    private CodeDto generateToken(final ManageTokenCategory manageTokenCategory, final Long userId) {
+        final LocalDateTime expireDate = getExpireDate(LocalDateTime.now());
+        final String uuid = UUID.randomUUID().toString();
+        final CodeDto codeDto = CodeDto.of(uuid, manageTokenCategory, userId, expireDate);
+        return CodeDto.of(manageTokenRepository.save(ManageToken.from(codeDto)));
+    }
+
+    private LocalDateTime getExpireDate(final LocalDateTime now) {
+        return now.plusHours(24);
     }
 }

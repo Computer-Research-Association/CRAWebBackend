@@ -9,14 +9,11 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 public class MailSendDto {
-
     @NotNull
     private String sendEmail;
     @NotNull
     private MailCategory mailCategory;
 
-
-    // datas
     private String username;
     private String url;
     private String code;

@@ -23,7 +23,6 @@ public class ManageToken extends BaseEntity {
     @Column(nullable = false)
     private LocalDateTime expireDate;
 
-
     // 패스워드 변경시 변경할 유저의 아이디
     private Long userId;
 

@@ -27,7 +27,7 @@ public abstract class BaseEntity {
     @Setter
     private Boolean deleted = false;
 
-    public void delete(){
+    public void delete() {
         this.deleted = true;
     }
 }

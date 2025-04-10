@@ -7,5 +7,5 @@ import org.springframework.data.domain.Pageable;
 
 
 public interface ProjectRepository extends JpaRepository<Project, Long> {
-    public Page<Project> findAllByDeletedIsFalse(Pageable pageable);
+    Page<Project> findAllByDeletedIsFalse(Pageable pageable);
 }

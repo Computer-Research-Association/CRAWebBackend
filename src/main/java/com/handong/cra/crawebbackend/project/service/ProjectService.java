@@ -1,25 +1,48 @@
 package com.handong.cra.crawebbackend.project.service;
 
-import com.handong.cra.crawebbackend.board.domain.BoardOrderBy;
-import com.handong.cra.crawebbackend.project.domain.Project;
-import com.handong.cra.crawebbackend.project.domain.ProjectOrderBy;
 import com.handong.cra.crawebbackend.project.dto.*;
 
 import java.util.List;
 
 
 public interface ProjectService {
-    // admin
-    public CreateProjectDto createProject(CreateProjectDto createProjectDto);
+    /**
+     * 프로젝트 생성
+     *
+     * @param createProjectDto 프로젝트 생생 데이터 DTO
+     */
+    CreateProjectDto createProject(CreateProjectDto createProjectDto);
 
-    public UpdateProjectDto updateProject(UpdateProjectDto updateProjectDto);
+    /**
+     * 프로젝트 수정
+     *
+     * @param updateProjectDto 수정할 프로젝트 데이터 DTO
+     */
+    UpdateProjectDto updateProject(UpdateProjectDto updateProjectDto);
 
-    public Boolean deleteProjectById(UpdateProjectDto updateProjectDto);
+    /**
+     * 프로젝트 삭제
+     *
+     * @param updateProjectDto 삭제할 프로젝트 데이터 DTO
+     */
+    Boolean deleteProjectById(UpdateProjectDto updateProjectDto);
 
-    // users
-    public DetailProjectDto getDetailProjectById(Long id);
+    /**
+     * 프로젝트 정보 반환
+     *
+     * @param projectId 확인할 프로젝트 아이디
+     */
+    DetailProjectDto getDetailProjectById(Long projectId);
 
-    public List<ListProjectDto> getListProject();
+    /**
+     * 모든 프로젝트 리스트 반환
+     */
+    List<ListProjectDto> getListProject();
 
-    public PageProjectDto getPaginationProject(PageProjectDataDto pageProjectDataDto);
+    /**
+     * 프로젝트 페이지로 반환
+     *
+     * @param pageProjectDataDto 페이지 데이터 DTO
+     */
+    PageProjectDto getPaginationProject(PageProjectDataDto pageProjectDataDto);
 }

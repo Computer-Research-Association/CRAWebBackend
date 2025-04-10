@@ -10,6 +10,7 @@ import com.handong.cra.crawebbackend.item.dto.response.ResAdminDetailItemDto;
 import com.handong.cra.crawebbackend.item.dto.response.ResCreateItemDto;
 import com.handong.cra.crawebbackend.item.dto.response.ResUpdateItemDto;
 import com.handong.cra.crawebbackend.item.service.ItemService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,34 +25,51 @@ public class AdminItemController {
     private final ItemService itemService;
 
     @PostMapping("")
-    public ResponseEntity<ResCreateItemDto> createItem(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody ReqCreateItemDto reqCreateItemDto) {
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(ResCreateItemDto.from(itemService.createItem(CreateItemDto.of(customUserDetails.getUserId(), reqCreateItemDto))));
+    @Operation(summary = "아이템 생성")
+    public ResponseEntity<ResCreateItemDto> createItem(
+            @AuthenticationPrincipal final CustomUserDetails customUserDetails,
+            @RequestBody final ReqCreateItemDto reqCreateItemDto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(ResCreateItemDto.from(
+                itemService.createItem(CreateItemDto.of(customUserDetails.getUserId(), reqCreateItemDto))));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ResUpdateItemDto> updateItem(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Long id, @RequestBody ReqUpdateItemDto reqUpdateItemDto) {
+    @PutMapping("/{itemId}")
+    @Operation(summary = "아이템 수정")
+    public ResponseEntity<ResUpdateItemDto> updateItem(
+            @AuthenticationPrincipal final CustomUserDetails customUserDetails,
+            @PathVariable final Long itemId,
+            @RequestBody final ReqUpdateItemDto reqUpdateItemDto) {
 
-        return ResponseEntity
-                .ok(ResUpdateItemDto.from(itemService.updateItem(UpdateItemDto.of(customUserDetails.getUserId(), id, reqUpdateItemDto))));
+        return ResponseEntity.ok(ResUpdateItemDto.from(
+                itemService.updateItem(
+                        UpdateItemDto.of(customUserDetails.getUserId(), itemId, reqUpdateItemDto))));
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<ResAdminDetailItemDto> getAdminItem(@PathVariable Long id) {
+    @GetMapping("/{itemId}")
+    @Operation(summary = "아이템 조회", description = "어드민 유저 조회")
+    public ResponseEntity<ResAdminDetailItemDto> getAdminItem(@PathVariable final Long itemId) {
         return ResponseEntity
-                .ok(ResAdminDetailItemDto.from(itemService.getDetailById(id)));
+                .ok(ResAdminDetailItemDto.from(itemService.getDetailById(itemId)));
     }
 
     @DeleteMapping("/{itemId}")
-    public ResponseEntity<Void> deleteItemById(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Long itemId) {
+    @Operation(summary = "아이템 삭제")
+    public ResponseEntity<Void> deleteItemById(
+            @AuthenticationPrincipal final CustomUserDetails customUserDetails,
+            @PathVariable final Long itemId) {
         itemService.deleteItemById(UpdateItemDto.of(itemId, customUserDetails.getUserId()));
         return ResponseEntity.ok().build();
     }
 
     @PutMapping("/valid/{itemId}")
-    public ResponseEntity<Void> changeValidatingById(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Long itemId, @RequestParam Boolean valid, @RequestParam String username) {
-        itemService.changeValidatingById(UpdateItemDto.of(itemId, customUserDetails.getUserId(), valid, username));
-
+    @Operation(summary = "아이템 상태 변경", description = "대여 상태 변경")
+    public ResponseEntity<Void> changeValidatingById(
+            @AuthenticationPrincipal final CustomUserDetails customUserDetails,
+            @PathVariable final Long itemId,
+            @RequestParam final Boolean valid,
+            @RequestParam final String username) {
+        itemService.changeValidatingById(
+                UpdateItemDto.of(itemId, customUserDetails.getUserId(), valid, username));
         return ResponseEntity.ok().build();
     }
 }

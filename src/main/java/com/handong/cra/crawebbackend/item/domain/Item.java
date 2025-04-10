@@ -40,7 +40,7 @@ public class Item extends BaseEntity {
     @JoinColumn(name = "user")
     private User borrowerUser;
 
-    public Item(CreateItemDto createItemDto) {
+    public Item(final CreateItemDto createItemDto) {
         this.name = createItemDto.getName();
         this.description = createItemDto.getDescription();
         this.itemCategory = createItemDto.getItemCategory();
@@ -48,17 +48,16 @@ public class Item extends BaseEntity {
         this.isBorrowed = false;
     }
 
-    public static Item from(CreateItemDto createItemDto) {
+    public static Item from(final CreateItemDto createItemDto) {
         return new Item(createItemDto);
     }
 
-    public Item update(UpdateItemDto updateItemDto) {
+    public Item update(final UpdateItemDto updateItemDto) {
         this.name = updateItemDto.getName();
         this.description = updateItemDto.getDescription();
         this.imageUrl = updateItemDto.getImageUrl();
         this.isBorrowed = updateItemDto.getIsBorrowed();
         this.itemCategory = updateItemDto.getItemCategory();
-
         return this;
     }
 

@@ -2,9 +2,6 @@ package com.handong.cra.crawebbackend.mail.domain;
 
 import lombok.Getter;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
-
-import java.nio.charset.Charset;
 
 @Getter
 public enum MailCategory {
@@ -18,7 +15,7 @@ public enum MailCategory {
     private final String title;
     private final ClassPathResource template;
 
-    MailCategory(String title, String templateLocation) {
+    MailCategory(final String title, final String templateLocation) {
         this.title = title;
         this.template = new ClassPathResource(templateLocation);
     }
