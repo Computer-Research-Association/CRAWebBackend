@@ -122,7 +122,7 @@ jobs:
               --log-driver json-file \
               --log-opt max-size=10m \
               --log-opt max-file=3 \
-              -e SPRING_PROFILES_ACTIVE='deploy' \
+              -e LOGGING_LOKI_URL='http://loki:3100' \
               -e DB_URL='${{ secrets.DB_URL }}' \
               -e DB_USERNAME='${{ secrets.DB_USERNAME }}' \
               -e DB_PASSWORD='${{ secrets.DB_PASSWORD }}' \
