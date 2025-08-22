@@ -1,108 +1,509 @@
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
-# This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-gradle
-
-name: Java CI with Gradle
-
+name: CI/CD for cra_web Dev
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "dev" ]
 
 jobs:
-  build:
-
+  build-and-deploy:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
+    timeout-minutes: 45
 
     steps:
-    - uses: actions/checkout@v4
-      with:
-        submodules: true
-        token: ${{ secrets.PAT_TOKEN }}
-        fetch-depth: 0
+      - name: Checkout source
+        uses: actions/checkout@v4
 
-    - name: Set up JDK 17
-      uses: actions/setup-java@v4
-      with:
-        java-version: '17'
-        distribution: 'temurin'
-
-    - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
-
-    - name: Build with Gradle Wrapper
-      run: ./gradlew clean build --exclude-task test
-      # run: ./gradlew clean build --exclude-task test
-
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v3
-
-    - name: Log in to DockerHub
-      run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
-
-    - name: Build and push test image
-      run: |
-        docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/craweb .
-        docker push ${{ secrets.DOCKERHUB_USERNAME }}/craweb
-
-  deploy:
-    runs-on: ubuntu-latest
-    needs: build
-
-    steps:
-      - uses: actions/checkout@v4
+      - name: Set up JDK
+        uses: actions/setup-java@v4
         with:
-          submodules: true
-          token: ${{ secrets.PAT_TOKEN }}
-          fetch-depth: 0
-          
-      - name: Check if files exist
+          distribution: temurin
+          java-version: '17'
+
+      - name: Cache Gradle packages
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
+      - name: Build Spring Boot App
+        run: ./gradlew clean bootJar
+
+      - name: Setup SSH Agent and Keys
         run: |
-          ls -lah ./src/main/resources/config/
+          eval "$(ssh-agent -s)"
+          mkdir -p ~/.ssh && chmod 700 ~/.ssh
+          echo "${{ secrets.BASTION_KEY }}" > ~/.ssh/bastion.pem
+          echo "${{ secrets.SERVER_KEY }}"  > ~/.ssh/target.pem
+          chmod 600 ~/.ssh/bastion.pem ~/.ssh/target.pem
+          ssh-add ~/.ssh/bastion.pem
+          ssh-add ~/.ssh/target.pem
 
-      - name: copy env file to root
-        run: cp ./src/main/resources/config/.env .
-          
-      - name: copy file via ssh password
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          debug: true
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_PRIVATE_KEY }}
-          source: "./docker-compose.yml,./.env,./prometheus.yml,./loki.yml"
-          target: '/home/ubuntu/craweb'
+      - name: Setup known_hosts for security
+        run: |
+          ssh-keyscan -H ${{ secrets.BASTION_HOST }} >> ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
 
-      - name: SSH to EC2 and Deploy
-        uses: appleboy/ssh-action@v1.2.0
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_PRIVATE_KEY }}
-          script: |
-            cd /home/ubuntu/craweb
-            docker compose down
-            docker compose pull
-            docker compose up -d
-  # dependency-submission:
+      - name: Configure SSH with ProxyJump
+        run: |
+          cat > ~/.ssh/config << 'EOF'
+          Host bastion
+            HostName ${{ secrets.BASTION_HOST }}
+            User ${{ secrets.BASTION_USER }}
+            IdentityFile ~/.ssh/bastion.pem
+            ConnectTimeout 10
+            ServerAliveInterval 60
+            ServerAliveCountMax 3
 
-  #   runs-on: ubuntu-latest
-  #   permissions:
-  #     contents: write
+          Host target
+            HostName ${{ secrets.SERVER_HOST }}
+            User ${{ secrets.SERVER_USER }}
+            Port 2222
+            IdentityFile ~/.ssh/target.pem
+            ProxyJump bastion
+            ConnectTimeout 10
+            ServerAliveInterval 60
+            ServerAliveCountMax 3
+            StrictHostKeyChecking no
+            UserKnownHostsFile /dev/null
+          EOF
+          chmod 600 ~/.ssh/config
 
-  #   steps:
-  #   - uses: actions/checkout@v4
-  #   - name: Set up JDK 17
-  #     uses: actions/setup-java@v4
-  #     with:
-  #       java-version: '17'
-  #       distribution: 'temurin'
+      - name: Test SSH connections
+        run: |
+          ssh -F ~/.ssh/config -o ConnectTimeout=10 bastion "true"
+          ssh -F ~/.ssh/config -o ConnectTimeout=10 target "docker --version"
 
-  #   # Generates and submits a dependency graph, enabling Dependabot Alerts for all project dependencies.
-  #   # See: https://github.com/gradle/actions/blob/main/dependency-submission/README.md
-  #   - name: Generate and submit dependency graph
-  #     uses: gradle/actions/dependency-submission@af1da67850ed9a4cedd57bfd976089dd991e2582 # v4.0.0
+      - name: Prepare target directory and network
+        run: |
+          ssh -F ~/.ssh/config target "
+            mkdir -p ~/cra_web/build/libs
+            if ! docker network inspect cra-network >/dev/null 2>&1; then
+              docker network create cra-network
+            fi
+          "
+
+      - name: Transfer application JAR
+        run: |
+          scp -F ~/.ssh/config build/libs/*.jar target:~/cra_web/build/libs/
+
+      - name: Deploy application with rollback capability
+        run: |
+          ssh -F ~/.ssh/config target "
+            set -e
+            cd ~/cra_web
+            
+            if docker ps -a --format '{{.Names}}' | grep -q '^cra_web
+
+      - name: Health check and verification
+        run: |
+          ssh -F ~/.ssh/config target "
+            for i in {1..30}; do
+              if docker ps --format '{{.Names}}' | grep -q '^cra_web
+
+      - name: Cleanup old Docker resources
+        run: |
+          ssh -F ~/.ssh/config target "
+            docker image prune -f --filter 'dangling=true'
+            docker container prune -f
+          "
+
+      - name: Final deployment verification
+        run: |
+          ssh -F ~/.ssh/config target "
+            docker ps --filter 'name=cra_web' --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}'
+            docker logs --tail 20 cra_web
+          "; then
+              docker stop cra_web 2>/dev/null || true
+              docker rename cra_web cra_web_backup 2>/dev/null || true
+            fi
+            
+            docker rmi cra_web 2>/dev/null || true
+            timeout 600 docker build -t cra_web .
+            
+            docker run -d \
+              --name cra_web \
+              -p 8000:8080 \
+              --network cra-network \
+              --restart unless-stopped \
+              --log-driver json-file \
+              --log-opt max-size=10m \
+              --log-opt max-file=3 \
+              -e SPRING_PROFILES_ACTIVE='deploy' \
+              -e DB_URL='${{ secrets.DB_URL }}' \
+              -e DB_USERNAME='${{ secrets.DB_USERNAME }}' \
+              -e DB_PASSWORD='${{ secrets.DB_PASSWORD }}' \
+              -e JPA_DDL_AUTO='${{ secrets.JPA_DDL_AUTO }}' \
+              -e JPA_SHOW_SQL='${{ secrets.JPA_SHOW_SQL }}' \
+              -e REDIS_HOST='${{ secrets.REDIS_HOST }}' \
+              -e REDIS_PORT='${{ secrets.REDIS_PORT }}' \
+              -e REDIS_TIMEOUT='${{ secrets.REDIS_TIMEOUT }}' \
+              -e MAIL_HOST='${{ secrets.MAIL_HOST }}' \
+              -e MAIL_PORT='${{ secrets.MAIL_PORT }}' \
+              -e MAIL_USERNAME='${{ secrets.MAIL_USERNAME }}' \
+              -e MAIL_PASSWORD='${{ secrets.MAIL_PASSWORD }}' \
+              -e JWT_SECRET='${{ secrets.JWT_SECRET }}' \
+              -e JWT_ACCESS_EXP='${{ secrets.JWT_ACCESS_EXP }}' \
+              -e JWT_REFRESH_EXP='${{ secrets.JWT_REFRESH_EXP }}' \
+              -e AES_ALGO='${{ secrets.AES_ALGO }}' \
+              -e AES_KEY='${{ secrets.AES_KEY }}' \
+              -e AES_IV='${{ secrets.AES_IV }}' \
+              -e LOG_FILE='${{ secrets.LOG_FILE }}' \
+              cra_web
+            
+            sleep 20
+          "
+
+      - name: Health check and verification
+        run: |
+          ssh -F ~/.ssh/config target "
+            echo 'Verifying container is running...'
+            for i in {1..30}; do
+              if docker ps --format '{{.Names}}' | grep -q '^cra_web$'; then
+                echo 'Container is running'
+                break
+              fi
+              if [ \$i -eq 30 ]; then
+                echo 'Container failed to start'
+                docker logs --tail 50 cra_web 2>/dev/null || true
+                exit 1
+              fi
+              sleep 2
+            done
+            
+            echo 'Performing health check...'
+            for i in {1..15}; do
+              if curl -fsS http://localhost:8000/actuator/health >/dev/null 2>&1; then
+                echo 'Health check passed on actuator endpoint'
+                break
+              elif curl -fsS http://localhost:8000/ >/dev/null 2>&1; then
+                echo 'Health check passed on root endpoint'
+                break
+              else
+                echo \"Health check attempt \$i/15 failed, waiting...\"
+                sleep 10
+              fi
+              
+              if [ \$i -eq 15 ]; then
+                echo 'Health check failed after all attempts'
+                docker logs --tail 100 cra_web
+                
+                echo 'Performing rollback...'
+                docker rm -f cra_web 2>/dev/null || true
+                if docker ps -a --format '{{.Names}}' | grep -q '^cra_web_backup$'; then
+                  docker rename cra_web_backup cra_web
+                  docker start cra_web
+                  echo 'Rollback completed'
+                fi
+                exit 1
+              fi
+            done
+            
+            echo 'Deployment successful, cleaning up backup...'
+            docker rm -f cra_web_backup 2>/dev/null || true
+            echo 'Deployment completed successfully'
+          "
+
+      - name: Cleanup old Docker resources
+        run: |
+          ssh -F ~/.ssh/config target "
+            echo 'Cleaning up unused Docker resources...'
+            docker image prune -f --filter 'dangling=true'
+            docker container prune -f
+            echo 'Cleanup completed'
+          "
+
+      - name: Final deployment verification
+        run: |
+          ssh -F ~/.ssh/config target "
+            echo 'Final verification...'
+            docker ps --filter 'name=cra_web' --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}'
+            echo 'Application logs (last 20 lines):'
+            docker logs --tail 20 cra_web
+          "; then
+                break
+              fi
+              if [ \$i -eq 30 ]; then
+                docker logs --tail 50 cra_web 2>/dev/null || true
+                exit 1
+              fi
+              sleep 2
+            done
+            
+            for i in {1..15}; do
+              if curl -fsS http://localhost:8000/actuator/health >/dev/null 2>&1; then
+                break
+              elif curl -fsS http://localhost:8000/ >/dev/null 2>&1; then
+                break
+              else
+                sleep 10
+              fi
+              
+              if [ \$i -eq 15 ]; then
+                docker logs --tail 100 cra_web
+                docker rm -f cra_web 2>/dev/null || true
+                if docker ps -a --format '{{.Names}}' | grep -q '^cra_web_backup
+
+      - name: Cleanup old Docker resources
+        run: |
+          ssh -F ~/.ssh/config target "
+            echo 'Cleaning up unused Docker resources...'
+            docker image prune -f --filter 'dangling=true'
+            docker container prune -f
+            echo 'Cleanup completed'
+          "
+
+      - name: Final deployment verification
+        run: |
+          ssh -F ~/.ssh/config target "
+            echo 'Final verification...'
+            docker ps --filter 'name=cra_web' --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}'
+            echo 'Application logs (last 20 lines):'
+            docker logs --tail 20 cra_web
+          "; then
+              docker stop cra_web 2>/dev/null || true
+              docker rename cra_web cra_web_backup 2>/dev/null || true
+            fi
+            
+            docker rmi cra_web 2>/dev/null || true
+            timeout 600 docker build -t cra_web .
+            
+            docker run -d \
+              --name cra_web \
+              -p 8000:8080 \
+              --network cra-network \
+              --restart unless-stopped \
+              --log-driver json-file \
+              --log-opt max-size=10m \
+              --log-opt max-file=3 \
+              -e SPRING_PROFILES_ACTIVE='deploy' \
+              -e DB_URL='${{ secrets.DB_URL }}' \
+              -e DB_USERNAME='${{ secrets.DB_USERNAME }}' \
+              -e DB_PASSWORD='${{ secrets.DB_PASSWORD }}' \
+              -e JPA_DDL_AUTO='${{ secrets.JPA_DDL_AUTO }}' \
+              -e JPA_SHOW_SQL='${{ secrets.JPA_SHOW_SQL }}' \
+              -e REDIS_HOST='${{ secrets.REDIS_HOST }}' \
+              -e REDIS_PORT='${{ secrets.REDIS_PORT }}' \
+              -e REDIS_TIMEOUT='${{ secrets.REDIS_TIMEOUT }}' \
+              -e MAIL_HOST='${{ secrets.MAIL_HOST }}' \
+              -e MAIL_PORT='${{ secrets.MAIL_PORT }}' \
+              -e MAIL_USERNAME='${{ secrets.MAIL_USERNAME }}' \
+              -e MAIL_PASSWORD='${{ secrets.MAIL_PASSWORD }}' \
+              -e JWT_SECRET='${{ secrets.JWT_SECRET }}' \
+              -e JWT_ACCESS_EXP='${{ secrets.JWT_ACCESS_EXP }}' \
+              -e JWT_REFRESH_EXP='${{ secrets.JWT_REFRESH_EXP }}' \
+              -e AES_ALGO='${{ secrets.AES_ALGO }}' \
+              -e AES_KEY='${{ secrets.AES_KEY }}' \
+              -e AES_IV='${{ secrets.AES_IV }}' \
+              -e LOG_FILE='${{ secrets.LOG_FILE }}' \
+              cra_web
+            
+            sleep 20
+          "
+
+      - name: Health check and verification
+        run: |
+          ssh -F ~/.ssh/config target "
+            echo 'Verifying container is running...'
+            for i in {1..30}; do
+              if docker ps --format '{{.Names}}' | grep -q '^cra_web$'; then
+                echo 'Container is running'
+                break
+              fi
+              if [ \$i -eq 30 ]; then
+                echo 'Container failed to start'
+                docker logs --tail 50 cra_web 2>/dev/null || true
+                exit 1
+              fi
+              sleep 2
+            done
+            
+            echo 'Performing health check...'
+            for i in {1..15}; do
+              if curl -fsS http://localhost:8000/actuator/health >/dev/null 2>&1; then
+                echo 'Health check passed on actuator endpoint'
+                break
+              elif curl -fsS http://localhost:8000/ >/dev/null 2>&1; then
+                echo 'Health check passed on root endpoint'
+                break
+              else
+                echo \"Health check attempt \$i/15 failed, waiting...\"
+                sleep 10
+              fi
+              
+              if [ \$i -eq 15 ]; then
+                echo 'Health check failed after all attempts'
+                docker logs --tail 100 cra_web
+                
+                echo 'Performing rollback...'
+                docker rm -f cra_web 2>/dev/null || true
+                if docker ps -a --format '{{.Names}}' | grep -q '^cra_web_backup$'; then
+                  docker rename cra_web_backup cra_web
+                  docker start cra_web
+                  echo 'Rollback completed'
+                fi
+                exit 1
+              fi
+            done
+            
+            echo 'Deployment successful, cleaning up backup...'
+            docker rm -f cra_web_backup 2>/dev/null || true
+            echo 'Deployment completed successfully'
+          "
+
+      - name: Cleanup old Docker resources
+        run: |
+          ssh -F ~/.ssh/config target "
+            echo 'Cleaning up unused Docker resources...'
+            docker image prune -f --filter 'dangling=true'
+            docker container prune -f
+            echo 'Cleanup completed'
+          "
+
+      - name: Final deployment verification
+        run: |
+          ssh -F ~/.ssh/config target "
+            echo 'Final verification...'
+            docker ps --filter 'name=cra_web' --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}'
+            echo 'Application logs (last 20 lines):'
+            docker logs --tail 20 cra_web
+          "; then
+                  docker rename cra_web_backup cra_web
+                  docker start cra_web
+                fi
+                exit 1
+              fi
+            done
+            
+            docker rm -f cra_web_backup 2>/dev/null || true
+          "
+
+      - name: Cleanup old Docker resources
+        run: |
+          ssh -F ~/.ssh/config target "
+            echo 'Cleaning up unused Docker resources...'
+            docker image prune -f --filter 'dangling=true'
+            docker container prune -f
+            echo 'Cleanup completed'
+          "
+
+      - name: Final deployment verification
+        run: |
+          ssh -F ~/.ssh/config target "
+            echo 'Final verification...'
+            docker ps --filter 'name=cra_web' --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}'
+            echo 'Application logs (last 20 lines):'
+            docker logs --tail 20 cra_web
+          "; then
+              docker stop cra_web 2>/dev/null || true
+              docker rename cra_web cra_web_backup 2>/dev/null || true
+            fi
+            
+            docker rmi cra_web 2>/dev/null || true
+            timeout 600 docker build -t cra_web .
+            
+            docker run -d \
+              --name cra_web \
+              -p 8000:8080 \
+              --network cra-network \
+              --restart unless-stopped \
+              --log-driver json-file \
+              --log-opt max-size=10m \
+              --log-opt max-file=3 \
+              -e SPRING_PROFILES_ACTIVE='deploy' \
+              -e DB_URL='${{ secrets.DB_URL }}' \
+              -e DB_USERNAME='${{ secrets.DB_USERNAME }}' \
+              -e DB_PASSWORD='${{ secrets.DB_PASSWORD }}' \
+              -e JPA_DDL_AUTO='${{ secrets.JPA_DDL_AUTO }}' \
+              -e JPA_SHOW_SQL='${{ secrets.JPA_SHOW_SQL }}' \
+              -e REDIS_HOST='${{ secrets.REDIS_HOST }}' \
+              -e REDIS_PORT='${{ secrets.REDIS_PORT }}' \
+              -e REDIS_TIMEOUT='${{ secrets.REDIS_TIMEOUT }}' \
+              -e MAIL_HOST='${{ secrets.MAIL_HOST }}' \
+              -e MAIL_PORT='${{ secrets.MAIL_PORT }}' \
+              -e MAIL_USERNAME='${{ secrets.MAIL_USERNAME }}' \
+              -e MAIL_PASSWORD='${{ secrets.MAIL_PASSWORD }}' \
+              -e JWT_SECRET='${{ secrets.JWT_SECRET }}' \
+              -e JWT_ACCESS_EXP='${{ secrets.JWT_ACCESS_EXP }}' \
+              -e JWT_REFRESH_EXP='${{ secrets.JWT_REFRESH_EXP }}' \
+              -e AES_ALGO='${{ secrets.AES_ALGO }}' \
+              -e AES_KEY='${{ secrets.AES_KEY }}' \
+              -e AES_IV='${{ secrets.AES_IV }}' \
+              -e LOG_FILE='${{ secrets.LOG_FILE }}' \
+              cra_web
+            
+            sleep 20
+          "
+
+      - name: Health check and verification
+        run: |
+          ssh -F ~/.ssh/config target "
+            echo 'Verifying container is running...'
+            for i in {1..30}; do
+              if docker ps --format '{{.Names}}' | grep -q '^cra_web$'; then
+                echo 'Container is running'
+                break
+              fi
+              if [ \$i -eq 30 ]; then
+                echo 'Container failed to start'
+                docker logs --tail 50 cra_web 2>/dev/null || true
+                exit 1
+              fi
+              sleep 2
+            done
+            
+            echo 'Performing health check...'
+            for i in {1..15}; do
+              if curl -fsS http://localhost:8000/actuator/health >/dev/null 2>&1; then
+                echo 'Health check passed on actuator endpoint'
+                break
+              elif curl -fsS http://localhost:8000/ >/dev/null 2>&1; then
+                echo 'Health check passed on root endpoint'
+                break
+              else
+                echo \"Health check attempt \$i/15 failed, waiting...\"
+                sleep 10
+              fi
+              
+              if [ \$i -eq 15 ]; then
+                echo 'Health check failed after all attempts'
+                docker logs --tail 100 cra_web
+                
+                echo 'Performing rollback...'
+                docker rm -f cra_web 2>/dev/null || true
+                if docker ps -a --format '{{.Names}}' | grep -q '^cra_web_backup$'; then
+                  docker rename cra_web_backup cra_web
+                  docker start cra_web
+                  echo 'Rollback completed'
+                fi
+                exit 1
+              fi
+            done
+            
+            echo 'Deployment successful, cleaning up backup...'
+            docker rm -f cra_web_backup 2>/dev/null || true
+            echo 'Deployment completed successfully'
+          "
+
+      - name: Cleanup old Docker resources
+        run: |
+          ssh -F ~/.ssh/config target "
+            echo 'Cleaning up unused Docker resources...'
+            docker image prune -f --filter 'dangling=true'
+            docker container prune -f
+            echo 'Cleanup completed'
+          "
+
+      - name: Final deployment verification
+        run: |
+          ssh -F ~/.ssh/config target "
+            echo 'Final verification...'
+            docker ps --filter 'name=cra_web' --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}'
+            echo 'Application logs (last 20 lines):'
+            docker logs --tail 20 cra_web
+          "
