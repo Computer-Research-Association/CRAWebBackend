@@ -1,0 +1,21 @@
+spring:
+  profiles:
+    active: dev
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 20MB
+
+springdoc:
+  api-docs:
+    path: /api/backend-api-data
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus
+
+site:
+  frontend:
+    url: https://cra206.org
