@@ -99,12 +99,11 @@ jobs:
             cd ~/cra_web
             
             echo 'Starting deployment...'
-            
-            # Backup current container if exists
+      
+            # remove  current container if exists
             if docker ps -a --format '{{.Names}}' | grep -q '^cra_web$'; then
-              echo 'Backing up current container...'
-              docker stop cra_web 2>/dev/null || true
-              docker rename cra_web cra_web_backup 2>/dev/null || true
+              echo 'Removing current container...'
+              docker rm -f cra_web || true
             fi
             
             # Remove old image and build new one
