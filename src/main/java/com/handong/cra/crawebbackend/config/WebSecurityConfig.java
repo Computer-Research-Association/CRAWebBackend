@@ -67,6 +67,7 @@ public class WebSecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll()
 
                         // 공지 확인
+                        .requestMatchers(HttpMethod.GET, "/api/board/1/page/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/board/0/page/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/board/view/**").permitAll()
 
