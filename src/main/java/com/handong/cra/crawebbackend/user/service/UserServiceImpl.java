@@ -54,7 +54,8 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public SignupDto save(final SignupDto signupDto) {
         final User user = User.from(signupDto);
-        signupDto.setId(user.getId());
+        final User savedUser = userRepository.save(user);
+        signupDto.setId(savedUser.getId());
         return signupDto;
     }
 
