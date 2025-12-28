@@ -25,16 +25,14 @@ public class EmailConfig {
 
     @Bean
     public JavaMailSender javaMailSender() {
-        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+        final JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
         mailSender.setHost(host);
         mailSender.setPort(port);
         mailSender.setUsername(username);
         mailSender.setPassword(password);
-
-        Properties props = mailSender.getJavaMailProperties();
+        final Properties props = mailSender.getJavaMailProperties();
         props.put("mail.smtp.starttls.enable", "true"); // STARTTLS 활성화
         props.put("mail.smtp.auth", "true"); // SMTP 인증 활성화
-
         return mailSender;
     }
 }

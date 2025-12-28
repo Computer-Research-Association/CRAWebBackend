@@ -1,6 +1,5 @@
 package com.handong.cra.crawebbackend.item.dto;
 
-import com.handong.cra.crawebbackend.item.dto.response.ResListItemDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -19,11 +19,11 @@ public class UserRoleSet {
     @Enumerated(EnumType.STRING)
     private Set<UserRoleEnum> roles = new HashSet<>();
 
-    public void addRole(UserRoleEnum userRoleEnum){
+    public void addRole(UserRoleEnum userRoleEnum) {
         if (!roles.contains(userRoleEnum)) this.roles.add(userRoleEnum);
     }
 
-    public void removeRole(UserRoleEnum userRoleEnum){
+    public void removeRole(UserRoleEnum userRoleEnum) {
         if (roles.contains(userRoleEnum)) this.roles.remove(userRoleEnum);
     }
 

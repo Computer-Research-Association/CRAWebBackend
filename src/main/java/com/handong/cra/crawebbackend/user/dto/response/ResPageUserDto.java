@@ -1,7 +1,6 @@
 package com.handong.cra.crawebbackend.user.dto.response;
 
 import com.handong.cra.crawebbackend.user.dto.PageUserDto;
-import com.handong.cra.crawebbackend.user.dto.UserDetailDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

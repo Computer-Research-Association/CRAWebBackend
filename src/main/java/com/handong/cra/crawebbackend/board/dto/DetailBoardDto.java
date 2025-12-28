@@ -4,7 +4,6 @@ import com.handong.cra.crawebbackend.board.domain.Board;
 import com.handong.cra.crawebbackend.board.domain.Category;
 import com.handong.cra.crawebbackend.comment.domain.Comment;
 import com.handong.cra.crawebbackend.comment.dto.ListCommentDto;
-import com.handong.cra.crawebbackend.havruta.dto.HavrutaDto;
 import com.handong.cra.crawebbackend.user.dto.UserDetailDto;
 import lombok.*;
 
@@ -26,9 +25,6 @@ public class DetailBoardDto {
     private Long view;
     private List<String> imageUrls;
     private String fileUrl;
-    //havruta
-    private HavrutaDto havrutaDto;
-
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -47,12 +43,7 @@ public class DetailBoardDto {
         this.view = board.getView();
         this.imageUrls = board.getImageUrls();
         this.fileUrl = board.getFileUrl();
-
-        if (board.getHavruta() != null)
-            this.havrutaDto = HavrutaDto.from(board.getHavruta());
         this.userDetailDto = UserDetailDto.from(board.getUser());
-
-//
         if (board.getComments() != null)
             this.listCommentDtos = board.getComments().stream()
                     .filter((comment) -> comment.getParentComment() == null).map(ListCommentDto::from).toList();

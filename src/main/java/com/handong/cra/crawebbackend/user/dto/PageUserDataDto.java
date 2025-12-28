@@ -1,7 +1,5 @@
 package com.handong.cra.crawebbackend.user.dto;
 
-import com.handong.cra.crawebbackend.board.domain.BoardOrderBy;
-import com.handong.cra.crawebbackend.board.domain.Category;
 import lombok.*;
 
 @Setter

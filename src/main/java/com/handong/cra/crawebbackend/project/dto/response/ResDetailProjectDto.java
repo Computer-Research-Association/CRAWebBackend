@@ -1,6 +1,5 @@
 package com.handong.cra.crawebbackend.project.dto.response;
 
-import com.handong.cra.crawebbackend.board.dto.response.ResDetailBoardDto;
 import com.handong.cra.crawebbackend.project.dto.DetailProjectDto;
 import lombok.*;
 
@@ -27,7 +26,7 @@ public class ResDetailProjectDto {
     private LocalDateTime createAt;
     private LocalDateTime updatedAt;
 
-    public ResDetailProjectDto(DetailProjectDto detailProjectDto){
+    public ResDetailProjectDto(DetailProjectDto detailProjectDto) {
         this.id = detailProjectDto.getId();
         this.semester = detailProjectDto.getSemester();
         this.teamName = detailProjectDto.getTeamName();
@@ -36,13 +35,13 @@ public class ResDetailProjectDto {
         this.gitHubUrl = detailProjectDto.getGitHubUrl();
         this.serviceUrl = detailProjectDto.getServiceUrl();
         this.members = detailProjectDto.getMembers();
-        this.imageUrl =detailProjectDto.getImageUrl();
+        this.imageUrl = detailProjectDto.getImageUrl();
         this.deleted = false;
         this.createAt = detailProjectDto.getCreateAt();
         this.updatedAt = detailProjectDto.getUpdatedAt();
     }
 
-    public static ResDetailProjectDto from(DetailProjectDto detailProjectDto){
+    public static ResDetailProjectDto from(DetailProjectDto detailProjectDto) {
         if (detailProjectDto == null) return null;
         else return new ResDetailProjectDto(detailProjectDto);
     }

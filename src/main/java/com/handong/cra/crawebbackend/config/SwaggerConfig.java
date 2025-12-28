@@ -12,9 +12,9 @@ import org.springframework.context.annotation.Configuration;
 public class SwaggerConfig {
     @Bean
     public OpenAPI openAPI() {
-        String jwt = "JWT";
-        SecurityRequirement securityRequirement = new SecurityRequirement().addList(jwt);
-        Components components = new Components().addSecuritySchemes(jwt, new SecurityScheme()
+        final String jwt = "JWT";
+        final SecurityRequirement securityRequirement = new SecurityRequirement().addList(jwt);
+        final Components components = new Components().addSecuritySchemes(jwt, new SecurityScheme()
                 .name(jwt)
                 .type(SecurityScheme.Type.HTTP) // SecurityScheme 타입 수정
                 .scheme("bearer")

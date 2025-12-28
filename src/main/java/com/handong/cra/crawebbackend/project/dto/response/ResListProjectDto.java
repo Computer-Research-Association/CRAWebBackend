@@ -1,6 +1,5 @@
 package com.handong.cra.crawebbackend.project.dto.response;
 
-import com.handong.cra.crawebbackend.project.domain.Project;
 import com.handong.cra.crawebbackend.project.dto.ListProjectDto;
 import lombok.*;
 

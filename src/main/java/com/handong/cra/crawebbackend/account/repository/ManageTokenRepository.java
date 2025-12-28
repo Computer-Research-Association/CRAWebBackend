@@ -5,6 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 
 public interface ManageTokenRepository extends JpaRepository<ManageToken, Long> {
-    public ManageToken findByCode(String code);
-
+    ManageToken findByCode(String code);
 }

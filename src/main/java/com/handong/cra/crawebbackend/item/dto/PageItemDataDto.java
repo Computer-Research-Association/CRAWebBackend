@@ -1,7 +1,5 @@
 package com.handong.cra.crawebbackend.item.dto;
 
-import com.handong.cra.crawebbackend.board.domain.BoardOrderBy;
-import com.handong.cra.crawebbackend.board.domain.Category;
 import com.handong.cra.crawebbackend.item.domain.ItemCategory;
 import lombok.*;
 

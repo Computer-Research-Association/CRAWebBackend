@@ -18,29 +18,32 @@ import java.util.List;
 public class BoardMDParser {
     private final AmazonS3 amazonS3;
     private final String bucket;
+    private final String publicUrl;
 
-    public String updateImageUrls(String markdown, List<String> newUrls) {
-        Parser parser = Parser.builder().build();
-        Node document = parser.parse(markdown);
+//    public BoardMDParser(final AmazonS3 amazonS3, final String bucket, final String publicUrl) {
+//        this.amazonS3 = amazonS3;
+//        this.bucket = bucket;
+//        this.publicUrl = publicUrl;
+//    }
 
-        List<String> copyUrls = new ArrayList<>(newUrls);
+    public String updateImageUrls(final String markdown, final List<String> newUrls) {
+        final Parser parser = Parser.builder().build();
+        final Node document = parser.parse(markdown);
+        final List<String> copyUrls = new ArrayList<>(newUrls);
         replaceImageUrls(document, copyUrls);
-
-        MarkdownRenderer renderer = MarkdownRenderer.builder().build();
+        final MarkdownRenderer renderer = MarkdownRenderer.builder().build();
         return renderer.render(document);
     }
 
-    private void replaceImageUrls(Node node, List<String> newUrls) {
+    private void replaceImageUrls(final Node node, final List<String> newUrls) {
         if (node instanceof Image image && !newUrls.isEmpty()) {
-            String s3Prefix = String.format("https://%s.s3.%s.amazonaws.com/", bucket, amazonS3.getRegionName());
-
+            final String s3Prefix = getPublicBaseUrl();
             if (image.getDestination().startsWith(s3Prefix)) {
                 log.info(image.getDestination());
                 log.info(newUrls.get(0));
                 image.setDestination(newUrls.remove(0));
             }
         }
-
         Node child = node.getFirstChild();
         while (child != null) {
             replaceImageUrls(child, newUrls);
@@ -49,18 +52,15 @@ public class BoardMDParser {
     }
 
     public static String extractPlainText(String markdown) {
-        Parser parser = Parser.builder().build();
+        final Parser parser = Parser.builder().build();
         markdown = markdown.replaceAll("(?i)<br\\s*/?>", " ");
-
-        Node document = parser.parse(markdown);
-
-        StringBuilder sb = new StringBuilder();
+        final Node document = parser.parse(markdown);
+        final StringBuilder sb = new StringBuilder();
         extractText(document, sb);
-
         return sb.toString().trim();
     }
 
-    private static void extractText(Node node, StringBuilder sb) {
+    private static void extractText(final Node node, final StringBuilder sb) {
         if (node instanceof Text) {
             sb.append(((Text) node).getLiteral()).append(" ");
         } else if (node instanceof SoftLineBreak || node instanceof HardLineBreak) {
@@ -83,5 +83,12 @@ public class BoardMDParser {
                 child = child.getNext();
             }
         }
+    }
+
+    private String getPublicBaseUrl() {
+        if (publicUrl != null && !publicUrl.isBlank()) {
+            return publicUrl.endsWith("/") ? publicUrl : publicUrl + "/";
+        }
+        return String.format("https://%s.s3.%s.amazonaws.com/", bucket, amazonS3.getRegionName());
     }
 }

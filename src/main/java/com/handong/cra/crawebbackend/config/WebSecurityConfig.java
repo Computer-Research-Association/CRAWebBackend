@@ -43,7 +43,7 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(final HttpSecurity http) throws Exception {
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
@@ -58,6 +58,7 @@ public class WebSecurityConfig {
 
                         // 계정 관리(아이디 찾기 등) 권한
                         .requestMatchers(HttpMethod.POST, "/api/account/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/account/**").permitAll()
 
                         // 비밀번호 변경 권한
                         .requestMatchers(HttpMethod.PUT, "/api/user/password-change").permitAll()
@@ -66,6 +67,7 @@ public class WebSecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll()
 
                         // 공지 확인
+                        .requestMatchers(HttpMethod.GET, "/api/board/1/page/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/board/0/page/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/board/view/**").permitAll()
 
@@ -74,6 +76,9 @@ public class WebSecurityConfig {
 
                         // 도서
                         .requestMatchers(HttpMethod.GET, "/api/item/1/page/**").permitAll()
+
+                        // test 접근 금지
+                        .requestMatchers(HttpMethod.GET, "/api/test/**").denyAll()
 
 
                         // 기본 권한
@@ -92,13 +97,13 @@ public class WebSecurityConfig {
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:5173", frontUrl));  // React 앱 도메인 허용
+        final CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(List.of("http://localhost:5173", "https://test.cra206.org", frontUrl));  // React 앱 도메인 허용
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));  // 모든 헤더 허용
         configuration.setAllowCredentials(true);  // 쿠키 허용
 
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }

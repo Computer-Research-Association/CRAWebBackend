@@ -3,7 +3,6 @@ package com.handong.cra.crawebbackend.account.dto.response;
 
 import com.handong.cra.crawebbackend.account.domain.ManageTokenCategory;
 import com.handong.cra.crawebbackend.account.dto.CodeDto;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDateTime;

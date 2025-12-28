@@ -11,13 +11,13 @@ import java.util.Optional;
 
 @Repository
 public interface BoardPinRepository extends JpaRepository<BoardPin, Long> {
-    public Optional<BoardPin> findBoardPinByIdAndDeletedFalse(Long id);
+    Optional<BoardPin> findBoardPinByIdAndDeletedFalse(Long id);
 
-    public List<BoardPin> findAllByDeletedFalse();
+    List<BoardPin> findAllByDeletedFalse();
 
-    public List<BoardPin> findBoardPinByCategoryAndDeletedFalse(Category category);
+    List<BoardPin> findBoardPinByCategoryAndDeletedFalse(Category category);
 
-    public BoardPin findBoardPinByBoardIdAndDeletedFalse(Long boardId);
-    public BoardPin findBoardPinByBoardAndDeletedFalse(Board board);
-    public BoardPin findBoardPinByBoard(Board board);
+    BoardPin findBoardPinByBoardIdAndDeletedFalse(Long boardId);
+
+    BoardPin findBoardPinByBoard(Board board);
 }

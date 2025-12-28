@@ -8,11 +8,30 @@ import java.util.List;
 
 @Service
 public interface BoardPinService {
-    public BoardPinDto setPin(final BoardPinDto boardPinDto);
 
-    public Boolean removePinById(final Long pinId);
+    /**
+     * 고정 공지 설정
+     *
+     * @param boardPinDto 고정 공지 설정 데이터 DTO
+     */
+    BoardPinDto setPin(final BoardPinDto boardPinDto);
 
-    public List<BoardPinDto> getPinByBoardCategory(Category category);
+    /**
+     * 고정 공지 삭제
+     *
+     * @param pinId 고정 공지 삭제 데이터 DTO
+     */
+    Boolean removePinById(final Long pinId);
 
-    public List<BoardPinDto> getALlPins();
+    /**
+     * 카테고리별 고정 공지 조회
+     *
+     * @param category 카테고리
+     */
+    List<BoardPinDto> getPinByBoardCategory(Category category);
+
+    /**
+     * 모든 고정 공지 확인
+     */
+    List<BoardPinDto> getALlPins();
 }
