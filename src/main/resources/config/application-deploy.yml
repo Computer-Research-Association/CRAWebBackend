@@ -27,6 +27,7 @@ spring:
       s3:
         bucket: ${AWS_S3_BUCKET}
         endpoint: ${AWS_S3_ENDPOINT}
+        public-url: ${AWS_S3_PUBLIC_URL}
 
   mail:
     host: ${MAIL_HOST}

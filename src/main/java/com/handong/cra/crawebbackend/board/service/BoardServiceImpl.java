@@ -53,6 +53,9 @@ public class BoardServiceImpl implements BoardService {
     @Value("${spring.cloud.aws.s3.bucket}")
     private String bucket;
 
+    @Value("${spring.cloud.aws.s3.public-url:}")
+    private String publicUrl;
+
     @Override
     @Transactional(readOnly = true)
     public List<ListBoardDto> getBoardsByCategory(Category category) {
@@ -92,7 +95,7 @@ public class BoardServiceImpl implements BoardService {
                 (!user.getRoles().hasRole(UserRoleEnum.ADMIN) /*|| TODO super admin 추가 */)) {
             throw new AuthForbiddenActionException();
         }
-        BoardMDParser parser = new BoardMDParser(amazonS3, bucket);
+        BoardMDParser parser = new BoardMDParser(amazonS3, bucket, publicUrl);
         if (createBoardDto.getFile() != null) {
             final String fileUrl = s3FileService
                     .uploadFile(createBoardDto.getFile(), S3ImageCategory.BOARD);
@@ -117,7 +120,7 @@ public class BoardServiceImpl implements BoardService {
                 .orElseThrow(BoardNotFoundException::new);
         // 권한 검사.
         boardAuthCheck(board.getUser().getId(), updateBoardDto.getUserId());
-        BoardMDParser parser = new BoardMDParser(amazonS3, bucket);
+        BoardMDParser parser = new BoardMDParser(amazonS3, bucket, publicUrl);
         if (updateBoardDto.getIsChangedFile()) {
             String fileUrl = null;
             if (updateBoardDto.getFile() != null) {

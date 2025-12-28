@@ -18,6 +18,13 @@ import java.util.List;
 public class BoardMDParser {
     private final AmazonS3 amazonS3;
     private final String bucket;
+    private final String publicUrl;
+
+//    public BoardMDParser(final AmazonS3 amazonS3, final String bucket, final String publicUrl) {
+//        this.amazonS3 = amazonS3;
+//        this.bucket = bucket;
+//        this.publicUrl = publicUrl;
+//    }
 
     public String updateImageUrls(final String markdown, final List<String> newUrls) {
         final Parser parser = Parser.builder().build();
@@ -30,7 +37,7 @@ public class BoardMDParser {
 
     private void replaceImageUrls(final Node node, final List<String> newUrls) {
         if (node instanceof Image image && !newUrls.isEmpty()) {
-            final String s3Prefix = String.format("https://%s.s3.%s.amazonaws.com/", bucket, amazonS3.getRegionName());
+            final String s3Prefix = getPublicBaseUrl();
             if (image.getDestination().startsWith(s3Prefix)) {
                 log.info(image.getDestination());
                 log.info(newUrls.get(0));
@@ -76,5 +83,12 @@ public class BoardMDParser {
                 child = child.getNext();
             }
         }
+    }
+
+    private String getPublicBaseUrl() {
+        if (publicUrl != null && !publicUrl.isBlank()) {
+            return publicUrl.endsWith("/") ? publicUrl : publicUrl + "/";
+        }
+        return String.format("https://%s.s3.%s.amazonaws.com/", bucket, amazonS3.getRegionName());
     }
 }

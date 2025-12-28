@@ -27,8 +27,11 @@ public class S3ImageServiceImpl implements S3ImageService {
     @Value("${spring.cloud.aws.s3.bucket}")
     private String bucket;
 
+    @Value("${spring.cloud.aws.s3.public-url:}")
+    private String publicUrl;
+
     private String getKeyFromUrl(final String url) {
-        final String originUrl = getPublicUrl(""); // get aws s3 url
+        final String originUrl = getPublicUrl(""); // get public base url
         if (!url.contains(originUrl)) {
             throw new S3ImageUrlException();
         }
@@ -36,6 +39,10 @@ public class S3ImageServiceImpl implements S3ImageService {
     }
 
     private String getPublicUrl(final String fileName) {
+        if (publicUrl != null && !publicUrl.isBlank()) {
+            final String base = publicUrl.endsWith("/") ? publicUrl : publicUrl + "/";
+            return base + fileName;
+        }
         return String.format("https://%s.s3.%s.amazonaws.com/%s", bucket, amazonS3.getRegionName(), fileName);
     }
 

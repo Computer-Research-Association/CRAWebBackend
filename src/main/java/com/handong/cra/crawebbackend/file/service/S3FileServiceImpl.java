@@ -28,6 +28,9 @@ public class S3FileServiceImpl implements S3FileService {
     @Value("${spring.cloud.aws.s3.bucket}")
     private String bucket;
 
+    @Value("${spring.cloud.aws.s3.public-url:}")
+    private String publicUrl;
+
     private String getKeyFromUrl(final String url) {
         final String originUrl = getPublicUrl("");
         if (!url.startsWith(originUrl)) {
@@ -40,6 +43,10 @@ public class S3FileServiceImpl implements S3FileService {
         try {
             String encodedFileName = URLEncoder.encode(fileName, "UTF-8");
             encodedFileName = encodedFileName.replace("+", "%20");
+            if (publicUrl != null && !publicUrl.isBlank()) {
+                final String base = publicUrl.endsWith("/") ? publicUrl : publicUrl + "/";
+                return base + encodedFileName;
+            }
             return String.format("https://%s.s3.%s.amazonaws.com/%s", bucket, amazonS3.getRegionName(), encodedFileName);
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
