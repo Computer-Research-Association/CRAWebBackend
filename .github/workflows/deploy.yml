@@ -57,6 +57,5 @@ jobs:
               -u ${{ secrets.DOCKERHUB_USERNAME }} \
               -p ${{ secrets.DOCKERHUB_TOKEN }}
 
-            echo "${{ secrets.SERVER_USER_PASSWORD }}" | sudo -S docker compose pull
-            echo "${{ secrets.SERVER_USER_PASSWORD }}" | sudo -S docker compose up -d
+            echo "${{ secrets.SERVER_USER_PASSWORD }}" | sudo -S docker compose up -d --pull always
             echo "${{ secrets.SERVER_USER_PASSWORD }}" | sudo -S docker logout
