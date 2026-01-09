@@ -20,6 +20,7 @@ public class MailService {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         try {
             MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+            mimeMessageHelper.setFrom("noreply@cra206.org"); // set email from
             mimeMessageHelper.setTo(mailSendDto.getSendEmail()); // set email to send
             mimeMessageHelper.setSubject(mailSendDto.getMailCategory().getTitle()); // set title
             String content = mailSendDto.getMailCategory().getTemplate()
