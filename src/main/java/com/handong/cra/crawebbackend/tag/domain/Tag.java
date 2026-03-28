@@ -13,7 +13,6 @@ import java.util.List;
 
 @Entity
 @Getter
-@Indexed
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Tag extends BaseEntity {
     @FullTextField
@@ -26,10 +25,12 @@ public class Tag extends BaseEntity {
     @ManyToMany(mappedBy = "tags")
     private List<Project> projects = new ArrayList<>();
 
+//    빌더로 ㄱㄱ private
     public Tag(String name) {
         this.name = name;
     }
 
+//    createdDto 하나 만들자
     public static Tag of(String name) {
         return new Tag(name);
     }

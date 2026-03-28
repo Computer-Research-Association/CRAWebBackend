@@ -7,6 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
+// Update Dto 만들어야 함,.
 public class ReqUpdateTagDto {
     private String name;
 }

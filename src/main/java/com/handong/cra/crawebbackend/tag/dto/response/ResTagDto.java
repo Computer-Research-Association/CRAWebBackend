@@ -9,6 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder(access = AccessLevel.PRIVATE)
+// 테그 관련된 묶여있는 걸 list로 받아야된다.
 public class ResTagDto {
 
     private Long id;
