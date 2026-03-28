@@ -6,7 +6,6 @@ import com.handong.cra.crawebbackend.project.domain.Project;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
-import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,13 +24,18 @@ public class Tag extends BaseEntity {
     @ManyToMany(mappedBy = "tags")
     private List<Project> projects = new ArrayList<>();
 
-//    빌더로 ㄱㄱ private
+    @Builder(access = AccessLevel.PRIVATE)
     public Tag(String name) {
         this.name = name;
     }
 
-//    createdDto 하나 만들자
-    public static Tag of(String name) {
-        return new Tag(name);
+    public void updateName(String name) {
+        this.name = name;
     }
+    public static Tag of(String name) {
+        return Tag.builder()
+                .name(name)
+                .build();
+    }
+
 }
