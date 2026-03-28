@@ -3,6 +3,7 @@ package com.handong.cra.crawebbackend.project.domain;
 import com.handong.cra.crawebbackend.common.domain.BaseEntity;
 import com.handong.cra.crawebbackend.project.dto.CreateProjectDto;
 import com.handong.cra.crawebbackend.project.dto.UpdateProjectDto;
+import com.handong.cra.crawebbackend.tag.domain.Tag;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -43,6 +44,14 @@ public class Project extends BaseEntity {
     @Column(name = "image_url")
     @Setter
     private String imageUrl;
+
+    @ManyToMany
+    @JoinTable(
+            name = "project_tag",
+            joinColumns = @JoinColumn(name = "project_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id")
+    )
+    private List<Tag> tags = new ArrayList<>();
 
 
     public Project(CreateProjectDto createProjectDto) {

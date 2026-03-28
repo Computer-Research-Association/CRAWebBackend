@@ -15,6 +15,8 @@ import com.handong.cra.crawebbackend.file.service.S3ImageService;
 import com.handong.cra.crawebbackend.exception.board.BoardLikeBadRequestException;
 import com.handong.cra.crawebbackend.exception.board.BoardNotFoundException;
 import com.handong.cra.crawebbackend.exception.user.UserNotFoundException;
+import com.handong.cra.crawebbackend.tag.domain.Tag;
+import com.handong.cra.crawebbackend.tag.repository.TagRepository;
 import com.handong.cra.crawebbackend.user.domain.User;
 import com.handong.cra.crawebbackend.user.domain.UserRoleEnum;
 import com.handong.cra.crawebbackend.user.repository.UserRepository;
@@ -48,6 +50,7 @@ public class BoardServiceImpl implements BoardService {
     private final BoardPinService boardPinService;
     private final EntityManager entityManager;
     private final BoardPinRepository boardPinRepository;
+    private final TagRepository tagRepository;
 
 
     @Value("${spring.cloud.aws.s3.bucket}")
@@ -108,6 +111,11 @@ public class BoardServiceImpl implements BoardService {
             board.setContent(parser
                     .updateImageUrls(board.getContent(), board.getImageUrls()));
         }
+        if (createBoardDto.getTagIds() != null) {
+            List<Tag> tags = tagRepository.findAllById(createBoardDto.getTagIds());
+            board.getTags().addAll(tags);
+        }
+
         final Board saevdBoard = boardRepository.save(board);
         return CreateBoardDto.from(saevdBoard);
     }
@@ -281,6 +289,14 @@ public class BoardServiceImpl implements BoardService {
         return Search.session(entityManager);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<ListBoardDto> getBoardsByTagName(String tagName) {
+        return boardRepository.findByTags_Name(tagName)
+                .stream()
+                .map(ListBoardDto::from)
+                .toList();
+    }
 
     private void boardAuthCheck(final Long writerId, final Long userId) {
         final User user = userRepository.findById(userId)

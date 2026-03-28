@@ -26,6 +26,7 @@ public class CreateBoardDto {
     private String fileUrl;
     private LocalDateTime createdAt;
     private UserDetailDto userDetailDto;
+    private List<Long> tagIds;
 
     public CreateBoardDto(Long userId, ReqCreateBoardDto reqCreateBoardDto, MultipartFile file) {
         this.userId = userId;
@@ -34,6 +35,7 @@ public class CreateBoardDto {
         this.category = Category.values()[reqCreateBoardDto.getCategory()];
         this.imageUrls = reqCreateBoardDto.getImageUrls();
         this.file = file;
+        this.tagIds = reqCreateBoardDto.getTagIds();
     }
 
     public CreateBoardDto(Board board) {

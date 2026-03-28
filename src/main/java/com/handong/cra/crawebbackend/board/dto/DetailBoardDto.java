@@ -4,6 +4,7 @@ import com.handong.cra.crawebbackend.board.domain.Board;
 import com.handong.cra.crawebbackend.board.domain.Category;
 import com.handong.cra.crawebbackend.comment.domain.Comment;
 import com.handong.cra.crawebbackend.comment.dto.ListCommentDto;
+import com.handong.cra.crawebbackend.tag.dto.response.ResTagDto;
 import com.handong.cra.crawebbackend.user.dto.UserDetailDto;
 import lombok.*;
 
@@ -27,11 +28,13 @@ public class DetailBoardDto {
     private String fileUrl;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private List<ResTagDto> tags;
 
     private Boolean viewerLiked;
     private List<ListCommentDto> listCommentDtos;
     private Long pinId;
     private Boolean isPined = false;
+
 
     public DetailBoardDto(Board board) {
         this.id = board.getId();
@@ -50,6 +53,9 @@ public class DetailBoardDto {
 
         this.createdAt = board.getCreatedAt();
         this.updatedAt = board.getUpdatedAt();
+        this.tags = board.getTags().stream()
+                .map(ResTagDto::from)
+                .toList();  // 추가
     }
 
     public DetailBoardDto(Board board, List<Comment> comments) {

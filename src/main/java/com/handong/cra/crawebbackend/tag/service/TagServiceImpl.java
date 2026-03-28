@@ -1,5 +1,9 @@
 package com.handong.cra.crawebbackend.tag.service;
 
+import com.handong.cra.crawebbackend.board.dto.ListBoardDto;
+import com.handong.cra.crawebbackend.board.repository.BoardRepository;
+import com.handong.cra.crawebbackend.project.dto.ListProjectDto;
+import com.handong.cra.crawebbackend.project.repository.ProjectRepository;
 import com.handong.cra.crawebbackend.tag.domain.Tag;
 import com.handong.cra.crawebbackend.tag.dto.request.ReqCreateTagDto;
 import com.handong.cra.crawebbackend.tag.dto.request.ReqUpdateTagDto;
@@ -9,8 +13,10 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.Objects;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -18,6 +24,8 @@ import java.util.List;
 public class TagServiceImpl implements TagService {
 
     private final TagRepository tagRepository;
+    private final ProjectRepository projectRepository;
+    private final BoardRepository boardRepository;
 
     @Override
     public List<ResTagDto> getAllTags() {
@@ -51,10 +59,28 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
+    public List<ListBoardDto> getBoardsByTagName(String tagName) {
+        return boardRepository.findByTags_Name(tagName)
+                .stream()
+                .map(ListBoardDto::from)
+                .filter(Objects::nonNull)
+                .toList();
+    }
+
+    @Override
+    public List<ListProjectDto> getProjectsByTagName(String tagName) {
+        return projectRepository.findByTags_Name(tagName)
+                .stream()
+                .map(ListProjectDto::from)
+                .toList();
+    }
+
+    @Override
     @Transactional
     public void deleteTag(Long id) {
         Tag tag = tagRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Tag not found: " + id));
         tagRepository.delete(tag);
     }
+
 }

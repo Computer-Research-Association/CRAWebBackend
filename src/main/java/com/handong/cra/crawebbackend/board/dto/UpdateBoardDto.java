@@ -26,6 +26,7 @@ public class UpdateBoardDto {
     private MultipartFile file;
     private String fileUrl;
     private Boolean isChangedFile;
+    private List<Long> tagIds;
 
     public UpdateBoardDto(Long userId, Long boardId, ReqUpdateBoardDto reqUpdateBoardDto, MultipartFile file) {
         this.id = boardId;
@@ -36,6 +37,7 @@ public class UpdateBoardDto {
         this.imageUrls = reqUpdateBoardDto.getImageUrls();
         this.file = file;
         this.isChangedFile = reqUpdateBoardDto.getIsChangedFile();
+        this.tagIds = reqUpdateBoardDto.getTagIds();
     }
 
     public UpdateBoardDto(Board board) {

@@ -23,6 +23,7 @@ public class UpdateProjectDto {
     private String serviceUrl;
     private List<String> members = new ArrayList<>();
     private String imageUrl;
+    private List<Long> tagIds;
 
     private Boolean deleted;
     private LocalDateTime createAt = null;
@@ -40,6 +41,7 @@ public class UpdateProjectDto {
         this.members = reqUpdateProjectDto.getMembers();
         this.imageUrl = reqUpdateProjectDto.getImageUrl();
         this.deleted = reqUpdateProjectDto.getDeleted();
+        this.tagIds = reqUpdateProjectDto.getTagIds();
     }
 
     public UpdateProjectDto(Project project) {

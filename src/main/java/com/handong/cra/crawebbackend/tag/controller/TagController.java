@@ -8,7 +8,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/tags")
@@ -20,6 +23,14 @@ public class TagController {
     @GetMapping
     public ResponseEntity<List<ResTagDto>> getAllTags() {
         return ResponseEntity.ok(tagService.getAllTags());
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<Map<String, Object>> searchByTagName(@RequestParam String name) {
+        Map<String, Object> result = new HashMap<>();
+        result.put("boards", tagService.getBoardsByTagName(name));
+        result.put("projects", tagService.getProjectsByTagName(name));
+        return ResponseEntity.ok(result);
     }
 
     @GetMapping("/{id}")
@@ -43,4 +54,6 @@ public class TagController {
         tagService.deleteTag(id);
         return ResponseEntity.noContent().build();
     }
+
+
 }

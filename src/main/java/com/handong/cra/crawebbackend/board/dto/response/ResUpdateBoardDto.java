@@ -22,6 +22,7 @@ public class ResUpdateBoardDto {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private ResUserDetailDto resUserDetailDto;
+    private List<Long> tagIds;
 
     public ResUpdateBoardDto(UpdateBoardDto updateBoardDto) {
         this.id = updateBoardDto.getId();

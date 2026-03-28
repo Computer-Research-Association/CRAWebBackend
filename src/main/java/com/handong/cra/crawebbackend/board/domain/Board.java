@@ -4,6 +4,7 @@ import com.handong.cra.crawebbackend.board.dto.CreateBoardDto;
 import com.handong.cra.crawebbackend.board.dto.UpdateBoardDto;
 import com.handong.cra.crawebbackend.comment.domain.Comment;
 import com.handong.cra.crawebbackend.common.domain.BaseEntity;
+import com.handong.cra.crawebbackend.tag.domain.Tag;
 import com.handong.cra.crawebbackend.user.domain.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -48,6 +49,14 @@ public class Board extends BaseEntity {
 
     @ManyToMany(mappedBy = "likedBoards")
     private List<User> likedUsers = new ArrayList<>();
+
+    @ManyToMany
+    @JoinTable(
+            name = "board_tag",
+            joinColumns = @JoinColumn(name = "board_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id")
+    )
+    private List<Tag> tags = new ArrayList<>();
 
     private Long view;
 

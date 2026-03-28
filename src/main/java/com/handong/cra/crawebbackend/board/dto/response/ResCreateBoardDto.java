@@ -21,6 +21,7 @@ public class ResCreateBoardDto {
     private List<String> imageUrls;
     private LocalDateTime createdAt;
     private ResUserDetailDto resUserDetailDto;
+    private List<Long> tagIds;
 
     public ResCreateBoardDto(CreateBoardDto createBoardDto) {
         this.id = createBoardDto.getId();
@@ -30,6 +31,7 @@ public class ResCreateBoardDto {
         this.imageUrls = createBoardDto.getImageUrls();
         this.createdAt = createBoardDto.getCreatedAt();
         this.resUserDetailDto = ResUserDetailDto.from(createBoardDto.getUserDetailDto());
+
     }
 
     public static ResCreateBoardDto from(CreateBoardDto createBoardDto) {

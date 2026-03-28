@@ -24,6 +24,7 @@ public class CreateProjectDto {
     private List<String> members = new ArrayList<>();
     private String imageUrl;
     private LocalDateTime createdAt;
+    private List<Long> tagIds;
 
     public CreateProjectDto(Long userId, ReqCreateProjectDto reqCreateProjectDto) {
         this.userId = userId;
@@ -35,6 +36,7 @@ public class CreateProjectDto {
         this.serviceUrl = reqCreateProjectDto.getServiceUrl();
         this.members = reqCreateProjectDto.getMembers();
         this.imageUrl = reqCreateProjectDto.getImageUrl();
+        this.tagIds = reqCreateProjectDto.getTagIds();
     }
     public CreateProjectDto(Project project) {
         this.semester = project.getSemester();
