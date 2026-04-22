@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 @Embeddable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserRoleSet {
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "roles", joinColumns = @JoinColumn(name = "user_id"))
     @Enumerated(EnumType.STRING)
     private Set<UserRoleEnum> roles = new HashSet<>();
