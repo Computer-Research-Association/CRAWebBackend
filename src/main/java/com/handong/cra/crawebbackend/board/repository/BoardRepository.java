@@ -18,9 +18,9 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
 
     List<Board> findAllByCategoryAndDeletedFalse(Category category);
 
+    @Query("SELECT b FROM Board b JOIN FETCH b.user WHERE b.category = :category AND b.deleted = false")
     Page<Board> findAllByCategoryAndDeletedFalse(Category category, Pageable pageable);
 
-    @EntityGraph(attributePaths = {"likedUsers"})
     Optional<Board> findBoardByIdAndDeletedFalse(Long id);
 
     List<Board> findByCategory(Category category);

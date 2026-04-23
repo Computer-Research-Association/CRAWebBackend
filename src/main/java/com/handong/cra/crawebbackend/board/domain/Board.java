@@ -7,6 +7,7 @@ import com.handong.cra.crawebbackend.common.domain.BaseEntity;
 import com.handong.cra.crawebbackend.user.domain.User;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed;
 
@@ -43,9 +44,11 @@ public class Board extends BaseEntity {
     @Setter
     private List<String> imageUrls = new ArrayList<>();
 
+    @BatchSize(size = 100)
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments;
 
+    @BatchSize(size = 100)
     @ManyToMany(mappedBy = "likedBoards")
     private List<User> likedUsers = new ArrayList<>();
 

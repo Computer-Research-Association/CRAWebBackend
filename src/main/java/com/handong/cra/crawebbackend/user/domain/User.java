@@ -31,6 +31,7 @@ public class User extends BaseEntity {
     @Column(name = "github_id", nullable = false)
     private String githubId;
 
+
     private UserRoleSet roles;
 
     @Column(name = "student_id", unique = true, nullable = false)
@@ -46,7 +47,7 @@ public class User extends BaseEntity {
     @Column(name = "img_url")
     private String imgUrl;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "likes",
             joinColumns = @JoinColumn(name = "user_id"),
