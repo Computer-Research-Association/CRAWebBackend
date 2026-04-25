@@ -5,6 +5,7 @@ import com.handong.cra.crawebbackend.board.domain.Board;
 import com.handong.cra.crawebbackend.project.domain.Project;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
 
 import java.util.ArrayList;
@@ -18,10 +19,12 @@ public class Tag extends BaseEntity {
     @Column(length = 50, nullable = false, unique = true)
     private String name;
 
-    @ManyToMany(mappedBy = "tags")
+    @ManyToMany(mappedBy = "tags", fetch = FetchType.LAZY)
+    @BatchSize(size = 50)
     private List<Board> boards = new ArrayList<>();
 
-    @ManyToMany(mappedBy = "tags")
+    @ManyToMany(mappedBy = "tags", fetch = FetchType.LAZY)
+    @BatchSize(size = 50)
     private List<Project> projects = new ArrayList<>();
 
     @Builder(access = AccessLevel.PRIVATE)

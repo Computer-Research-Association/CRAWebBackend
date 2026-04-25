@@ -42,6 +42,9 @@ public class DetailProjectDto {
         this.deleted = project.getDeleted();
         this.createAt = project.getCreatedAt();
         this.updatedAt = project.getUpdatedAt();
+        this.tags = project.getTags().stream()
+                .map(ResTagDto::from)
+                .toList();
     }
     public static DetailProjectDto from(Project project) {
         return new DetailProjectDto(project);

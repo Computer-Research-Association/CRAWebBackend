@@ -2,6 +2,7 @@ package com.handong.cra.crawebbackend.board.dto.response;
 
 
 import com.handong.cra.crawebbackend.board.dto.UpdateBoardDto;
+import com.handong.cra.crawebbackend.tag.dto.response.ResTagDto;
 import com.handong.cra.crawebbackend.user.dto.response.ResUserDetailDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
@@ -22,7 +23,7 @@ public class ResUpdateBoardDto {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private ResUserDetailDto resUserDetailDto;
-    private List<Long> tagIds;
+    private List<ResTagDto> tags;
 
     public ResUpdateBoardDto(UpdateBoardDto updateBoardDto) {
         this.id = updateBoardDto.getId();
@@ -33,6 +34,7 @@ public class ResUpdateBoardDto {
         this.imageUrls = updateBoardDto.getImageUrls();
         this.createdAt = updateBoardDto.getCreatedAt();
         this.updatedAt = updateBoardDto.getUpdatedAt();
+        this.tags = updateBoardDto.getTags();
     }
 
     public static ResUpdateBoardDto from(UpdateBoardDto updateBoardDto) {

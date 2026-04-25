@@ -40,6 +40,10 @@ public enum ErrorCode {
     PROJECT_PAGE_SIZE_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST, "P2", "비정상적으로 큰 Per page 값입니다."),
     PROJECT_SEMESTER_PARSE(HttpStatus.BAD_REQUEST, "P3", "잘못된 학기 수 값 입니다. EX) 25-1"),
 
+    // Tag Error
+    TAG_NOT_FOUND(HttpStatus.NOT_FOUND, "T1", "존재하지 않는 태그입니다."),
+    TAG_INVALID_NAME(HttpStatus.BAD_REQUEST, "T2", "잘못된 태그 이름입니다."),
+
     // User Error
     USER_NOT_FOUND_ERROR(HttpStatus.NOT_FOUND, "U1", "해당하는 유저가 존재하지 않습니다."),
     USER_INVALID_PASSWORD(HttpStatus.BAD_REQUEST, "U2", "변경하려는 패스워드가 잘못되었습니다."),

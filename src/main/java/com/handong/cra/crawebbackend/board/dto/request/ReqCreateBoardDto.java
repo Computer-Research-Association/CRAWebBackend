@@ -24,6 +24,6 @@ public class ReqCreateBoardDto {
 
     private List<String> imageUrls;
 
-    private List<Long> tagIds;
+    private List<String> tagNames;
 
 }
