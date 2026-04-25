@@ -58,3 +58,9 @@ logging:
     com.handong.cra.crawebbackend: info
   file:
     name: ${LOG_FILE}
+
+dev-site:
+  test-server:
+    url: ${DEV-SITE_TEST-SERVER_URL}
+
+

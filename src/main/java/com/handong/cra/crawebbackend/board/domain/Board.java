@@ -45,10 +45,12 @@ public class Board extends BaseEntity {
     @Setter
     private List<String> imageUrls = new ArrayList<>();
 
+    @BatchSize(size = 100)
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments;
 
     @ManyToMany(mappedBy = "likedBoards", fetch = FetchType.LAZY)
+    @BatchSize(size = 100)
     private List<User> likedUsers = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.LAZY)

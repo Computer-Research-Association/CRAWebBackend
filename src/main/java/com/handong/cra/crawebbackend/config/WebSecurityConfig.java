@@ -37,6 +37,9 @@ public class WebSecurityConfig {
     @Value("${site.frontend.url}")
     private String frontUrl;
 
+    @Value("${dev-site.test-server.url}")
+    private String testServerUrl;
+
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() {
         return new JwtAuthenticationFilter(jwtTokenProvider, userDetailsService, userRepository);
@@ -98,7 +101,7 @@ public class WebSecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         final CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:5173", "https://test.cra206.org", frontUrl));  // React 앱 도메인 허용
+        configuration.setAllowedOrigins(List.of("http://localhost:5173", frontUrl, testServerUrl));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));  // 모든 헤더 허용
         configuration.setAllowCredentials(true);  // 쿠키 허용
