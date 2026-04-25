@@ -1,6 +1,7 @@
 package com.handong.cra.crawebbackend.project.dto;
 
 import com.handong.cra.crawebbackend.project.domain.Project;
+import com.handong.cra.crawebbackend.tag.dto.response.ResTagDto;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -21,6 +22,7 @@ public class DetailProjectDto {
     private String serviceUrl;
     private List<String> members = new ArrayList<>();
     private String imageUrl;
+    private List<ResTagDto> tags;
 
     private Boolean deleted;
     private LocalDateTime createAt = null;
@@ -40,6 +42,9 @@ public class DetailProjectDto {
         this.deleted = project.getDeleted();
         this.createAt = project.getCreatedAt();
         this.updatedAt = project.getUpdatedAt();
+        this.tags = project.getTags().stream()
+                .map(ResTagDto::from)
+                .toList();
     }
     public static DetailProjectDto from(Project project) {
         return new DetailProjectDto(project);

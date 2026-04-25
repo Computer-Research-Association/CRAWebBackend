@@ -15,5 +15,5 @@ public class ReqUpdateBoardDto {
     private List<String> imageUrls;
     private Boolean isChangedFile;
     private Boolean deleted;
-
+    private List<String> tagNames;
 }

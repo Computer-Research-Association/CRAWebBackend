@@ -19,4 +19,5 @@ public class ReqUpdateProjectDto {
     private List<String> members = new ArrayList<>();
     private String imageUrl;
     private Boolean deleted;
+    private List<String> tagNames;
 }

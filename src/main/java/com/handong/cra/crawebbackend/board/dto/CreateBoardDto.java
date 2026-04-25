@@ -3,6 +3,7 @@ package com.handong.cra.crawebbackend.board.dto;
 import com.handong.cra.crawebbackend.board.domain.Board;
 import com.handong.cra.crawebbackend.board.domain.Category;
 import com.handong.cra.crawebbackend.board.dto.request.ReqCreateBoardDto;
+import com.handong.cra.crawebbackend.tag.dto.response.ResTagDto;
 import com.handong.cra.crawebbackend.user.dto.UserDetailDto;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,6 +27,8 @@ public class CreateBoardDto {
     private String fileUrl;
     private LocalDateTime createdAt;
     private UserDetailDto userDetailDto;
+    private List<String> tagNames;
+    private List<ResTagDto> tags;
 
     public CreateBoardDto(Long userId, ReqCreateBoardDto reqCreateBoardDto, MultipartFile file) {
         this.userId = userId;
@@ -34,6 +37,7 @@ public class CreateBoardDto {
         this.category = Category.values()[reqCreateBoardDto.getCategory()];
         this.imageUrls = reqCreateBoardDto.getImageUrls();
         this.file = file;
+        this.tagNames = reqCreateBoardDto.getTagNames();
     }
 
     public CreateBoardDto(Board board) {
@@ -46,6 +50,9 @@ public class CreateBoardDto {
         this.createdAt = board.getCreatedAt();
         this.fileUrl = board.getFileUrl();
         this.userDetailDto = UserDetailDto.from(board.getUser());
+        this.tags = board.getTags().stream()
+                .map(ResTagDto::from)
+                .toList();
     }
 
     public static CreateBoardDto of(Long userId, ReqCreateBoardDto reqCreateBoardDto, MultipartFile file) {

@@ -3,6 +3,7 @@ package com.handong.cra.crawebbackend.board.dto.response;
 import com.handong.cra.crawebbackend.board.domain.Category;
 import com.handong.cra.crawebbackend.board.dto.DetailBoardDto;
 import com.handong.cra.crawebbackend.comment.dto.response.ResListCommentDto;
+import com.handong.cra.crawebbackend.tag.dto.response.ResTagDto;
 import com.handong.cra.crawebbackend.user.dto.response.ResUserDetailDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
@@ -29,7 +30,8 @@ public class ResDetailBoardDto {
     private Boolean viewerLiked;
     private Long pidId;
     private Boolean isPined;
-    private List<ResListCommentDto> resListCommentDtos;
+    private List<ResListCommentDto> resListCommentDto;
+    private List<ResTagDto> tags;
 
     public ResDetailBoardDto(DetailBoardDto detailBoardDto) {
         this.id = detailBoardDto.getId();
@@ -46,8 +48,9 @@ public class ResDetailBoardDto {
         this.isPined = detailBoardDto.getIsPined();
         this.resUserDetailDto = ResUserDetailDto.from(detailBoardDto.getUserDetailDto());
         this.viewerLiked = detailBoardDto.getViewerLiked();
+        this.tags = detailBoardDto.getTags();
         if (detailBoardDto.getListCommentDtos() != null)
-            this.resListCommentDtos = detailBoardDto.getListCommentDtos().stream().map(ResListCommentDto::from).toList();
+            this.resListCommentDto = detailBoardDto.getListCommentDtos().stream().map(ResListCommentDto::from).toList();
     }
 
     public static ResDetailBoardDto from(DetailBoardDto detailBoardDto) {

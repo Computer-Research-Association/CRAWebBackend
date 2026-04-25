@@ -2,6 +2,7 @@ package com.handong.cra.crawebbackend.board.dto;
 
 import com.handong.cra.crawebbackend.board.domain.Board;
 import com.handong.cra.crawebbackend.board.domain.Category;
+import com.handong.cra.crawebbackend.tag.dto.response.ResTagDto;
 import com.handong.cra.crawebbackend.user.dto.UserDetailDto;
 import lombok.*;
 
@@ -27,6 +28,7 @@ public class ListBoardDto {
     private Integer totalPages;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private List<ResTagDto> tags;
 
     public ListBoardDto(Board board) {
         this.id = board.getId();
@@ -44,6 +46,9 @@ public class ListBoardDto {
         }
         this.createdAt = board.getCreatedAt();
         this.updatedAt = board.getUpdatedAt();
+        this.tags = board.getTags().stream()
+                .map(ResTagDto::from)
+                .toList();
     }
 
     public static ListBoardDto from(Board board) {

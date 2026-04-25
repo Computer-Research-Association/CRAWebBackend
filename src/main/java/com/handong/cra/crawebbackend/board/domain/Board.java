@@ -4,9 +4,11 @@ import com.handong.cra.crawebbackend.board.dto.CreateBoardDto;
 import com.handong.cra.crawebbackend.board.dto.UpdateBoardDto;
 import com.handong.cra.crawebbackend.comment.domain.Comment;
 import com.handong.cra.crawebbackend.common.domain.BaseEntity;
+import com.handong.cra.crawebbackend.tag.domain.Tag;
 import com.handong.cra.crawebbackend.user.domain.User;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed;
 
@@ -46,8 +48,17 @@ public class Board extends BaseEntity {
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments;
 
-    @ManyToMany(mappedBy = "likedBoards")
+    @ManyToMany(mappedBy = "likedBoards", fetch = FetchType.LAZY)
     private List<User> likedUsers = new ArrayList<>();
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @BatchSize(size = 50)
+    @JoinTable(
+            name = "board_tag",
+            joinColumns = @JoinColumn(name = "board_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id")
+    )
+    private List<Tag> tags = new ArrayList<>();
 
     private Long view;
 

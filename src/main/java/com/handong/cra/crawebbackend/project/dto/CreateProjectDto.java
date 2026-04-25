@@ -2,6 +2,7 @@ package com.handong.cra.crawebbackend.project.dto;
 
 import com.handong.cra.crawebbackend.project.domain.Project;
 import com.handong.cra.crawebbackend.project.dto.request.ReqCreateProjectDto;
+import com.handong.cra.crawebbackend.tag.dto.response.ResTagDto;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -24,6 +25,8 @@ public class CreateProjectDto {
     private List<String> members = new ArrayList<>();
     private String imageUrl;
     private LocalDateTime createdAt;
+    private List<String> tagNames;
+    private List<ResTagDto> tags;
 
     public CreateProjectDto(Long userId, ReqCreateProjectDto reqCreateProjectDto) {
         this.userId = userId;
@@ -35,8 +38,10 @@ public class CreateProjectDto {
         this.serviceUrl = reqCreateProjectDto.getServiceUrl();
         this.members = reqCreateProjectDto.getMembers();
         this.imageUrl = reqCreateProjectDto.getImageUrl();
+        this.tagNames = reqCreateProjectDto.getTagNames();
     }
     public CreateProjectDto(Project project) {
+        this.id = project.getId();
         this.semester = project.getSemester();
         this.teamName = project.getTeamName();
         this.serviceName = project.getServiceName();
@@ -45,6 +50,10 @@ public class CreateProjectDto {
         this.serviceUrl = project.getServiceUrl();
         this.members = project.getMembers();
         this.imageUrl = project.getImageUrl();
+        this.createdAt = project.getCreatedAt();
+        this.tags = project.getTags().stream()
+                .map(ResTagDto::from)
+                .toList();
     }
 
     public static CreateProjectDto of(Long userId, ReqCreateProjectDto reqCreateProjectDto) {

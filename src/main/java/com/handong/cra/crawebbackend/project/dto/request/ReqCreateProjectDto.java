@@ -18,4 +18,5 @@ public class ReqCreateProjectDto {
     private String serviceUrl;
     private List<String> members = new ArrayList<>();
     private String imageUrl;
+    private List<String> tagNames;
 }

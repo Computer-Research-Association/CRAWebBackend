@@ -28,4 +28,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     Page<Board> findByCategoryAndDeletedFalse(Category category, Pageable pageable);
 
     Page<Board> findByTitleContainingOrContentContainingAndDeletedFalse(String titleKeyword, String contentKeyword, Pageable pageable);
+
+    List<Board> findByTags_Name(String tagName);
+
 }

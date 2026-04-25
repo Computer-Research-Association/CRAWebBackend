@@ -88,4 +88,10 @@ public interface BoardService {
      * <br />서버 실행시 실행, 주기적으로 실행 필요(스케줄링 처리 완)
      */
     void setSearchIndex();
+
+    /**
+     * 태그로 게시글 목록 조회
+     * @param tagName 태그 이름
+     */
+    List<ListBoardDto> getBoardsByTagName(String tagName);
 }
