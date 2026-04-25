@@ -11,6 +11,7 @@ import com.handong.cra.crawebbackend.project.domain.Project;
 import com.handong.cra.crawebbackend.project.domain.ProjectOrderBy;
 import com.handong.cra.crawebbackend.project.dto.*;
 import com.handong.cra.crawebbackend.project.repository.ProjectRepository;
+import com.handong.cra.crawebbackend.tag.service.TagService;
 import com.handong.cra.crawebbackend.user.domain.User;
 import com.handong.cra.crawebbackend.user.domain.UserRoleEnum;
 import com.handong.cra.crawebbackend.user.repository.UserRepository;
@@ -33,6 +34,7 @@ public class ProjectServiceImpl implements ProjectService {
     private final ProjectRepository projectRepository;
     private final S3ImageService s3ImageService;
     private final UserRepository userRepository;
+    private final TagService tagService;
 
     @Override
     @Transactional
@@ -43,6 +45,11 @@ public class ProjectServiceImpl implements ProjectService {
         }
         final Project project = Project.from(createProjectDto);
         project.setImageUrl(s3ImageService.transferImage(project.getImageUrl(), S3ImageCategory.PROJECT));
+
+        if (createProjectDto.getTagNames() != null) {
+            project.getTags().addAll(tagService.getOrCreateTagsByNames(createProjectDto.getTagNames()));
+        }
+
         final Project savedProject = projectRepository.save(project); // save 된 Entity 가져옴
         return CreateProjectDto.from(savedProject);
     }
@@ -53,6 +60,11 @@ public class ProjectServiceImpl implements ProjectService {
         projectAuthCheck(updateProjectDto.getUserId());
         final Project project = projectRepository.findById(updateProjectDto.getId())
                 .orElseThrow(ProjectNotFoundException::new);
+        if (updateProjectDto.getTagNames() != null) {
+            project.getTags().clear();
+            project.getTags().addAll(tagService.getOrCreateTagsByNames(updateProjectDto.getTagNames()));
+        }
+
         String newImgUrl;
         // 수정됨
         if (updateProjectDto.getImageUrl().contains("temp/")) {
@@ -102,10 +114,20 @@ public class ProjectServiceImpl implements ProjectService {
         return PageProjectDto.of(projects.stream().map(ListProjectDto::from).toList(), projects.getTotalPages());
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<ListProjectDto> getProjectsByTagName(String tagName) {
+        return projectRepository.findByTags_Name(tagName)
+                .stream()
+                .map(ListProjectDto::from)
+                .toList();
+    }
+
     private void projectAuthCheck(final Long userId) {
         final User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         if (!user.getRoles().hasRole(UserRoleEnum.ADMIN)) {
             throw new AuthForbiddenActionException();
         }
     }
+
 }

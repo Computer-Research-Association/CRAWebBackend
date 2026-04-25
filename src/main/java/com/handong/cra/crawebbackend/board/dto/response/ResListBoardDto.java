@@ -2,12 +2,14 @@ package com.handong.cra.crawebbackend.board.dto.response;
 
 import com.handong.cra.crawebbackend.board.domain.Category;
 import com.handong.cra.crawebbackend.board.dto.ListBoardDto;
+import com.handong.cra.crawebbackend.tag.dto.response.ResTagDto;
 import com.handong.cra.crawebbackend.user.dto.response.ResUserDetailDto;
 import com.handong.cra.crawebbackend.util.BoardMDParser;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -24,6 +26,7 @@ public class ResListBoardDto {
     private LocalDateTime updatedAt;
     private Integer commentCount;
     private ResUserDetailDto resUserDetailDto = new ResUserDetailDto();
+    private List<ResTagDto> tags;
 
     public ResListBoardDto(ListBoardDto listBoardDto) {
         this.id = listBoardDto.getId();
@@ -42,6 +45,7 @@ public class ResListBoardDto {
         this.commentCount = listBoardDto.getCommentCount();
 
         this.resUserDetailDto = ResUserDetailDto.from(listBoardDto.getUserDetailDto());
+        this.tags = listBoardDto.getTags();
 
     }
 

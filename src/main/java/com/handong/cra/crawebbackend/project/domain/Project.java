@@ -3,11 +3,13 @@ package com.handong.cra.crawebbackend.project.domain;
 import com.handong.cra.crawebbackend.common.domain.BaseEntity;
 import com.handong.cra.crawebbackend.project.dto.CreateProjectDto;
 import com.handong.cra.crawebbackend.project.dto.UpdateProjectDto;
+import com.handong.cra.crawebbackend.tag.domain.Tag;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.BatchSize;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -43,6 +45,15 @@ public class Project extends BaseEntity {
     @Column(name = "image_url")
     @Setter
     private String imageUrl;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @BatchSize(size = 50)
+    @JoinTable(
+            name = "project_tag",
+            joinColumns = @JoinColumn(name = "project_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id")
+    )
+    private List<Tag> tags = new ArrayList<>();
 
 
     public Project(CreateProjectDto createProjectDto) {

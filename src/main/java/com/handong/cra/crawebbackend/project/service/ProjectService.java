@@ -45,4 +45,11 @@ public interface ProjectService {
      * @param pageProjectDataDto 페이지 데이터 DTO
      */
     PageProjectDto getPaginationProject(PageProjectDataDto pageProjectDataDto);
+
+    /**
+     * 태그로 프로젝트 목록 조회
+     *
+     * @param tagName 태그 이름
+     */
+    List<ListProjectDto> getProjectsByTagName(String tagName);
 }

@@ -1,6 +1,7 @@
 package com.handong.cra.crawebbackend.project.dto.response;
 
 import com.handong.cra.crawebbackend.project.dto.ListProjectDto;
+import com.handong.cra.crawebbackend.tag.dto.response.ResTagDto;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -18,6 +19,7 @@ public class ResListProjectDto {
     private String serviceName;
     private List<String> members = new ArrayList<>();
     private String imageUrl = "";
+    private List<ResTagDto> tags;
 
     private Boolean deleted;
     private LocalDateTime createAt;
@@ -31,6 +33,7 @@ public class ResListProjectDto {
 //        this.content = listProjectDto.getContent();
         this.members = listProjectDto.getMembers();
         this.imageUrl = listProjectDto.getImageUrl(); // 대표 이미지만 가져오기
+        this.tags = listProjectDto.getTags();
         this.deleted = listProjectDto.getDeleted();
         this.createAt = listProjectDto.getCreateAt();
     }

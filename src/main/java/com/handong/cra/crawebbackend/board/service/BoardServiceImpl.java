@@ -15,6 +15,7 @@ import com.handong.cra.crawebbackend.file.service.S3ImageService;
 import com.handong.cra.crawebbackend.exception.board.BoardLikeBadRequestException;
 import com.handong.cra.crawebbackend.exception.board.BoardNotFoundException;
 import com.handong.cra.crawebbackend.exception.user.UserNotFoundException;
+import com.handong.cra.crawebbackend.tag.service.TagService;
 import com.handong.cra.crawebbackend.user.domain.User;
 import com.handong.cra.crawebbackend.user.domain.UserRoleEnum;
 import com.handong.cra.crawebbackend.user.repository.UserRepository;
@@ -48,6 +49,7 @@ public class BoardServiceImpl implements BoardService {
     private final BoardPinService boardPinService;
     private final EntityManager entityManager;
     private final BoardPinRepository boardPinRepository;
+    private final TagService tagService;
 
 
     @Value("${spring.cloud.aws.s3.bucket}")
@@ -102,12 +104,16 @@ public class BoardServiceImpl implements BoardService {
             createBoardDto.setFileUrl(fileUrl);
         }
         final Board board = Board.of(user, createBoardDto);
-        if (!board.getImageUrls().isEmpty()) {
+        if (board.getImageUrls() != null && !board.getImageUrls().isEmpty()) {
             board.setImageUrls(s3ImageService
                     .transferImage(board.getImageUrls(), S3ImageCategory.BOARD));
             board.setContent(parser
                     .updateImageUrls(board.getContent(), board.getImageUrls()));
         }
+        if (createBoardDto.getTagNames() != null) {
+            board.getTags().addAll(tagService.getOrCreateTagsByNames(createBoardDto.getTagNames()));
+        }
+
         final Board saevdBoard = boardRepository.save(board);
         return CreateBoardDto.from(saevdBoard);
     }
@@ -131,7 +137,7 @@ public class BoardServiceImpl implements BoardService {
         } else {
             updateBoardDto.setFileUrl(board.getFileUrl());
         }
-        if (!updateBoardDto.getImageUrls().isEmpty()) { //img update logic
+        if (updateBoardDto.getImageUrls() != null && !updateBoardDto.getImageUrls().isEmpty()) { //img update logic
             // 기존에 있는 이미지와 비교하여 삭제된 이미지 삭제, 새로운 이미지 등록
             final List<String> removeImgs = board.getImageUrls();
             List<String> newImgs = updateBoardDto.getImageUrls();
@@ -144,6 +150,10 @@ public class BoardServiceImpl implements BoardService {
             newImgs.addAll(temp);
             board.setImageUrls(newImgs);
             board.setContent(parser.updateImageUrls(board.getContent(), board.getImageUrls()));
+        }
+        if (updateBoardDto.getTagNames() != null) {
+            board.getTags().clear();
+            board.getTags().addAll(tagService.getOrCreateTagsByNames(updateBoardDto.getTagNames()));
         }
         final Board updatedBoard = board.update(updateBoardDto);
         return UpdateBoardDto.from(updatedBoard);
@@ -281,6 +291,14 @@ public class BoardServiceImpl implements BoardService {
         return Search.session(entityManager);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<ListBoardDto> getBoardsByTagName(String tagName) {
+        return boardRepository.findByTags_Name(tagName)
+                .stream()
+                .map(ListBoardDto::from)
+                .toList();
+    }
 
     private void boardAuthCheck(final Long writerId, final Long userId) {
         final User user = userRepository.findById(userId)

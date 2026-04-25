@@ -2,6 +2,7 @@ package com.handong.cra.crawebbackend.board.dto;
 
 import com.handong.cra.crawebbackend.board.domain.Board;
 import com.handong.cra.crawebbackend.board.dto.request.ReqUpdateBoardDto;
+import com.handong.cra.crawebbackend.tag.dto.response.ResTagDto;
 import com.handong.cra.crawebbackend.user.dto.UserDetailDto;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,6 +27,8 @@ public class UpdateBoardDto {
     private MultipartFile file;
     private String fileUrl;
     private Boolean isChangedFile;
+    private List<String> tagNames;
+    private List<ResTagDto> tags;
 
     public UpdateBoardDto(Long userId, Long boardId, ReqUpdateBoardDto reqUpdateBoardDto, MultipartFile file) {
         this.id = boardId;
@@ -36,6 +39,7 @@ public class UpdateBoardDto {
         this.imageUrls = reqUpdateBoardDto.getImageUrls();
         this.file = file;
         this.isChangedFile = reqUpdateBoardDto.getIsChangedFile();
+        this.tagNames = reqUpdateBoardDto.getTagNames();
     }
 
     public UpdateBoardDto(Board board) {
@@ -48,6 +52,9 @@ public class UpdateBoardDto {
         this.createdAt = board.getCreatedAt();
         this.updatedAt = board.getUpdatedAt();
         this.userDetailDto = UserDetailDto.from(board.getUser());
+        this.tags = board.getTags().stream()
+                .map(ResTagDto::from)
+                .toList();
     }
 
     public UpdateBoardDto(Long userId, Long boardId) {
