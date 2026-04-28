@@ -1,0 +1,21 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: cra-mysql-dev
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: cra_dev
+    ports:
+      - "3306:3306"
+    volumes:
+      - cra_mysql_dev_data:/var/lib/mysql
+
+  redis:
+    image: redis:7
+    container_name: cra-redis-dev
+    ports:
+      - "6379:6379"
+
+volumes:
+  cra_mysql_dev_data:
+    driver: local

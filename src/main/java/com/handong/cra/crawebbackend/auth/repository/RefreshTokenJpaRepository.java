@@ -1,0 +1,9 @@
+package com.handong.cra.crawebbackend.auth.repository;
+
+import com.handong.cra.crawebbackend.auth.domain.RefreshToken;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface RefreshTokenJpaRepository extends JpaRepository<RefreshToken, Long> {
+    RefreshToken findByRefreshToken(String refreshToken);
+    void deleteAllByUserId(Long userId);
+}

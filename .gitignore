@@ -45,3 +45,6 @@ logs/
 
 ### search datas ###
 Board/
+
+### AI Agent Memories ###
+.claude
