@@ -18,6 +18,9 @@ management:
       exposure:
         include: health, prometheus
 
+jwt:
+  refresh-store: redis
+
 site:
   frontend:
     url: https://cra206.org

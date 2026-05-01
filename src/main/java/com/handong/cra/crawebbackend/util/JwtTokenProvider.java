@@ -3,15 +3,11 @@ package com.handong.cra.crawebbackend.util;
 import com.handong.cra.crawebbackend.auth.domain.RefreshToken;
 import com.handong.cra.crawebbackend.auth.dto.ReissueTokenDto;
 import com.handong.cra.crawebbackend.auth.dto.TokenDto;
-import com.handong.cra.crawebbackend.auth.dto.response.ResTokenDto;
 import com.handong.cra.crawebbackend.auth.repository.RefreshTokenRepository;
-import com.handong.cra.crawebbackend.exception.auth.AuthInvalidTokenException;
-import com.handong.cra.crawebbackend.exception.auth.AuthTokenExpiredException;
 import com.handong.cra.crawebbackend.exception.user.UserNotFoundException;
 import com.handong.cra.crawebbackend.user.domain.User;
 import com.handong.cra.crawebbackend.user.domain.UserRoleSet;
 import com.handong.cra.crawebbackend.user.repository.UserRepository;
-import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -19,7 +15,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -67,13 +62,13 @@ public class JwtTokenProvider {
         final Long userId = user.getId();
         final UserRoleSet roles = user.getRoles();
         final String refreshToken = generateToken(userId, refreshExpiration, roles);
-        final RefreshToken newRefreshToken = refreshTokenRepository.save(new RefreshToken(userId, refreshToken));
-        return TokenDto.of(newRefreshToken.getUserId(), null, newRefreshToken.getRefreshToken());
+        refreshTokenRepository.save(new RefreshToken(userId, refreshToken));
+        return TokenDto.of(userId, null, refreshToken);
     }
 
     @Transactional
     public TokenDto reissueToken(final ReissueTokenDto reissueTokenDto) {
-        final RefreshToken savedToken = refreshTokenRepository.findByRefreshToken(reissueTokenDto.getRefreshToken());
+        final RefreshToken savedToken = refreshTokenRepository.findByToken(reissueTokenDto.getRefreshToken());
         if (savedToken == null) { // 만료되었는지 검사
             return TokenDto.of(null, "expired", "expired");
         }
