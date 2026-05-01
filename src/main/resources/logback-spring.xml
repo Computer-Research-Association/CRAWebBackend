@@ -71,36 +71,11 @@
     </appender>
 
     <springProfile name="deploy">
-        <springProperty scope="context" name="LOKI_URL" source="logging.loki.url" defaultValue="http://localhost:3100"/>
-
-        <appender name="LOKI" class="com.github.loki4j.logback.Loki4jAppender">
-            <http>
-                <url>${LOKI_URL}/loki/api/v1/push</url>
-                <connectTimeoutMs>1000</connectTimeoutMs>
-                <requestTimeoutMs>1500</requestTimeoutMs>
-                <maxRetries>1</maxRetries>
-            </http>
-            <format>
-                <label>
-                    <pattern>app=craweb,host=${HOSTNAME:-unknown}</pattern>
-                </label>
-                <message class="com.github.loki4j.logback.JsonLayout"/>
-            </format>
-        </appender>
-
-        <appender name="ASYNC-LOKI" class="ch.qos.logback.classic.AsyncAppender">
-            <appender-ref ref="LOKI"/>
-            <queueSize>8192</queueSize>
-            <discardingThreshold>0</discardingThreshold>
-            <neverBlock>true</neverBlock>
-        </appender>
-
         <root level="info">
             <appender-ref ref="CONSOLE"/>
             <appender-ref ref="ASYNC-FILE"/>
             <appender-ref ref="ASYNC-FILE-ERROR"/>
             <appender-ref ref="ASYNC-FILE-WARN"/>
-            <appender-ref ref="ASYNC-LOKI"/>
         </root>
     </springProfile>
 

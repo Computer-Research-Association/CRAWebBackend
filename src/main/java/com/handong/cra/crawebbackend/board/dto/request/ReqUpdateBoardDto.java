@@ -1,6 +1,5 @@
 package com.handong.cra.crawebbackend.board.dto.request;
 
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
 import java.util.List;
@@ -15,5 +14,5 @@ public class ReqUpdateBoardDto {
     private List<String> imageUrls;
     private Boolean isChangedFile;
     private Boolean deleted;
-    private List<String> tagNames;
+    private List<String> tags;
 }

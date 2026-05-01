@@ -39,7 +39,7 @@ public class UpdateBoardDto {
         this.imageUrls = reqUpdateBoardDto.getImageUrls();
         this.file = file;
         this.isChangedFile = reqUpdateBoardDto.getIsChangedFile();
-        this.tagNames = reqUpdateBoardDto.getTagNames();
+        this.tagNames = reqUpdateBoardDto.getTags();
     }
 
     public UpdateBoardDto(Board board) {
