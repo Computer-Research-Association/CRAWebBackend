@@ -37,7 +37,7 @@ public class CreateBoardDto {
         this.category = Category.values()[reqCreateBoardDto.getCategory()];
         this.imageUrls = reqCreateBoardDto.getImageUrls();
         this.file = file;
-        this.tagNames = reqCreateBoardDto.getTagNames();
+        this.tagNames = reqCreateBoardDto.getTags();
     }
 
     public CreateBoardDto(Board board) {

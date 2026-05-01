@@ -1,6 +1,5 @@
 package com.handong.cra.crawebbackend.board.dto.request;
 
-import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
@@ -24,6 +23,6 @@ public class ReqCreateBoardDto {
 
     private List<String> imageUrls;
 
-    private List<String> tagNames;
+    private List<String> tags;
 
 }
