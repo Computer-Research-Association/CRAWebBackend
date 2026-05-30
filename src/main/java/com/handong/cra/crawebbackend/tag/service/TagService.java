@@ -1,6 +1,8 @@
 package com.handong.cra.crawebbackend.tag.service;
 
 import com.handong.cra.crawebbackend.board.dto.ListBoardDto;
+import com.handong.cra.crawebbackend.board.dto.PageBoardDataDto;
+import com.handong.cra.crawebbackend.board.dto.PageBoardDto;
 import com.handong.cra.crawebbackend.project.dto.ListProjectDto;
 import com.handong.cra.crawebbackend.tag.domain.Tag;
 import com.handong.cra.crawebbackend.tag.dto.request.ReqCreateTagDto;
@@ -16,6 +18,7 @@ public interface TagService {
     ResTagDto updateTag(Long id, ReqUpdateTagDto dto);
     void deleteTag(Long id);
     List<ListBoardDto> getBoardsByTagName(String tagName);
+    PageBoardDto getTagBoardsById(Long tagId, PageBoardDataDto pageBoardDataDto);
     List<ListProjectDto> getProjectsByTagName(String tagName);
     List<Tag> getOrCreateTagsByNames(List<String> tagNames);
 }

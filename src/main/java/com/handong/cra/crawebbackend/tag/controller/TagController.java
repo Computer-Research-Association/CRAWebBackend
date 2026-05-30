@@ -1,10 +1,15 @@
 package com.handong.cra.crawebbackend.tag.controller;
 
+import com.handong.cra.crawebbackend.board.domain.BoardOrderBy;
+import com.handong.cra.crawebbackend.board.dto.PageBoardDataDto;
+import com.handong.cra.crawebbackend.board.dto.response.ResPageBoardDto;
+import com.handong.cra.crawebbackend.exception.board.PageSizeLimitExceededException;
 import com.handong.cra.crawebbackend.tag.dto.request.ReqCreateTagDto;
 import com.handong.cra.crawebbackend.tag.dto.request.ReqUpdateTagDto;
 import com.handong.cra.crawebbackend.tag.dto.response.ResTagDto;
 import com.handong.cra.crawebbackend.tag.service.TagService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,6 +25,9 @@ public class TagController {
 
     private final TagService tagService;
 
+    @Value("${spring.data.page.MAX_PER_PAGE}")
+    private Integer MAX_PAGE_SIZE;
+
     @GetMapping
     public ResponseEntity<List<ResTagDto>> getAllTags() {
         return ResponseEntity.ok(tagService.getAllTags());
@@ -34,8 +42,23 @@ public class TagController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ResTagDto> getTagById(@PathVariable Long id) {
-        return ResponseEntity.ok(tagService.getTagById(id));
+    public ResponseEntity<ResPageBoardDto> getTagById(
+            @PathVariable Long id,
+            @RequestParam(required = false, defaultValue = "0") final Long page,
+            @RequestParam(required = false, defaultValue = "10") final Integer perPage,
+            @RequestParam(required = false, defaultValue = "0") final Integer orderBy,
+            @RequestParam(required = false, defaultValue = "true") final Boolean isASC
+    ) {
+        if (perPage > MAX_PAGE_SIZE) {
+            throw new PageSizeLimitExceededException();
+        }
+        final PageBoardDataDto pageBoardDataDto = PageBoardDataDto.builder()
+                .page(page)
+                .perPage(perPage)
+                .orderBy(BoardOrderBy.values()[orderBy])
+                .isASC(isASC)
+                .build();
+        return ResponseEntity.ok(ResPageBoardDto.from(tagService.getTagBoardsById(id, pageBoardDataDto)));
     }
 
     @PostMapping
