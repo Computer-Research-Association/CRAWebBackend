@@ -31,4 +31,6 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
 
     List<Board> findByTags_Name(String tagName);
 
+    Page<Board> findByTags_IdAndDeletedFalse(Long tagId, Pageable pageable);
+
 }

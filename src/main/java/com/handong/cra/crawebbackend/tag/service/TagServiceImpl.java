@@ -1,6 +1,9 @@
 package com.handong.cra.crawebbackend.tag.service;
 
+import com.handong.cra.crawebbackend.board.domain.BoardOrderBy;
 import com.handong.cra.crawebbackend.board.dto.ListBoardDto;
+import com.handong.cra.crawebbackend.board.dto.PageBoardDataDto;
+import com.handong.cra.crawebbackend.board.dto.PageBoardDto;
 import com.handong.cra.crawebbackend.board.repository.BoardRepository;
 import com.handong.cra.crawebbackend.exception.tag.TagInvalidNameException;
 import com.handong.cra.crawebbackend.exception.tag.TagNotFoundException;
@@ -13,9 +16,14 @@ import com.handong.cra.crawebbackend.tag.dto.response.ResTagDto;
 import com.handong.cra.crawebbackend.tag.repository.TagRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.handong.cra.crawebbackend.board.domain.Board;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -69,6 +77,31 @@ public class TagServiceImpl implements TagService {
                 .map(ListBoardDto::from)
                 .filter(Objects::nonNull)
                 .toList();
+    }
+
+    @Override
+    public PageBoardDto getTagBoardsById(Long tagId, PageBoardDataDto pageBoardDataDto) {
+        tagRepository.findById(tagId)
+                .orElseThrow(TagNotFoundException::new);
+        final Pageable pageable = getPageable(pageBoardDataDto);
+        final Page<Board> boards = boardRepository.findByTags_IdAndDeletedFalse(tagId, pageable);
+        return PageBoardDto.builder()
+                .listBoardDtos(boards.stream()
+                        .map(ListBoardDto::from)
+                        .filter(Objects::nonNull)
+                        .toList())
+                .totalPages(boards.getTotalPages())
+                .build();
+    }
+
+    private Pageable getPageable(final PageBoardDataDto pageBoardDataDto) {
+        final Map<BoardOrderBy, String> map = Map.of(
+                BoardOrderBy.DATE, "createdAt",
+                BoardOrderBy.LIKECOUNT, "likeCount"
+        );
+        Sort sort = Sort.by(map.get(pageBoardDataDto.getOrderBy()));
+        sort = pageBoardDataDto.getIsASC() ? sort.ascending() : sort.descending();
+        return PageRequest.of(Math.toIntExact(pageBoardDataDto.getPage()), pageBoardDataDto.getPerPage(), sort);
     }
 
     @Override
