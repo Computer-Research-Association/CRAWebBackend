@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.handong.cra.crawebbackend.board.domain.Board;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -117,6 +118,8 @@ public class TagServiceImpl implements TagService {
     public void deleteTag(Long id) {
         Tag tag = tagRepository.findById(id)
                 .orElseThrow(TagNotFoundException::new);
+        new ArrayList<>(tag.getBoards()).forEach(board -> board.getTags().remove(tag));
+        new ArrayList<>(tag.getProjects()).forEach(project -> project.getTags().remove(tag));
         tagRepository.delete(tag);
     }
 
